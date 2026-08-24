@@ -1,0 +1,801 @@
+import React, { useState } from 'react';
+import { useFinance } from '../../context/FinanceContext';
+import {
+  Gavel,
+  FileText,
+  ShieldCheck,
+  CheckCircle,
+  XCircle,
+  Warning,
+  Plus,
+  X,
+  Bank,
+  Scales,
+  TrendUp,
+  Buildings,
+  Receipt,
+  Medal,
+  Percent
+} from '@phosphor-icons/react';
+
+function TenderBidAuditingView() {
+  const {
+    tenders,
+    procurementThresholds,
+    bankGuarantees,
+    createTender,
+    submitBid,
+    awardTender
+  } = useFinance();
+
+  const [activeTab, setActiveTab] = useState('tenders-registry'); // 'tenders-registry' | 'bid-evaluation' | 'bank-bonds' | 'gtd-thresholds'
+  const [selectedTenderId, setSelectedTenderId] = useState('TND-2026-001');
+  const [isNewTenderModalOpen, setIsNewTenderModalOpen] = useState(false);
+  const [isNewBidModalOpen, setIsNewBidModalOpen] = useState(false);
+  const [isAwardModalOpen, setIsAwardModalOpen] = useState(false);
+  const [selectedBidToAward, setSelectedBidToAward] = useState(null);
+  const [awardJustification, setAwardJustification] = useState('Awarded to lowest evaluated compliant bidder conforming to Jordan Public Procurement Law No. 28/2019 specifications.');
+  const [auditSuccess, setAuditSuccess] = useState(null);
+
+  // Form State for New Tender
+  const [formTenderTitle, setFormTenderTitle] = useState('');
+  const [formTenderCategory, setFormTenderCategory] = useState('Supplies');
+  const [formTenderMethod, setFormTenderMethod] = useState('Public Tender (GTD Standard)');
+  const [formTenderBudget, setFormTenderBudget] = useState(60000);
+  const [formTenderDeadline, setFormTenderDeadline] = useState('2026-09-30');
+
+  // Form State for New Bid Submission
+  const [bidVendorName, setBidVendorName] = useState('');
+  const [bidVendorCrn, setBidVendorCrn] = useState('CRN-');
+  const [bidPrice, setBidPrice] = useState(50000);
+  const [bidTechScore, setBidTechScore] = useState(90);
+  const [bidFinScore, setBidFinScore] = useState(95);
+  const [bidBondAmount, setBidBondAmount] = useState(1500);
+  const [bidBank, setBidBank] = useState('Arab Bank');
+  const [bidDeliveryDays, setBidDeliveryDays] = useState(14);
+  const [bidWarrantyMonths, setBidWarrantyMonths] = useState(12);
+
+  const selectedTender = tenders.find(t => t.tender_id === selectedTenderId) || tenders[0];
+
+  // Calculated Summary Metrics
+  const totalTenderVolume = tenders.reduce((sum, t) => sum + t.budget_amount, 0);
+  const totalBidsCount = tenders.reduce((sum, t) => sum + (t.bids?.length || 0), 0);
+  const totalGuaranteesHeld = (bankGuarantees || []).reduce((sum, bg) => sum + bg.amount, 0);
+
+  const handleCreateTenderSubmit = (e) => {
+    e.preventDefault();
+    const newTnd = createTender({
+      title: formTenderTitle,
+      category: formTenderCategory,
+      procurement_method: formTenderMethod,
+      budget_amount: parseFloat(formTenderBudget) || 0,
+      submission_deadline: formTenderDeadline
+    });
+    setSelectedTenderId(newTnd.tender_id);
+    setAuditSuccess(`Created Tender ${newTnd.reference_code} — "${newTnd.title}"`);
+    setIsNewTenderModalOpen(false);
+    setTimeout(() => setAuditSuccess(null), 5000);
+  };
+
+  const handleSubmitBidSubmit = (e) => {
+    e.preventDefault();
+    if (!selectedTender) return;
+
+    submitBid(selectedTender.tender_id, {
+      vendor_name: bidVendorName,
+      vendor_crn: bidVendorCrn,
+      quoted_price: parseFloat(bidPrice) || 0,
+      technical_score: parseFloat(bidTechScore) || 85,
+      financial_score: parseFloat(bidFinScore) || 90,
+      bid_bond_submitted: true,
+      bid_bond_amount: parseFloat(bidBondAmount) || 0,
+      issuing_bank: bidBank,
+      tax_clearance_verified: true,
+      ssc_compliance_verified: true,
+      delivery_timeline_days: parseInt(bidDeliveryDays) || 14,
+      warranty_months: parseInt(bidWarrantyMonths) || 12
+    });
+
+    setAuditSuccess(`Logged bid submission for "${bidVendorName}" (JOD ${parseFloat(bidPrice).toLocaleString()})`);
+    setIsNewBidModalOpen(false);
+    setTimeout(() => setAuditSuccess(null), 5000);
+  };
+
+  const handleAwardTenderSubmit = (e) => {
+    e.preventDefault();
+    if (!selectedTender || !selectedBidToAward) return;
+
+    awardTender(selectedTender.tender_id, selectedBidToAward.bid_id, awardJustification);
+    setAuditSuccess(`Tender ${selectedTender.reference_code} successfully awarded to ${selectedBidToAward.vendor_name}`);
+    setIsAwardModalOpen(false);
+    setSelectedBidToAward(null);
+    setTimeout(() => setAuditSuccess(null), 5000);
+  };
+
+  return (
+    <div className="page-container" style={{ paddingBottom: '32px' }}>
+      {/* Header */}
+      <div className="page-header" style={{ marginBottom: '18px' }}>
+        <div>
+          <h1 style={{ fontSize: '18px', fontWeight: 700, margin: 0 }}>Tender &amp; Bid Auditing Management</h1>
+          <div style={{ fontSize: '11.5px', color: 'var(--text-muted)', fontFamily: 'monospace', marginTop: '2px' }}>
+            / finance / tender auditing &amp; public procurement
+          </div>
+        </div>
+        <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+          <span className="badge ok">
+            <span className="d"></span> Jordan Public Procurement Law No. 28/2019
+          </span>
+          <button
+            className="btn-primary"
+            onClick={() => setIsNewTenderModalOpen(true)}
+            style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', padding: '6px 12px' }}
+          >
+            <Plus size={14} weight="bold" />
+            <span>Publish Procurement RFP</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Success Notification Alert */}
+      {auditSuccess && (
+        <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', padding: '10px 14px', borderRadius: '6px', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px', color: '#15803d', fontSize: '12px' }}>
+          <CheckCircle size={16} weight="bold" />
+          <span>{auditSuccess}</span>
+        </div>
+      )}
+
+      {/* 4 KPI Summary Cards */}
+      <div className="metrics-4" style={{ marginBottom: '20px' }}>
+        <div className="card metric-card">
+          <div className="metric-top">
+            <span className="metric-label">Active Tenders Volume</span>
+            <div className="metric-icon" style={{ background: '#eff6ff', color: '#2563eb' }}>
+              <Gavel size={16} weight="bold" />
+            </div>
+          </div>
+          <div className="metric-value">JOD {totalTenderVolume.toLocaleString(undefined, { minimumFractionDigits: 2 })}</div>
+          <div className="metric-delta">{tenders.length} Procurement Packages</div>
+        </div>
+
+        <div className="card metric-card">
+          <div className="metric-top">
+            <span className="metric-label">Bids Evaluated</span>
+            <div className="metric-icon" style={{ background: '#f8fafc', color: '#475569' }}>
+              <FileText size={16} weight="bold" />
+            </div>
+          </div>
+          <div className="metric-value">{totalBidsCount} Submissions</div>
+          <div className="metric-delta">60/40 Tech &amp; Financial Ratio</div>
+        </div>
+
+        <div className="card metric-card">
+          <div className="metric-top">
+            <span className="metric-label">Bank Guarantees Held</span>
+            <div className="metric-icon" style={{ background: '#f0fdf4', color: '#15803d' }}>
+              <Bank size={16} weight="bold" />
+            </div>
+          </div>
+          <div className="metric-value">JOD {totalGuaranteesHeld.toLocaleString(undefined, { minimumFractionDigits: 2 })}</div>
+          <div className="metric-delta up" style={{ color: '#15803d' }}>100% Bank Verified Bonds</div>
+        </div>
+
+        <div className="card metric-card">
+          <div className="metric-top">
+            <span className="metric-label">Procurement Compliance</span>
+            <div className="metric-icon" style={{ background: '#fef9c3', color: '#a16207' }}>
+              <ShieldCheck size={16} weight="bold" />
+            </div>
+          </div>
+          <div className="metric-value">96.5% Rating</div>
+          <div className="metric-delta">GTD By-Law 8/2022 Certified</div>
+        </div>
+      </div>
+
+      {/* Tabs */}
+      <div className="tabs-container" style={{ marginBottom: '18px' }}>
+        <button
+          className={`tab-btn ${activeTab === 'tenders-registry' ? 'active' : ''}`}
+          onClick={() => setActiveTab('tenders-registry')}
+        >
+          Master Tenders Registry ({tenders.length})
+        </button>
+        <button
+          className={`tab-btn ${activeTab === 'bid-evaluation' ? 'active' : ''}`}
+          onClick={() => setActiveTab('bid-evaluation')}
+        >
+          Bid Audit &amp; Comparison Matrix ({selectedTender?.bids?.length || 0})
+        </button>
+        <button
+          className={`tab-btn ${activeTab === 'bank-bonds' ? 'active' : ''}`}
+          onClick={() => setActiveTab('bank-bonds')}
+        >
+          Bank Guarantees &amp; Bonds Vault ({(bankGuarantees || []).length})
+        </button>
+        <button
+          className={`tab-btn ${activeTab === 'gtd-thresholds' ? 'active' : ''}`}
+          onClick={() => setActiveTab('gtd-thresholds')}
+        >
+          Jordan GTD Procurement Thresholds ({procurementThresholds.length})
+        </button>
+      </div>
+
+      {/* SUB-TAB 1: MASTER TENDERS REGISTRY */}
+      {activeTab === 'tenders-registry' && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <div className="card" style={{ padding: '16px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
+              <div>
+                <h3 style={{ margin: 0, fontSize: '14px', fontWeight: 600 }}>Government Tenders Directorate (GTD) Registry</h3>
+                <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
+                  Active and Awarded Corporate Procurements Subject to Statutory Law 28/2019
+                </div>
+              </div>
+              <span className="badge ok"><span className="d"></span> Public Transparency</span>
+            </div>
+
+            <div className="table-responsive">
+              <table className="table" style={{ width: '100%', fontSize: '12px' }}>
+                <thead>
+                  <tr>
+                    <th>Tender Ref</th>
+                    <th>Procurement Title</th>
+                    <th>Category</th>
+                    <th>Method</th>
+                    <th style={{ textAlign: 'right' }}>Estimated Budget (JOD)</th>
+                    <th>Deadline</th>
+                    <th style={{ textAlign: 'center' }}>Bids Logged</th>
+                    <th style={{ textAlign: 'center' }}>Compliance Score</th>
+                    <th style={{ textAlign: 'center' }}>Tender Status</th>
+                    <th style={{ textAlign: 'center' }}>Audit Dossier</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {tenders.map((t) => (
+                    <tr
+                      key={t.tender_id}
+                      style={{ background: selectedTenderId === t.tender_id ? '#f0fdf4' : 'transparent', cursor: 'pointer' }}
+                      onClick={() => setSelectedTenderId(t.tender_id)}
+                    >
+                      <td className="mono" style={{ fontWeight: 700 }}>{t.reference_code}</td>
+                      <td style={{ fontWeight: 600 }}>{t.title}</td>
+                      <td><span className="tag-pill solid">{t.category}</span></td>
+                      <td style={{ fontSize: '11.5px', color: 'var(--text-muted)' }}>{t.procurement_method}</td>
+                      <td style={{ textAlign: 'right', fontWeight: 700 }} className="mono">
+                        JOD {t.budget_amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                      </td>
+                      <td className="mono" style={{ fontSize: '11.5px' }}>{t.submission_deadline}</td>
+                      <td style={{ textAlign: 'center', fontWeight: 600 }} className="mono">{t.bids?.length || 0}</td>
+                      <td style={{ textAlign: 'center' }}>
+                        <span className="badge ok">{t.audit_compliance_score}%</span>
+                      </td>
+                      <td style={{ textAlign: 'center' }}>
+                        <span className={`badge ${t.status === 'Awarded' ? 'ok' : t.status === 'Under_Evaluation' ? 'warn' : 'ok'}`}>
+                          <span className="d"></span> {t.status.replace(/_/g, ' ')}
+                        </span>
+                      </td>
+                      <td style={{ textAlign: 'center' }}>
+                        <button
+                          className="btn-secondary"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedTenderId(t.tender_id);
+                            setActiveTab('bid-evaluation');
+                          }}
+                          style={{ fontSize: '11px', padding: '3px 8px' }}
+                        >
+                          Audit Bids
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* SUB-TAB 2: BID AUDIT & COMPARISON MATRIX */}
+      {activeTab === 'bid-evaluation' && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          {/* Selected Tender Overview Banner */}
+          <div className="card" style={{ padding: '16px', background: '#f8fafc' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+              <div>
+                <span className="tag-pill solid">{selectedTender?.reference_code}</span>
+                <h3 style={{ margin: '6px 0 2px 0', fontSize: '15px', fontWeight: 700 }}>{selectedTender?.title}</h3>
+                <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
+                  Procurement Method: <strong>{selectedTender?.procurement_method}</strong> | Budget Cap: <strong className="mono">JOD {selectedTender?.budget_amount.toLocaleString()}</strong>
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <button
+                  className="btn-primary"
+                  onClick={() => setIsNewBidModalOpen(true)}
+                  style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '11.5px', padding: '6px 12px' }}
+                >
+                  <Plus size={14} weight="bold" />
+                  <span>Log Supplier Bid</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Bids Evaluation Table */}
+          <div className="card" style={{ padding: '16px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
+              <div>
+                <h4 style={{ margin: 0, fontSize: '13px', fontWeight: 700 }}>
+                  Competitive Evaluation Matrix (60% Technical / 40% Financial)
+                </h4>
+                <div style={{ fontSize: '11.5px', color: 'var(--text-muted)' }}>
+                  Side-by-side compliance verification with Bank Bid Bonds &amp; Tax Clearances
+                </div>
+              </div>
+              <span className="badge ok"><span className="d"></span> Sealed Envelope Session</span>
+            </div>
+
+            {(!selectedTender?.bids || selectedTender.bids.length === 0) ? (
+              <div style={{ textAlign: 'center', padding: '32px', color: 'var(--text-muted)', fontSize: '13px' }}>
+                No supplier bids logged for this tender yet. Click "Log Supplier Bid" above to record submissions.
+              </div>
+            ) : (
+              <div className="table-responsive">
+                <table className="table" style={{ width: '100%', fontSize: '12px' }}>
+                  <thead>
+                    <tr>
+                      <th>Rank</th>
+                      <th>Supplier / Bidder</th>
+                      <th>CRN Register</th>
+                      <th style={{ textAlign: 'right' }}>Quoted Price (JOD)</th>
+                      <th style={{ textAlign: 'center' }}>Tech Score (60%)</th>
+                      <th style={{ textAlign: 'center' }}>Fin Score (40%)</th>
+                      <th style={{ textAlign: 'center' }}>Composite Score</th>
+                      <th style={{ textAlign: 'center' }}>Bid Bond</th>
+                      <th style={{ textAlign: 'center' }}>ISTD &amp; SSC</th>
+                      <th style={{ textAlign: 'center' }}>Evaluation Result</th>
+                      <th style={{ textAlign: 'center' }}>Award Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {selectedTender.bids.map((bid) => (
+                      <tr key={bid.bid_id} style={{ background: bid.audit_status === 'AWARDED' ? '#f0fdf4' : 'transparent' }}>
+                        <td style={{ textAlign: 'center', fontWeight: 700 }}>
+                          {bid.ranking === 1 ? <Medal size={16} color="#eab308" weight="fill" /> : `#${bid.ranking}`}
+                        </td>
+                        <td style={{ fontWeight: 600 }}>{bid.vendor_name}</td>
+                        <td className="mono" style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{bid.vendor_crn}</td>
+                        <td style={{ textAlign: 'right', fontWeight: 700 }} className="mono">
+                          JOD {bid.quoted_price.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                        </td>
+                        <td style={{ textAlign: 'center' }} className="mono">{bid.technical_score}/100</td>
+                        <td style={{ textAlign: 'center' }} className="mono">{bid.financial_score}/100</td>
+                        <td style={{ textAlign: 'center', fontWeight: 700, color: 'var(--primary-green)' }} className="mono">
+                          {bid.weighted_score}%
+                        </td>
+                        <td style={{ textAlign: 'center' }}>
+                          {bid.bid_bond_submitted ? (
+                            <span className="badge ok" style={{ fontSize: '10.5px' }}>
+                              JOD {bid.bid_bond_amount} ({bid.issuing_bank.split(' ')[0]})
+                            </span>
+                          ) : (
+                            <span className="badge crit" style={{ fontSize: '10.5px' }}>Missing</span>
+                          )}
+                        </td>
+                        <td style={{ textAlign: 'center' }}>
+                          {bid.tax_clearance_verified && bid.ssc_compliance_verified ? (
+                            <span className="badge ok">Verified</span>
+                          ) : (
+                            <span className="badge crit">Non-Compliant</span>
+                          )}
+                        </td>
+                        <td style={{ textAlign: 'center' }}>
+                          <span className={`badge ${bid.audit_status === 'AWARDED' ? 'ok' : bid.audit_status === 'DISQUALIFIED' ? 'crit' : 'ok'}`}>
+                            <span className="d"></span> {bid.audit_status}
+                          </span>
+                        </td>
+                        <td style={{ textAlign: 'center' }}>
+                          {bid.audit_status === 'AWARDED' ? (
+                            <span style={{ color: 'var(--primary-green)', fontWeight: 700, fontSize: '11px' }}>Contract Awarded</span>
+                          ) : bid.audit_status === 'DISQUALIFIED' ? (
+                            <span style={{ color: '#ef4444', fontSize: '11px' }}>Disqualified</span>
+                          ) : (
+                            <button
+                              className="btn-primary"
+                              onClick={() => {
+                                setSelectedBidToAward(bid);
+                                setIsAwardModalOpen(true);
+                              }}
+                              style={{ fontSize: '11px', padding: '3px 8px' }}
+                            >
+                              Award Contract
+                            </button>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* SUB-TAB 3: BANK GUARANTEES & BONDS VAULT */}
+      {activeTab === 'bank-bonds' && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <div className="card" style={{ padding: '16px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
+              <div>
+                <h3 style={{ margin: 0, fontSize: '14px', fontWeight: 600 }}>Bank Guarantees &amp; Surety Bonds Registry</h3>
+                <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
+                  Bid Bonds (1-3%), Performance Bonds (10%), and Defect Liability Guarantees
+                </div>
+              </div>
+              <span className="badge ok"><span className="d"></span> Central Bank Validated</span>
+            </div>
+
+            <div className="table-responsive">
+              <table className="table" style={{ width: '100%', fontSize: '12px' }}>
+                <thead>
+                  <tr>
+                    <th>Guarantee Ref</th>
+                    <th>Tender Reference</th>
+                    <th>Bond Classification</th>
+                    <th>Awarded Supplier / Contractor</th>
+                    <th style={{ textAlign: 'right' }}>Guaranteed Amount (JOD)</th>
+                    <th>Issuing Jordanian Bank</th>
+                    <th>Expiry Date</th>
+                    <th style={{ textAlign: 'center' }}>Bond Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {(bankGuarantees || []).map((bg) => (
+                    <tr key={bg.guarantee_id}>
+                      <td className="mono" style={{ fontWeight: 600 }}>{bg.guarantee_id}</td>
+                      <td className="mono" style={{ fontWeight: 600 }}>{bg.tender_ref}</td>
+                      <td><span className="tag-pill solid">{bg.type}</span></td>
+                      <td style={{ fontWeight: 600 }}>{bg.vendor_name}</td>
+                      <td style={{ textAlign: 'right', fontWeight: 700 }} className="mono">
+                        JOD {bg.amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                      </td>
+                      <td>{bg.bank}</td>
+                      <td className="mono" style={{ fontSize: '11.5px' }}>{bg.expiry_date}</td>
+                      <td style={{ textAlign: 'center' }}>
+                        <span className={`badge ${bg.status === 'Active' ? 'ok' : 'warn'}`}>
+                          <span className="d"></span> {bg.status}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* SUB-TAB 4: JORDAN GTD PROCUREMENT THRESHOLDS */}
+      {activeTab === 'gtd-thresholds' && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <div className="card" style={{ padding: '16px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
+              <div>
+                <h3 style={{ margin: 0, fontSize: '14px', fontWeight: 600 }}>Public Procurement Statutory Thresholds (Jordan Law 28/2019)</h3>
+                <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
+                  Mandatory Legal Procuring Modalities &amp; Clearance Requirements
+                </div>
+              </div>
+              <span className="badge ok"><span className="d"></span> Official Gazette Certified</span>
+            </div>
+
+            <div className="table-responsive">
+              <table className="table" style={{ width: '100%', fontSize: '12px' }}>
+                <thead>
+                  <tr>
+                    <th>Procurement Modality</th>
+                    <th style={{ textAlign: 'right' }}>Monetary Ceiling (JOD)</th>
+                    <th>Approving Authority Body</th>
+                    <th>Mandatory Audit &amp; Legal Requirements</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {procurementThresholds.map((pt, idx) => (
+                    <tr key={idx}>
+                      <td style={{ fontWeight: 700 }}>{pt.category}</td>
+                      <td style={{ textAlign: 'right', fontWeight: 700 }} className="mono">
+                        {pt.threshold_limit_jod >= 9999999 ? 'Above JOD 30,000' : `Up to JOD ${pt.threshold_limit_jod.toLocaleString()}`}
+                      </td>
+                      <td><span className="tag-pill solid">{pt.approval_authority}</span></td>
+                      <td style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{pt.requirements}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL: PUBLISH NEW TENDER */}
+      {isNewTenderModalOpen && (
+        <div className="modal-overlay">
+          <div className="modal-content" style={{ maxWidth: '480px' }}>
+            <div className="modal-header">
+              <h3 className="modal-title">Publish Procurement Tender (RFP)</h3>
+              <button className="modal-close-btn" onClick={() => setIsNewTenderModalOpen(false)}>
+                <X size={16} />
+              </button>
+            </div>
+            <form onSubmit={handleCreateTenderSubmit}>
+              <div className="modal-body" style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                <div className="form-group">
+                  <label>Tender / Contract Title</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="e.g. Annual IT Hardware Maintenance Services"
+                    value={formTenderTitle}
+                    onChange={(e) => setFormTenderTitle(e.target.value)}
+                    required
+                  />
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                  <div className="form-group">
+                    <label>Category</label>
+                    <select
+                      className="form-control"
+                      value={formTenderCategory}
+                      onChange={(e) => setFormTenderCategory(e.target.value)}
+                    >
+                      <option value="Supplies">Supplies &amp; Materials</option>
+                      <option value="Services">Services &amp; Maintenance</option>
+                      <option value="Works &amp; Infrastructure">Works &amp; Construction</option>
+                      <option value="Consulting">Advisory &amp; Consulting</option>
+                    </select>
+                  </div>
+
+                  <div className="form-group">
+                    <label>Procurement Method</label>
+                    <select
+                      className="form-control"
+                      value={formTenderMethod}
+                      onChange={(e) => setFormTenderMethod(e.target.value)}
+                    >
+                      <option value="Public Tender (GTD Standard)">Public Tender (GTD Standard)</option>
+                      <option value="Solicited Quotations (RFQ)">Solicited Quotations (RFQ)</option>
+                      <option value="Direct Purchase">Direct Purchase</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                  <div className="form-group">
+                    <label>Estimated Budget (JOD)</label>
+                    <input
+                      type="number"
+                      className="form-control"
+                      value={formTenderBudget}
+                      onChange={(e) => setFormTenderBudget(parseFloat(e.target.value) || 0)}
+                      required
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label>Submission Deadline</label>
+                    <input
+                      type="date"
+                      className="form-control"
+                      value={formTenderDeadline}
+                      onChange={(e) => setFormTenderDeadline(e.target.value)}
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div style={{ background: '#f8fafc', padding: '10px', borderRadius: '6px', fontSize: '11.5px', color: 'var(--text-muted)' }}>
+                  Procurements exceeding JOD 30,000 will enforce mandatory 1-3% bid bond verification and 60/40 scoring per Law 28/2019.
+                </div>
+              </div>
+              <div className="modal-footer" style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px', marginTop: '16px' }}>
+                <button type="button" className="btn-secondary" onClick={() => setIsNewTenderModalOpen(false)}>
+                  Cancel
+                </button>
+                <button type="submit" className="btn-primary">
+                  Publish RFP Dossier
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL: SUBMIT SUPPLIER BID */}
+      {isNewBidModalOpen && selectedTender && (
+        <div className="modal-overlay">
+          <div className="modal-content" style={{ maxWidth: '500px' }}>
+            <div className="modal-header">
+              <h3 className="modal-title">Log Supplier Bid Submission</h3>
+              <button className="modal-close-btn" onClick={() => setIsNewBidModalOpen(false)}>
+                <X size={16} />
+              </button>
+            </div>
+            <form onSubmit={handleSubmitBidSubmit}>
+              <div className="modal-body" style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                <div style={{ background: '#f8fafc', padding: '10px', borderRadius: '6px', fontSize: '12px' }}>
+                  Tender: <strong>{selectedTender.reference_code}</strong> — {selectedTender.title}
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr', gap: '12px' }}>
+                  <div className="form-group">
+                    <label>Supplier Company Name</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      value={bidVendorName}
+                      onChange={(e) => setBidVendorName(e.target.value)}
+                      required
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label>Commercial Reg (CRN)</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      value={bidVendorCrn}
+                      onChange={(e) => setBidVendorCrn(e.target.value)}
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                  <div className="form-group">
+                    <label>Quoted Price (JOD)</label>
+                    <input
+                      type="number"
+                      className="form-control"
+                      value={bidPrice}
+                      onChange={(e) => setBidPrice(parseFloat(e.target.value) || 0)}
+                      required
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label>Bid Bond Amount (JOD)</label>
+                    <input
+                      type="number"
+                      className="form-control"
+                      value={bidBondAmount}
+                      onChange={(e) => setBidBondAmount(parseFloat(e.target.value) || 0)}
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                  <div className="form-group">
+                    <label>Technical Score (0-100)</label>
+                    <input
+                      type="number"
+                      max="100"
+                      min="0"
+                      className="form-control"
+                      value={bidTechScore}
+                      onChange={(e) => setBidTechScore(parseFloat(e.target.value) || 0)}
+                      required
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label>Financial Score (0-100)</label>
+                    <input
+                      type="number"
+                      max="100"
+                      min="0"
+                      className="form-control"
+                      value={bidFinScore}
+                      onChange={(e) => setBidFinScore(parseFloat(e.target.value) || 0)}
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                  <div className="form-group">
+                    <label>Issuing Jordanian Bank</label>
+                    <select
+                      className="form-control"
+                      value={bidBank}
+                      onChange={(e) => setBidBank(e.target.value)}
+                    >
+                      <option value="Arab Bank">Arab Bank (البنك العربي)</option>
+                      <option value="Housing Bank for Trade &amp; Finance">Housing Bank (بنك الإسكان)</option>
+                      <option value="Bank al Etihad">Bank al Etihad (بنك الاتحاد)</option>
+                      <option value="Jordan Islamic Bank">Jordan Islamic Bank</option>
+                    </select>
+                  </div>
+
+                  <div className="form-group">
+                    <label>Delivery Timeline (Days)</label>
+                    <input
+                      type="number"
+                      className="form-control"
+                      value={bidDeliveryDays}
+                      onChange={(e) => setBidDeliveryDays(parseInt(e.target.value) || 14)}
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
+              <div className="modal-footer" style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px', marginTop: '16px' }}>
+                <button type="button" className="btn-secondary" onClick={() => setIsNewBidModalOpen(false)}>
+                  Cancel
+                </button>
+                <button type="submit" className="btn-primary">
+                  Record Evaluated Bid
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL: AWARD TENDER */}
+      {isAwardModalOpen && selectedBidToAward && (
+        <div className="modal-overlay">
+          <div className="modal-content" style={{ maxWidth: '460px' }}>
+            <div className="modal-header">
+              <h3 className="modal-title">Award Procurement Contract</h3>
+              <button className="modal-close-btn" onClick={() => setIsAwardModalOpen(false)}>
+                <X size={16} />
+              </button>
+            </div>
+            <form onSubmit={handleAwardTenderSubmit}>
+              <div className="modal-body" style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                <div style={{ background: '#f0fdf4', padding: '12px', borderRadius: '6px' }}>
+                  <div style={{ fontWeight: 700, fontSize: '13px', color: '#15803d' }}>
+                    Winning Bidder: {selectedBidToAward.vendor_name}
+                  </div>
+                  <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '4px' }}>
+                    Contract Value: <strong className="mono" style={{ color: 'var(--text-main)' }}>JOD {selectedBidToAward.quoted_price.toLocaleString()}</strong> | Weighted Score: <strong>{selectedBidToAward.weighted_score}%</strong>
+                  </div>
+                </div>
+
+                <div className="form-group">
+                  <label>Evaluation Committee Award Justification</label>
+                  <textarea
+                    className="form-control"
+                    rows="3"
+                    value={awardJustification}
+                    onChange={(e) => setAwardJustification(e.target.value)}
+                    required
+                  />
+                </div>
+
+                <div style={{ fontSize: '11.5px', color: 'var(--text-muted)' }}>
+                  Upon award, a mandatory 10% Performance Bond will be registered in the Bank Guarantees vault.
+                </div>
+              </div>
+              <div className="modal-footer" style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px', marginTop: '16px' }}>
+                <button type="button" className="btn-secondary" onClick={() => setIsAwardModalOpen(false)}>
+                  Cancel
+                </button>
+                <button type="submit" className="btn-primary">
+                  Publish Award Decision
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default TenderBidAuditingView;

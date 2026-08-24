@@ -1,0 +1,1530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Harborline Hotel — Finance &amp; GL Wireframes</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+<style>
+  :root{
+    --bg:#eef0f1;
+    --panel:#ffffff;
+    --line:#c9cdd1;
+    --line-soft:#e2e5e8;
+    --ink:#26292c;
+    --ink-soft:#6b7075;
+    --ink-faint:#9aa0a6;
+    --gray-1:#3a3d40;
+    --gray-2:#6b7075;
+    --gray-3:#9aa0a6;
+    --gray-4:#c9cdd1;
+    --gray-5:#e2e5e8;
+    --radius:6px;
+    --mono: "IBM Plex Mono","SFMono-Regular",Consolas,monospace;
+    --sans: "IBM Plex Sans","Inter",-apple-system,Segoe UI,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html,body{height:100%;}
+  body{
+    margin:0;
+    font-family:var(--sans);
+    color:var(--ink);
+    background:var(--bg);
+    display:flex;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  /* ---------- SIDEBAR ---------- */
+  .sidebar{
+    width:222px;
+    flex:0 0 222px;
+    background:var(--panel);
+    border-right:1px solid var(--line);
+    display:flex;
+    flex-direction:column;
+    height:100vh;
+    position:sticky;
+    top:0;
+  }
+  .brand{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:18px 18px 16px 18px;
+    border-bottom:1px solid var(--line-soft);
+  }
+  .brand-mark{
+    width:30px;height:30px;border:1.5px solid var(--ink);border-radius:5px;
+    display:flex;align-items:center;justify-content:center;
+    font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.5px;
+    flex:none;
+  }
+  .brand-text{line-height:1.15;}
+  .brand-text .b1{font-weight:700;font-size:13.5px;letter-spacing:.2px;}
+  .brand-text .b2{font-size:10.5px;color:var(--ink-faint);letter-spacing:.6px;text-transform:uppercase;}
+
+  nav.navlist{padding:10px 10px;flex:1;overflow-y:auto;}
+  .nav-section-label{
+    font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--ink-faint);
+    padding:14px 10px 6px 10px;font-weight:600;
+  }
+  .nav-item{
+    display:flex;align-items:center;gap:10px;
+    padding:9px 10px;border-radius:var(--radius);
+    font-size:13px;color:var(--ink-soft);cursor:pointer;
+    border:1px solid transparent;
+    margin-bottom:2px;
+  }
+  .nav-item:hover{background:var(--gray-5);color:var(--ink);}
+  .nav-item.active{
+    background:var(--ink);color:#fff;
+  }
+  .nav-item .num{
+    font-family:var(--mono);font-size:10px;color:var(--ink-faint);
+    width:16px;flex:none;
+  }
+  .nav-item.active .num{color:rgba(255,255,255,.55);}
+  .nav-icon{width:15px;height:15px;flex:none;display:flex;align-items:center;justify-content:center;font-size:12px;}
+
+  .sidebar-foot{
+    border-top:1px solid var(--line-soft);
+    padding:12px 16px;
+    font-size:11px;color:var(--ink-faint);
+    display:flex;flex-direction:column;gap:6px;
+  }
+  .sidebar-foot .row{display:flex;align-items:center;gap:8px;}
+  .dot-live{width:6px;height:6px;border-radius:50%;background:var(--gray-1);flex:none;}
+
+  /* ---------- MAIN ---------- */
+  .main{flex:1;min-width:0;display:flex;flex-direction:column;height:100vh;}
+  .topbar{
+    height:58px;flex:none;
+    background:var(--panel);border-bottom:1px solid var(--line);
+    display:flex;align-items:center;justify-content:space-between;
+    padding:0 22px;
+  }
+  .topbar-left{display:flex;align-items:baseline;gap:10px;}
+  .page-title{font-size:16px;font-weight:700;}
+  .page-sub{font-size:11.5px;color:var(--ink-faint);font-family:var(--mono);}
+  .topbar-right{display:flex;align-items:center;gap:14px;}
+  .search-box{
+    display:flex;align-items:center;gap:6px;
+    border:1px solid var(--line);border-radius:5px;
+    padding:6px 10px;color:var(--ink-faint);font-size:12px;width:230px;
+  }
+  .search-box .kbd{margin-left:auto;font-family:var(--mono);font-size:9.5px;border:1px solid var(--line);border-radius:3px;padding:1px 5px;color:var(--ink-faint);}
+  .icon-btn{
+    width:30px;height:30px;border:1px solid var(--line);border-radius:5px;
+    display:flex;align-items:center;justify-content:center;color:var(--ink-soft);cursor:pointer;
+    position:relative;
+  }
+  .icon-btn .ping{position:absolute;top:-3px;right:-3px;width:8px;height:8px;border-radius:50%;background:var(--ink);border:1.5px solid #fff;}
+  .avatar{
+    width:30px;height:30px;border-radius:50%;border:1.5px solid var(--ink);
+    display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;
+    font-family:var(--mono);
+  }
+
+  .content{flex:1;overflow-y:auto;padding:24px;}
+  .page{display:none;}
+  .page.active{display:block;animation:fade .18s ease;}
+  @keyframes fade{from{opacity:0;transform:translateY(3px);}to{opacity:1;transform:none;}}
+
+  /* generic elements */
+  .card{
+    background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+  }
+  .grid{display:grid;gap:16px;}
+  .row-actions{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;gap:12px;flex-wrap:wrap;}
+  .btn{
+    font-family:var(--sans);font-size:12.5px;font-weight:600;
+    border-radius:5px;padding:9px 14px;cursor:pointer;border:1px solid var(--ink);
+    display:inline-flex;align-items:center;gap:6px;white-space:nowrap;
+  }
+  .btn-primary{background:var(--ink);color:#fff;}
+  .btn-primary:hover{background:#000;}
+  .btn-ghost{background:#fff;color:var(--ink);border-color:var(--line);}
+  .btn-ghost:hover{border-color:var(--ink);}
+  .btn-row{display:flex;gap:8px;flex-wrap:wrap;}
+  .select, .input{
+    font-family:var(--sans);font-size:12.5px;
+    border:1px solid var(--line);border-radius:5px;background:#fff;color:var(--ink-soft);
+    padding:8px 10px;
+  }
+  .filters{display:flex;gap:10px;flex-wrap:wrap;}
+
+  .section-label{
+    font-size:11px;text-transform:uppercase;letter-spacing:.8px;color:var(--ink-faint);
+    font-weight:700;margin-bottom:10px;
+  }
+
+  /* metric cards */
+  .metrics{grid-template-columns:repeat(5,1fr);margin-bottom:18px;}
+  .metrics-4{grid-template-columns:repeat(4,1fr);margin-bottom:18px;}
+  .metric-card{padding:16px 18px;}
+  .metric-top{display:flex;justify-content:space-between;align-items:flex-start;}
+  .metric-label{font-size:11px;color:var(--ink-faint);font-weight:600;text-transform:uppercase;letter-spacing:.5px;}
+  .metric-icon{width:26px;height:26px;border:1px solid var(--line);border-radius:5px;display:flex;align-items:center;justify-content:center;flex:none;font-size:12px;}
+  .metric-value{font-size:24px;font-weight:700;margin-top:10px;font-family:var(--mono);}
+  .metric-delta{font-size:11px;color:var(--ink-faint);margin-top:4px;}
+  .metric-delta.up{color:var(--ink);font-weight:600;}
+  .metric-sub{font-size:10.5px;color:var(--ink-faint);margin-top:6px;padding-top:6px;border-top:1px dashed var(--line-soft);}
+
+  .two-col{grid-template-columns:1.6fr 1fr;align-items:start;}
+  .two-col-even{grid-template-columns:1fr 1fr;align-items:start;}
+  .panel-head{padding:14px 18px;border-bottom:1px solid var(--line-soft);display:flex;justify-content:space-between;align-items:center;}
+  .panel-head .t{font-size:13px;font-weight:700;}
+  .panel-body{padding:16px 18px;}
+
+  .activity-item{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--line-soft);}
+  .activity-item:last-child{border-bottom:none;}
+  .activity-dot{width:7px;height:7px;border-radius:50%;background:var(--gray-3);margin-top:5px;flex:none;}
+  .activity-text{font-size:12.5px;color:var(--ink-soft);line-height:1.4;}
+  .activity-text b{color:var(--ink);}
+  .activity-time{font-size:10.5px;color:var(--ink-faint);font-family:var(--mono);margin-top:2px;}
+
+  /* table */
+  table{width:100%;border-collapse:collapse;font-size:12.5px;}
+  thead th{
+    text-align:left;font-size:10.5px;text-transform:uppercase;letter-spacing:.5px;
+    color:var(--ink-faint);font-weight:700;padding:10px 12px;border-bottom:1px solid var(--line);
+    background:#fafbfb;white-space:nowrap;
+  }
+  tbody td{padding:11px 12px;border-bottom:1px solid var(--line-soft);color:var(--ink-soft);}
+  tbody tr:hover{background:#fafbfb;}
+  .cell-strong{color:var(--ink);font-weight:600;}
+  .mono{font-family:var(--mono);}
+  .table-scroll{overflow-x:auto;}
+  .avatar-sm{width:20px;height:20px;border-radius:50%;border:1px solid var(--line);display:inline-block;vertical-align:middle;}
+
+  .badge{
+    display:inline-flex;align-items:center;gap:5px;
+    font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:20px;
+    border:1px solid var(--gray-4);color:var(--ink-soft);text-transform:uppercase;letter-spacing:.4px;
+    white-space:nowrap;
+  }
+  .badge .d{width:6px;height:6px;border-radius:50%;background:var(--gray-3);}
+  .badge.ok{border-color:var(--ink);color:var(--ink);background:#f2f3f3;}
+  .badge.ok .d{background:var(--ink);}
+  .badge.warn{border-style:dashed;}
+  .badge.crit{background:var(--ink);color:#fff;border-color:var(--ink);}
+  .badge.crit .d{background:#fff;}
+  .badge.outline{background:#fff;}
+  .badge-row{display:flex;gap:5px;flex-wrap:wrap;}
+
+  .row-check{width:16px;height:16px;border:1.5px solid var(--gray-3);border-radius:3px;flex:none;}
+  .link-action{font-size:11.5px;font-weight:600;color:var(--ink);border-bottom:1px solid var(--ink);cursor:pointer;white-space:nowrap;}
+  .link-mono{font-family:var(--mono);font-size:11.5px;font-weight:600;color:var(--ink);border-bottom:1px solid var(--gray-4);cursor:pointer;}
+
+  /* expandable journal rows */
+  .expand-toggle{cursor:pointer;user-select:none;}
+  .expand-toggle .car{display:inline-block;transition:transform .15s ease;margin-right:2px;color:var(--ink-faint);}
+  tr.expanded .expand-toggle .car{transform:rotate(90deg);}
+  tr.detail-row{display:none;background:#fafbfb;}
+  tr.detail-row.show{display:table-row;}
+  tr.detail-row td{padding:0;border-bottom:1px solid var(--line-soft);}
+  .detail-wrap{padding:14px 18px 16px 40px;}
+  .subtable{width:100%;border-collapse:collapse;font-size:11.5px;}
+  .subtable th{font-size:9.5px;color:var(--ink-faint);text-transform:uppercase;letter-spacing:.4px;text-align:left;padding:6px 8px;border-bottom:1px solid var(--line-soft);}
+  .subtable td{padding:7px 8px;color:var(--ink-soft);border-bottom:1px solid var(--line-soft);}
+  .subtable tfoot td{font-weight:700;color:var(--ink);border-top:1px solid var(--line);border-bottom:none;}
+  .subfoot{display:flex;justify-content:flex-end;gap:18px;padding:8px 8px 0;font-size:11px;color:var(--ink-faint);}
+
+  /* progress bars (budget / utilization) */
+  .progress-track{height:6px;border-radius:3px;background:var(--gray-5);overflow:hidden;margin-top:10px;}
+  .progress-fill{height:100%;background:var(--ink);}
+  .progress-fill.over{background:repeating-linear-gradient(45deg,var(--ink),var(--ink) 4px,#6b7075 4px,#6b7075 8px);}
+  .budget-card{padding:16px 18px;}
+  .budget-top{display:flex;justify-content:space-between;align-items:baseline;}
+  .budget-name{font-size:12.5px;font-weight:700;}
+  .budget-code{font-size:10.5px;font-family:var(--mono);color:var(--ink-faint);}
+  .budget-nums{display:flex;justify-content:space-between;margin-top:10px;font-size:11px;color:var(--ink-faint);font-family:var(--mono);}
+  .budget-grid{grid-template-columns:repeat(4,1fr);margin-bottom:18px;}
+
+  /* tabs (also used for statement / payroll switchers) */
+  .tabs{display:flex;gap:2px;border-bottom:1px solid var(--line);margin-bottom:20px;flex-wrap:wrap;}
+  .tab{padding:10px 16px;font-size:12.5px;font-weight:600;color:var(--ink-faint);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;}
+  .tab.active{color:var(--ink);border-color:var(--ink);}
+
+  /* pill filter tabs for status rows */
+  .pill-tabs{display:flex;gap:8px;flex-wrap:wrap;}
+  .pill-tab{font-size:11.5px;font-weight:600;padding:7px 12px;border-radius:20px;border:1px solid var(--line);color:var(--ink-soft);cursor:pointer;}
+  .pill-tab.active{background:var(--ink);color:#fff;border-color:var(--ink);}
+
+  /* party 360 dual role */
+  .role-pill{display:inline-block;font-size:9.5px;font-weight:700;padding:2px 7px;border-radius:10px;border:1px solid var(--gray-4);margin-right:4px;text-transform:uppercase;letter-spacing:.3px;}
+  .role-pill.cust{background:#f2f3f3;border-color:var(--ink);color:var(--ink);}
+  .role-pill.vend{background:#fff;border-style:dashed;}
+
+  /* statement (financial reports) styling */
+  .stmt-table{width:100%;border-collapse:collapse;font-size:12.5px;}
+  .stmt-table td{padding:7px 4px;border-bottom:1px solid var(--line-soft);}
+  .stmt-table td.amt{text-align:right;font-family:var(--mono);}
+  .stmt-group{font-weight:700;padding-top:14px !important;border-bottom:none !important;}
+  .stmt-sub{padding-left:18px !important;color:var(--ink-soft);}
+  .stmt-total{font-weight:700;border-top:1px solid var(--line);border-bottom:1px solid var(--ink) !important;}
+  .stmt-grand{font-weight:700;font-size:13.5px;border-top:2px solid var(--ink) !important;border-bottom:2px solid var(--ink) !important;padding-top:10px !important;padding-bottom:10px !important;}
+  .equilibrium-banner{
+    margin-top:16px;padding:12px 16px;border:1.5px solid var(--ink);border-radius:6px;
+    display:flex;align-items:center;gap:10px;font-size:12.5px;font-weight:600;background:#f2f3f3;
+  }
+  .equilibrium-banner .dot{width:8px;height:8px;border-radius:50%;background:var(--ink);flex:none;}
+
+  /* forms / modals (inline mockups) */
+  .form-card{max-width:640px;padding:26px;}
+  .form-row{margin-bottom:18px;}
+  .form-label{font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--ink-faint);margin-bottom:8px;display:block;}
+  .form-hint{font-size:11px;color:var(--ink-faint);margin-top:6px;}
+  .input-full{width:100%;padding:12px 12px;font-size:13.5px;}
+  .two-field{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .balance-pill{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border:1.5px solid var(--ink);border-radius:6px;background:#f2f3f3;margin-top:6px;font-family:var(--mono);font-size:12.5px;font-weight:700;}
+
+  .placeholder-chart{width:100%;height:210px;}
+  .placeholder-chart.sm{height:170px;}
+  .footer-note{font-size:10.5px;color:var(--ink-faint);text-align:center;padding:14px 0 4px;}
+
+  .kv-list{display:flex;flex-direction:column;gap:0;}
+  .kv-row{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--line-soft);font-size:12px;}
+  .kv-row:last-child{border-bottom:none;}
+  .kv-row .k{color:var(--ink-faint);}
+  .kv-row .v{font-family:var(--mono);font-weight:600;color:var(--ink);}
+
+  .stack-16{display:flex;flex-direction:column;gap:16px;}
+</style>
+</head>
+<body>
+
+<!-- ================= SIDEBAR ================= -->
+<aside class="sidebar">
+  <div class="brand">
+    <div class="brand-mark">HF</div>
+    <div class="brand-text">
+      <div class="b1">Harborline Hotel</div>
+      <div class="b2">Finance OS</div>
+    </div>
+  </div>
+  <nav class="navlist" id="navlist">
+    <div class="nav-section-label">Overview</div>
+    <div class="nav-item active" data-page="dashboard"><span class="num">01</span><span class="nav-icon">◱</span>Executive Dashboard</div>
+
+    <div class="nav-section-label">General Ledger</div>
+    <div class="nav-item" data-page="gl"><span class="num">02</span><span class="nav-icon">▤</span>Journal Inspector</div>
+
+    <div class="nav-section-label">Procurement &amp; Payables</div>
+    <div class="nav-item" data-page="matching"><span class="num">03</span><span class="nav-icon">⇄</span>3-Way Matching</div>
+    <div class="nav-item" data-page="ap"><span class="num">04</span><span class="nav-icon">▧</span>Accounts Payable</div>
+
+    <div class="nav-section-label">Commercial &amp; Receivables</div>
+    <div class="nav-item" data-page="ar"><span class="num">05</span><span class="nav-icon">▦</span>Accounts Receivable</div>
+    <div class="nav-item" data-page="parties"><span class="num">06</span><span class="nav-icon">◐</span>Party Directory</div>
+
+    <div class="nav-section-label">Inventory Costing</div>
+    <div class="nav-item" data-page="rules"><span class="num">07</span><span class="nav-icon">⚙</span>Valuation &amp; GL Rules</div>
+    <div class="nav-item" data-page="costcenters"><span class="num">08</span><span class="nav-icon">▥</span>Cost Centers &amp; Requisitions</div>
+
+    <div class="nav-section-label">Assets &amp; Compliance</div>
+    <div class="nav-item" data-page="assets"><span class="num">09</span><span class="nav-icon">◔</span>Fixed Assets</div>
+    <div class="nav-item" data-page="payroll"><span class="num">10</span><span class="nav-icon">≡</span>Payroll &amp; VAT</div>
+    <div class="nav-item" data-page="reports"><span class="num">11</span><span class="nav-icon">▤</span>Statements &amp; Audit</div>
+  </nav>
+  <div class="sidebar-foot">
+    <div class="row"><span class="dot-live"></span> Synced 2 min ago</div>
+    <div class="row" style="font-family:var(--mono);">FY 2026 · Q3 · Main WH</div>
+  </div>
+</aside>
+
+<!-- ================= MAIN ================= -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="page-title" id="pageTitle">Financial &amp; Inventory Executive Dashboard</div>
+      <div class="page-sub" id="pageSub">/ overview</div>
+    </div>
+    <div class="topbar-right">
+      <div class="search-box">⌕ Search vouchers, invoices, SKUs…<span class="kbd">Ctrl K</span></div>
+      <div class="icon-btn">⚑<span class="ping"></span></div>
+      <div class="icon-btn">⎚</div>
+      <div class="avatar">SJ</div>
+    </div>
+  </div>
+
+  <div class="content" id="content">
+
+    <!-- ============ 01. EXECUTIVE DASHBOARD ============ -->
+    <section class="page active" id="page-dashboard">
+      <div class="row-actions">
+        <div class="filters">
+          <select class="select"><option>All Facilities (Consolidated)</option><option>Main Warehouse</option><option>Floor 1 Storage</option></select>
+          <select class="select"><option>August 2026 (Active)</option><option>Q3-2026</option><option>YTD 2026</option></select>
+        </div>
+        <button class="btn btn-ghost">Export Board Financial Package (PDF)</button>
+      </div>
+
+      <div class="grid metrics">
+        <div class="card metric-card">
+          <div class="metric-top"><span class="metric-label">Liquid Cash &amp; Bank</span><div class="metric-icon">$</div></div>
+          <div class="metric-value">$428,950</div>
+          <div class="metric-delta up">+4.2% MoM</div>
+          <div class="metric-sub">3 bank accounts · Runway 8.4 mo</div>
+        </div>
+        <div class="card metric-card">
+          <div class="metric-top"><span class="metric-label">Perpetual Inventory Asset</span><div class="metric-icon">▤</div></div>
+          <div class="metric-value">$186,420</div>
+          <div class="metric-delta up">+2.1% book value</div>
+          <div class="metric-sub">6,850 SKUs · 7 categories</div>
+        </div>
+        <div class="card metric-card">
+          <div class="metric-top"><span class="metric-label">Receivables (AR)</span><div class="metric-icon">↙</div></div>
+          <div class="metric-value">$84,120</div>
+          <div class="metric-delta">$12,400 overdue · 4 clients</div>
+          <div class="metric-sub">DSO 28 days · 18 open invoices</div>
+        </div>
+        <div class="card metric-card">
+          <div class="metric-top"><span class="metric-label">Payables &amp; GR/IR</span><div class="metric-icon">↗</div></div>
+          <div class="metric-value">$54,890</div>
+          <div class="metric-delta">$36.8k AP + $18.0k accrual</div>
+          <div class="metric-sub">DPO 22 days · 12 open bills</div>
+        </div>
+        <div class="card metric-card">
+          <div class="metric-top"><span class="metric-label">Net Operating Profit YTD</span><div class="metric-icon">%</div></div>
+          <div class="metric-value">23.5%</div>
+          <div class="metric-delta up">$142,300 · GM 68.2%</div>
+          <div class="metric-sub">Budget variance +$14.2k favorable</div>
+        </div>
+      </div>
+
+      <div class="grid two-col">
+        <div class="card">
+          <div class="panel-head"><span class="t">30-Day Cash Flow vs. Inventory Inflow/Outflow</span><span class="badge outline">Consolidated ▾</span></div>
+          <div class="panel-body"><div class="placeholder-chart"><canvas id="cashFlowChart"></canvas></div></div>
+        </div>
+        <div class="card">
+          <div class="panel-head"><span class="t">Inventory Valuation by Category</span></div>
+          <div class="panel-body"><div class="placeholder-chart"><canvas id="inventoryDonut"></canvas></div></div>
+        </div>
+      </div>
+
+      <div class="grid two-col-even" style="margin-top:16px;">
+        <div class="card">
+          <div class="panel-head"><span class="t">AR vs. AP Aging Distribution</span><span class="badge outline">GR/IR incl.</span></div>
+          <div class="panel-body"><div class="placeholder-chart sm"><canvas id="agingChart"></canvas></div></div>
+        </div>
+        <div class="card">
+          <div class="panel-head"><span class="t">Real-Time Cross-Domain Activity Stream</span></div>
+          <div class="panel-body" id="activityFeed"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 02. GENERAL LEDGER & JOURNAL INSPECTOR ============ -->
+    <section class="page" id="page-gl">
+      <div class="row-actions">
+        <div class="filters">
+          <input class="input" placeholder="Search voucher #, account code, memo…" style="width:240px;">
+          <select class="select"><option>Date Range: MTD</option><option>QTD</option><option>YTD</option></select>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-ghost">Export Audit Trail (CSV)</button>
+          <button class="btn btn-primary">+ New Journal Voucher</button>
+        </div>
+      </div>
+
+      <div class="grid metrics-4">
+        <div class="card metric-card">
+          <div class="metric-top"><span class="metric-label">Posted Journal Volume</span><div class="metric-icon">▤</div></div>
+          <div class="metric-value">$1,420,500</div>
+          <div class="metric-delta">142 vouchers MTD</div>
+          <div class="metric-sub">Average voucher $10,003.50</div>
+        </div>
+        <div class="card metric-card">
+          <div class="metric-top"><span class="metric-label">Inventory Auto-Postings</span><div class="metric-icon">⚙</div></div>
+          <div class="metric-value">84 <span style="font-size:13px;color:var(--ink-faint);">(59.1%)</span></div>
+          <div class="metric-delta">Zero human touch</div>
+          <div class="metric-sub">Triggered by warehouse movements</div>
+        </div>
+        <div class="card metric-card">
+          <div class="metric-top"><span class="metric-label">Mathematical Equilibrium</span><div class="metric-icon">✓</div></div>
+          <div class="metric-value">100%</div>
+          <div class="metric-delta up">Discrepancy $0.00</div>
+          <div class="metric-sub">Sum(Debits) == Sum(Credits)</div>
+        </div>
+        <div class="card metric-card">
+          <div class="metric-top"><span class="metric-label">Draft / Pending Review</span><div class="metric-icon">…</div></div>
+          <div class="metric-value">4</div>
+          <div class="metric-delta">Totaling $18,200.00</div>
+          <div class="metric-sub">Requires controller sign-off</div>
+        </div>
+      </div>
+
+      <div class="row-actions">
+        <div class="pill-tabs" id="glTabs">
+          <div class="pill-tab active">All Entries (142)</div>
+          <div class="pill-tab">Inventory Automated (84)</div>
+          <div class="pill-tab">Accounts Payable (24)</div>
+          <div class="pill-tab">Accounts Receivable (18)</div>
+          <div class="pill-tab">Payroll &amp; Tax (12)</div>
+          <div class="pill-tab">Manual Adjustments (4)</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="table-scroll">
+        <table>
+          <thead><tr>
+            <th></th><th>Voucher Ref</th><th>Posting Date</th><th>Source Module</th><th>Trigger Event</th>
+            <th>Origin Doc</th><th>Memo</th><th>Debit</th><th>Credit</th><th>Equilibrium</th><th></th>
+          </tr></thead>
+          <tbody id="glTbody"></tbody>
+        </table>
+        </div>
+      </div>
+      <div class="footer-note">Click a voucher row to expand its debit / credit line items and drill into the originating warehouse movement.</div>
+    </section>
+
+    <!-- ============ 03. 3-WAY MATCHING ============ -->
+    <section class="page" id="page-matching">
+      <div class="row-actions">
+        <div class="section-label" style="margin:0;">Automated 3-Way Matching &amp; Purchase Price Variance Cockpit</div>
+        <div class="btn-row">
+          <button class="btn btn-ghost">Tolerance Threshold: ±2.0%</button>
+          <button class="btn btn-ghost">+ Manual Match Override</button>
+          <button class="btn btn-primary">▶ Run Auto-Match Engine</button>
+        </div>
+      </div>
+
+      <div class="grid metrics-4">
+        <div class="card metric-card">
+          <div class="metric-top"><span class="metric-label">Fully Matched &amp; Approved</span><div class="metric-icon">✓</div></div>
+          <div class="metric-value">$184,250</div>
+          <div class="metric-delta up">42 POs cleared</div>
+          <div class="metric-sub">Zero variance · ready for payment</div>
+        </div>
+        <div class="card metric-card">
+          <div class="metric-top"><span class="metric-label">Price Variance (PPV) Review</span><div class="metric-icon">!</div></div>
+          <div class="metric-value">$8,420</div>
+          <div class="metric-delta">5 bills &gt; 2.0% variance</div>
+          <div class="metric-sub">Requires procurement approval</div>
+        </div>
+        <div class="card metric-card">
+          <div class="metric-top"><span class="metric-label">Quantity Discrepancy Holds</span><div class="metric-icon">⛔</div></div>
+          <div class="metric-value">$12,100</div>
+          <div class="metric-delta">3 bills invoiced &gt; received</div>
+          <div class="metric-sub">Payment blocked pending GRN</div>
+        </div>
+        <div class="card metric-card">
+          <div class="metric-top"><span class="metric-label">GR/IR Clearing Balance</span><div class="metric-icon">◔</div></div>
+          <div class="metric-value">$18,000</div>
+          <div class="metric-delta">8 unbilled receipts</div>
+          <div class="metric-sub">Goods received, invoices pending</div>
+        </div>
+      </div>
+
+      <div class="row-actions">
+        <div class="pill-tabs">
+          <div class="pill-tab active">All Matches (58)</div>
+          <div class="pill-tab">Perfect Match (42)</div>
+          <div class="pill-tab">Price Variance (5)</div>
+          <div class="pill-tab">Qty Mismatch (3)</div>
+          <div class="pill-tab">Unbilled GRN (8)</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="table-scroll">
+        <table>
+          <thead><tr>
+            <th>Status</th><th>Purchase Order</th><th>Goods Receipt</th><th>Vendor Bill</th><th>Vendor</th>
+            <th>SKU / Item</th><th>Qty Δ</th><th>Price Δ</th><th>PPV</th><th>Tolerance</th><th></th>
+          </tr></thead>
+          <tbody id="matchTbody"></tbody>
+        </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 04. ACCOUNTS PAYABLE ============ -->
+    <section class="page" id="page-ap">
+      <div class="row-actions">
+        <div class="section-label" style="margin:0;">Accounts Payable &amp; Vendor Bills</div>
+        <div class="btn-row">
+          <button class="btn btn-ghost">Create Bill from PO</button>
+          <button class="btn btn-ghost">+ Record Non-PO Expense</button>
+          <button class="btn btn-primary">Execute Payment Run</button>
+        </div>
+      </div>
+
+      <div class="grid metrics-4">
+        <div class="card metric-card">
+          <div class="metric-top"><span class="metric-label">Total Accounts Payable</span><div class="metric-icon">▧</div></div>
+          <div class="metric-value">$36,890</div>
+          <div class="metric-delta">12 open bills</div>
+          <div class="metric-sub">Average bill $3,074.00</div>
+        </div>
+        <div class="card metric-card">
+          <div class="metric-top"><span class="metric-label">Due This Week</span><div class="metric-icon">!</div></div>
+          <div class="metric-value">$14,200</div>
+          <div class="metric-delta">6 critical disbursements</div>
+          <div class="metric-sub">Requires treasury funding</div>
+        </div>
+        <div class="card metric-card">
+          <div class="metric-top"><span class="metric-label">Capitalized Landed Costs</span><div class="metric-icon">▤</div></div>
+          <div class="metric-value">$4,350</div>
+          <div class="metric-delta">Freight &amp; customs MTD</div>
+          <div class="metric-sub">Added to asset basis</div>
+        </div>
+        <div class="card metric-card">
+          <div class="metric-top"><span class="metric-label">Settled Bills MTD</span><div class="metric-icon">✓</div></div>
+          <div class="metric-value">$92,100</div>
+          <div class="metric-delta up">18 payments executed</div>
+          <div class="metric-sub">Zero late fees incurred</div>
+        </div>
+      </div>
+
+      <div class="row-actions">
+        <div class="pill-tabs">
+          <div class="pill-tab active">All Payables</div>
+          <div class="pill-tab">PO-Backed Inventory</div>
+          <div class="pill-tab">Direct Opex</div>
+          <div class="pill-tab">Capitalized Landed Costs</div>
+          <div class="pill-tab">Overdue</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="table-scroll">
+        <table>
+          <thead><tr>
+            <th><span class="row-check"></span></th><th>Bill Ref</th><th>PO Ref</th><th>Vendor</th><th>Category</th>
+            <th>Bill Date</th><th>Due Date</th><th>Amount</th><th>Input VAT</th><th>Match</th><th>Status</th><th></th>
+          </tr></thead>
+          <tbody id="apTbody"></tbody>
+        </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 05. ACCOUNTS RECEIVABLE ============ -->
+    <section class="page" id="page-ar">
+      <div class="row-actions">
+        <div class="section-label" style="margin:0;">Accounts Receivable &amp; Sales Invoicing</div>
+        <div class="btn-row">
+          <button class="btn btn-ghost">Export AR Aging Schedule</button>
+          <button class="btn btn-ghost">Generate from Delivered Orders</button>
+          <button class="btn btn-primary">+ Create Manual Invoice</button>
+        </div>
+      </div>
+
+      <div class="grid metrics-4">
+        <div class="card metric-card">
+          <div class="metric-top"><span class="metric-label">Total Outstanding AR</span><div class="metric-icon">▤</div></div>
+          <div class="metric-value">$84,120</div>
+          <div class="metric-delta">18 unpaid invoices</div>
+          <div class="metric-sub">Average invoice $4,673.00</div>
+        </div>
+        <div class="card metric-card">
+          <div class="metric-top"><span class="metric-label">Collected Cash MTD</span><div class="metric-icon">✓</div></div>
+          <div class="metric-value">$112,450</div>
+          <div class="metric-delta up">+14.8% MoM</div>
+          <div class="metric-sub">24 settled invoices</div>
+        </div>
+        <div class="card metric-card">
+          <div class="metric-top"><span class="metric-label">Overdue Invoices</span><div class="metric-icon">!</div></div>
+          <div class="metric-value">$12,400</div>
+          <div class="metric-delta">4 invoices &gt; 30 days late</div>
+          <div class="metric-sub">Requires collection follow-up</div>
+        </div>
+        <div class="card metric-card">
+          <div class="metric-top"><span class="metric-label">Uninvoiced Delivered Orders</span><div class="metric-icon">◔</div></div>
+          <div class="metric-value">$24,800</div>
+          <div class="metric-delta">6 sales orders dispatched</div>
+          <div class="metric-sub">Ready for 1-click invoicing</div>
+        </div>
+      </div>
+
+      <div class="row-actions">
+        <div class="pill-tabs">
+          <div class="pill-tab active">All Invoices</div>
+          <div class="pill-tab">Ready from SO</div>
+          <div class="pill-tab">Draft</div>
+          <div class="pill-tab">Sent / Pending</div>
+          <div class="pill-tab">Paid</div>
+          <div class="pill-tab">Overdue</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="table-scroll">
+        <table>
+          <thead><tr>
+            <th><span class="row-check"></span></th><th>Invoice #</th><th>Origin SO / Booking</th><th>Customer</th>
+            <th>Issue Date</th><th>Due Date</th><th>Subtotal</th><th>Output VAT</th><th>Total</th><th>Balance Due</th><th>Status</th><th></th>
+          </tr></thead>
+          <tbody id="arTbody"></tbody>
+        </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 06. PARTY DIRECTORY ============ -->
+    <section class="page" id="page-parties">
+      <div class="row-actions">
+        <div class="section-label" style="margin:0;">Shared Party Directory — Customers &amp; Vendors</div>
+        <div class="btn-row">
+          <button class="btn btn-ghost">Export Master Directory</button>
+          <button class="btn btn-primary">+ Add New Party</button>
+        </div>
+      </div>
+
+      <div class="grid metrics-4">
+        <div class="card metric-card">
+          <div class="metric-top"><span class="metric-label">Total Master Parties</span><div class="metric-icon">◐</div></div>
+          <div class="metric-value">128</div>
+          <div class="metric-delta">Unified CRM &amp; AP/AR directory</div>
+          <div class="metric-sub">Zero duplicate records</div>
+        </div>
+        <div class="card metric-card">
+          <div class="metric-top"><span class="metric-label">Dual-Role Counterparties</span><div class="metric-icon">⇄</div></div>
+          <div class="metric-value">14</div>
+          <div class="metric-delta">Both customer &amp; vendor</div>
+          <div class="metric-sub">Consolidated net balances</div>
+        </div>
+        <div class="card metric-card">
+          <div class="metric-top"><span class="metric-label">Open Receivables (AR)</span><div class="metric-icon">↙</div></div>
+          <div class="metric-value">$84,120</div>
+          <div class="metric-delta">Across 68 active customers</div>
+          <div class="metric-sub">Top debtor: Al-Madina ($18.5k)</div>
+        </div>
+        <div class="card metric-card">
+          <div class="metric-top"><span class="metric-label">Open Payables (AP)</span><div class="metric-icon">↗</div></div>
+          <div class="metric-value">$36,890</div>
+          <div class="metric-delta">Across 46 active vendors</div>
+          <div class="metric-sub">Top creditor: Global Linens ($12.5k)</div>
+        </div>
+      </div>
+
+      <div class="row-actions">
+        <div class="pill-tabs">
+          <div class="pill-tab active">All Parties (128)</div>
+          <div class="pill-tab">Customers Only (68)</div>
+          <div class="pill-tab">Vendors Only (46)</div>
+          <div class="pill-tab">Dual-Role (14)</div>
+        </div>
+        <input class="input" placeholder="Search parties…" style="width:200px;">
+      </div>
+
+      <div class="card">
+        <div class="table-scroll">
+        <table>
+          <thead><tr>
+            <th>Party Code</th><th>Legal Name</th><th>Roles</th><th>TRN / VAT ID</th><th>Primary Contact</th>
+            <th>Terms</th><th>Credit Limit</th><th>AR Balance</th><th>AP Balance</th><th>Net Position</th><th></th>
+          </tr></thead>
+          <tbody id="partiesTbody"></tbody>
+        </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 07. INVENTORY VALUATION & GL RULES ============ -->
+    <section class="page" id="page-rules">
+      <div class="row-actions">
+        <div class="section-label" style="margin:0;">Inventory Accounting &amp; Valuation Rules Engine</div>
+        <div class="btn-row">
+          <button class="btn btn-ghost">Audit Accounting Rules</button>
+          <button class="btn btn-ghost">+ Add Category Mapping</button>
+          <button class="btn btn-primary">Save Configuration</button>
+        </div>
+      </div>
+
+      <div class="grid metrics-4">
+        <div class="card metric-card">
+          <div class="metric-top"><span class="metric-label">Configured Categories</span><div class="metric-icon">⚙</div></div>
+          <div class="metric-value">6</div>
+          <div class="metric-delta">100% GL account mapped</div>
+          <div class="metric-sub">Linens, F&amp;B, Cleaning, Toiletries, Equip, MRO</div>
+        </div>
+        <div class="card metric-card">
+          <div class="metric-top"><span class="metric-label">Valuation Policies</span><div class="metric-icon">▤</div></div>
+          <div class="metric-value" style="font-size:18px;">FIFO &amp; AVCO</div>
+          <div class="metric-delta">Per-category enforcement</div>
+          <div class="metric-sub">F&amp;B: FIFO · Linens / MRO: AVCO</div>
+        </div>
+        <div class="card metric-card">
+          <div class="metric-top"><span class="metric-label">GL Auto-Posting Engine</span><div class="metric-icon">⚡</div></div>
+          <div class="metric-value" style="font-size:18px;">Active</div>
+          <div class="metric-delta up">Real-time event processing</div>
+          <div class="metric-sub">Idempotency key protected</div>
+        </div>
+        <div class="card metric-card">
+          <div class="metric-top"><span class="metric-label">Reconciliation Variance</span><div class="metric-icon">✓</div></div>
+          <div class="metric-value">0.00%</div>
+          <div class="metric-delta up">Δ $0.00</div>
+          <div class="metric-sub">Sub-ledger == GL balance</div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:16px;">
+        <div class="table-scroll">
+        <table>
+          <thead><tr>
+            <th>Category</th><th>SKUs</th><th>Valuation Policy</th><th>Inventory Asset A/C</th><th>COGS A/C</th>
+            <th>Revenue A/C</th><th>Variance A/C</th><th>Scrap A/C</th><th></th>
+          </tr></thead>
+          <tbody id="rulesTbody"></tbody>
+        </table>
+        </div>
+      </div>
+
+      <div class="grid two-col-even">
+        <div class="card panel-body">
+          <div class="section-label">Landed Cost &amp; PPV Tolerance Settings</div>
+          <div class="kv-list">
+            <div class="kv-row"><span class="k">Landed cost basis</span><span class="v">By item value</span></div>
+            <div class="kv-row"><span class="k">PPV tolerance threshold</span><span class="v">± 2.0% / $50.00</span></div>
+            <div class="kv-row"><span class="k">Above tolerance</span><span class="v">Route to controller</span></div>
+            <div class="kv-row"><span class="k">Negative inventory policy</span><span class="v">Strict prohibition</span></div>
+          </div>
+        </div>
+        <div class="card panel-body">
+          <div class="section-label">GL Posting Simulator</div>
+          <div class="form-row" style="margin-bottom:12px;">
+            <select class="select input-full"><option>LIN-001 — Bath Towel, White</option></select>
+          </div>
+          <div class="form-row" style="margin-bottom:12px;">
+            <select class="select input-full"><option>Receive 100 units @ $12.50 + $50 freight</option></select>
+          </div>
+          <button class="btn btn-primary" style="width:100%;justify-content:center;">Simulate Posting 🧪</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 08. COST CENTERS & REQUISITIONS ============ -->
+    <section class="page" id="page-costcenters">
+      <div class="row-actions">
+        <div class="section-label" style="margin:0;">Departmental Requisitions &amp; Cost Center Allocations</div>
+        <div class="btn-row">
+          <button class="btn btn-ghost">Cost Center Budget Matrix</button>
+          <button class="btn btn-primary">+ New Internal Requisition</button>
+        </div>
+      </div>
+
+      <div class="grid metrics-4">
+        <div class="card metric-card">
+          <div class="metric-top"><span class="metric-label">Total Internal Consumption</span><div class="metric-icon">▥</div></div>
+          <div class="metric-value">$42,850</div>
+          <div class="metric-delta">58 requisitions MTD</div>
+          <div class="metric-sub">Inventory asset → opex</div>
+        </div>
+        <div class="card metric-card">
+          <div class="metric-top"><span class="metric-label">Active Cost Centers</span><div class="metric-icon">▦</div></div>
+          <div class="metric-value">6</div>
+          <div class="metric-delta">100% budget monitored</div>
+          <div class="metric-sub">CC-100 to CC-600</div>
+        </div>
+        <div class="card metric-card">
+          <div class="metric-top"><span class="metric-label">Budget Utilization</span><div class="metric-icon">◔</div></div>
+          <div class="metric-value">74.2%</div>
+          <div class="metric-delta">1 dept exceeding target</div>
+          <div class="metric-sub">F&amp;B Kitchen at 104%</div>
+        </div>
+        <div class="card metric-card">
+          <div class="metric-top"><span class="metric-label">Average Requisition Value</span><div class="metric-icon">$</div></div>
+          <div class="metric-value">$738.80</div>
+          <div class="metric-delta">Avg turnaround 1.2 hrs</div>
+          <div class="metric-sub">Zero unallocated postings</div>
+        </div>
+      </div>
+
+      <div class="section-label">Cost Center Budget &amp; Consumption</div>
+      <div class="grid budget-grid" id="budgetGrid"></div>
+
+      <div class="card">
+        <div class="table-scroll">
+        <table>
+          <thead><tr>
+            <th>Req ID</th><th>Date</th><th>Cost Center</th><th>Staff</th><th>Destination</th>
+            <th>Items</th><th>Total</th><th>GL Expense A/C</th><th>Voucher Ref</th><th></th>
+          </tr></thead>
+          <tbody id="reqTbody"></tbody>
+        </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 09. FIXED ASSETS ============ -->
+    <section class="page" id="page-assets">
+      <div class="row-actions">
+        <div class="section-label" style="margin:0;">Fixed Assets &amp; Depreciation Register</div>
+        <div class="btn-row">
+          <button class="btn btn-ghost">Export Asset Schedule</button>
+          <button class="btn btn-ghost">+ Register New Asset</button>
+          <button class="btn btn-primary">▶ Execute Monthly Depreciation Run</button>
+        </div>
+      </div>
+
+      <div class="grid metrics-4">
+        <div class="card metric-card">
+          <div class="metric-top"><span class="metric-label">Gross Historical Capex</span><div class="metric-icon">◔</div></div>
+          <div class="metric-value">$450,000</div>
+          <div class="metric-delta">24 registered assets</div>
+          <div class="metric-sub">Total original acquisition basis</div>
+        </div>
+        <div class="card metric-card">
+          <div class="metric-top"><span class="metric-label">Accumulated Depreciation</span><div class="metric-icon">↓</div></div>
+          <div class="metric-value">$168,200</div>
+          <div class="metric-delta">Contra-asset A/C 1520</div>
+          <div class="metric-sub">Amortized to date</div>
+        </div>
+        <div class="card metric-card">
+          <div class="metric-top"><span class="metric-label">Net Book Value</span><div class="metric-icon">✓</div></div>
+          <div class="metric-value">$281,800</div>
+          <div class="metric-delta">Current balance sheet value</div>
+          <div class="metric-sub">Gross cost − accum. deprec.</div>
+        </div>
+        <div class="card metric-card">
+          <div class="metric-top"><span class="metric-label">Monthly Depreciation Run</span><div class="metric-icon">▤</div></div>
+          <div class="metric-value">$6,500</div>
+          <div class="metric-delta">Next run: 31 Aug 2026</div>
+          <div class="metric-sub">Automated amortization journal</div>
+        </div>
+      </div>
+
+      <div class="row-actions">
+        <div class="pill-tabs">
+          <div class="pill-tab active">All Assets</div>
+          <div class="pill-tab">Heavy Equipment &amp; Laundry</div>
+          <div class="pill-tab">HVAC &amp; Mechanical</div>
+          <div class="pill-tab">IT &amp; POS Hardware</div>
+          <div class="pill-tab">Vehicles</div>
+          <div class="pill-tab">Furniture</div>
+        </div>
+      </div>
+
+      <div class="grid two-col" style="margin-bottom:16px;">
+        <div class="card">
+          <div class="table-scroll">
+          <table>
+            <thead><tr>
+              <th>Asset Tag</th><th>Name</th><th>Category</th><th>Cost Center</th><th>Acquired</th>
+              <th>Life</th><th>Cost</th><th>Accum. Deprec.</th><th>NBV</th><th></th>
+            </tr></thead>
+            <tbody id="assetsTbody"></tbody>
+          </table>
+          </div>
+        </div>
+        <div class="card">
+          <div class="panel-head"><span class="t">NBV Decline — FA-2024-0012</span></div>
+          <div class="panel-body"><div class="placeholder-chart sm"><canvas id="deprecChart"></canvas></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 10. PAYROLL & VAT ============ -->
+    <section class="page" id="page-payroll">
+      <div class="row-actions">
+        <div class="section-label" style="margin:0;">Payroll (WPS) &amp; Tax / VAT Compliance</div>
+        <div class="btn-row">
+          <button class="btn btn-ghost">Export WPS SIF File</button>
+          <button class="btn btn-ghost">File VAT Return</button>
+          <button class="btn btn-primary">▶ Execute Monthly Payroll Run</button>
+        </div>
+      </div>
+
+      <div class="grid metrics-4">
+        <div class="card metric-card">
+          <div class="metric-top"><span class="metric-label">Total Monthly Payroll Cost</span><div class="metric-icon">▥</div></div>
+          <div class="metric-value">$148,500</div>
+          <div class="metric-delta">Gross salaries + benefits</div>
+          <div class="metric-sub">42 staff · August 2026 batch</div>
+        </div>
+        <div class="card metric-card">
+          <div class="metric-top"><span class="metric-label">Net Salary Disbursement</span><div class="metric-icon">$</div></div>
+          <div class="metric-value">$124,200</div>
+          <div class="metric-delta up">100% WPS SIF compliant</div>
+          <div class="metric-sub">Direct transfer via HSBC</div>
+        </div>
+        <div class="card metric-card">
+          <div class="metric-top"><span class="metric-label">Net VAT Liability Due</span><div class="metric-icon">⚖</div></div>
+          <div class="metric-value">$18,450</div>
+          <div class="metric-delta">Output VAT − input VAT</div>
+          <div class="metric-sub">Filing due in 14 days (28 Aug)</div>
+        </div>
+        <div class="card metric-card">
+          <div class="metric-top"><span class="metric-label">Total Statutory Remittances</span><div class="metric-icon">✓</div></div>
+          <div class="metric-value">$42,750</div>
+          <div class="metric-delta">Payroll withholding + net VAT</div>
+          <div class="metric-sub">Zero compliance penalties</div>
+        </div>
+      </div>
+
+      <div class="tabs" id="payrollTabs">
+        <div class="tab active" data-tab="pt-payroll">Workforce Payroll &amp; WPS SIF Register</div>
+        <div class="tab" data-tab="pt-vat">VAT Filing &amp; Tax Audit Trail</div>
+      </div>
+
+      <div id="pt-payroll" class="tab-panel">
+        <div class="card">
+          <div class="table-scroll">
+          <table>
+            <thead><tr>
+              <th>Emp ID</th><th>Name &amp; Role</th><th>Dept</th><th>Basic</th><th>Allowances</th>
+              <th>Gross</th><th>Income Tax</th><th>Social Security</th><th>Net Payout</th><th>WPS</th><th></th>
+            </tr></thead>
+            <tbody id="payrollTbody"></tbody>
+          </table>
+          </div>
+        </div>
+      </div>
+
+      <div id="pt-vat" class="tab-panel" style="display:none;">
+        <div class="card panel-body" style="margin-bottom:16px;">
+          <div class="section-label">VAT Return Summary — Q3 2026</div>
+          <div class="kv-list">
+            <div class="kv-row"><span class="k">Taxable sales revenue</span><span class="v">$642,000.00</span></div>
+            <div class="kv-row"><span class="k">Output VAT collected (5%)</span><span class="v">$32,100.00</span></div>
+            <div class="kv-row"><span class="k">Taxable inbound purchases</span><span class="v">$273,000.00</span></div>
+            <div class="kv-row"><span class="k">Input VAT recoverable (5%)</span><span class="v">−$13,650.00</span></div>
+            <div class="kv-row"><span class="k">Net VAT payable</span><span class="v">$18,450.00</span></div>
+          </div>
+          <button class="btn btn-primary" style="margin-top:14px;">Submit VAT Return &amp; Post Settlement Journal</button>
+        </div>
+        <div class="card">
+          <div class="table-scroll">
+          <table>
+            <thead><tr><th>Date</th><th>Document Ref</th><th>Party</th><th>Tax Type</th><th>Taxable Base</th><th>Tax Amount</th><th>GL Impact</th></tr></thead>
+            <tbody id="vatTbody"></tbody>
+          </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 11. FINANCIAL STATEMENTS & AUDIT ============ -->
+    <section class="page" id="page-reports">
+      <div class="row-actions">
+        <div class="section-label" style="margin:0;">Financial Statements &amp; Enterprise Audit Trail</div>
+        <div class="btn-row">
+          <select class="select"><option>August 2026</option><option>Q3 2026</option><option>FY 2026</option></select>
+          <button class="btn btn-ghost">Comparative Prior Period</button>
+          <button class="btn btn-ghost">Export PDF / CSV</button>
+        </div>
+      </div>
+
+      <div class="tabs" id="stmtTabs">
+        <div class="tab active" data-tab="stmt-bs">Balance Sheet</div>
+        <div class="tab" data-tab="stmt-pl">Profit &amp; Loss</div>
+        <div class="tab" data-tab="stmt-cf">Cash Flows</div>
+        <div class="tab" data-tab="stmt-tb">Trial Balance</div>
+        <div class="tab" data-tab="stmt-audit">Audit Trail</div>
+      </div>
+
+      <div id="stmt-bs" class="tab-panel">
+        <div class="card panel-body">
+          <table class="stmt-table">
+            <tr><td class="stmt-group" colspan="2">ASSETS — Current Assets</td></tr>
+            <tr><td class="stmt-sub">Cash &amp; Cash Equivalents</td><td class="amt">$428,950.00</td></tr>
+            <tr><td class="stmt-sub">Accounts Receivable (net)</td><td class="amt">$84,120.00</td></tr>
+            <tr><td class="stmt-sub">Perpetual Inventory Asset</td><td class="amt">$186,420.00</td></tr>
+            <tr><td class="stmt-sub">Prepayments &amp; Input VAT Recoverable</td><td class="amt">$32,050.00</td></tr>
+            <tr class="stmt-total"><td>Total Current Assets</td><td class="amt">$731,540.00</td></tr>
+            <tr><td class="stmt-group" colspan="2">Non-Current Assets</td></tr>
+            <tr><td class="stmt-sub">Property, Plant &amp; Equipment (net of accum. deprec.)</td><td class="amt">$281,800.00</td></tr>
+            <tr class="stmt-grand"><td>TOTAL ASSETS</td><td class="amt">$1,013,340.00</td></tr>
+            <tr><td class="stmt-group" colspan="2">LIABILITIES — Current</td></tr>
+            <tr><td class="stmt-sub">Accounts Payable</td><td class="amt">$36,890.00</td></tr>
+            <tr><td class="stmt-sub">GR/IR Interim Clearing Accrual</td><td class="amt">$18,000.00</td></tr>
+            <tr><td class="stmt-sub">Accrued Payroll &amp; Statutory Taxes</td><td class="amt">$24,300.00</td></tr>
+            <tr><td class="stmt-sub">Output VAT Payable</td><td class="amt">$32,100.00</td></tr>
+            <tr><td class="stmt-sub">Short-Term Notes</td><td class="amt">$15,000.00</td></tr>
+            <tr class="stmt-total"><td>Total Current Liabilities</td><td class="amt">$126,290.00</td></tr>
+            <tr><td class="stmt-group" colspan="2">Long-Term Liabilities</td></tr>
+            <tr><td class="stmt-sub">Bank Term Facility</td><td class="amt">$200,000.00</td></tr>
+            <tr><td class="stmt-sub">End of Service Benefits</td><td class="amt">$42,500.00</td></tr>
+            <tr class="stmt-total"><td>Total Long-Term Liabilities</td><td class="amt">$242,500.00</td></tr>
+            <tr class="stmt-total"><td>TOTAL LIABILITIES</td><td class="amt">$368,790.00</td></tr>
+            <tr><td class="stmt-group" colspan="2">EQUITY</td></tr>
+            <tr><td class="stmt-sub">Contributed Share Capital</td><td class="amt">$400,000.00</td></tr>
+            <tr><td class="stmt-sub">Retained Earnings (Prior Periods)</td><td class="amt">$102,250.00</td></tr>
+            <tr><td class="stmt-sub">Current Year Net Income</td><td class="amt">$142,300.00</td></tr>
+            <tr class="stmt-total"><td>TOTAL EQUITY</td><td class="amt">$644,550.00</td></tr>
+            <tr class="stmt-grand"><td>TOTAL LIABILITIES &amp; EQUITY</td><td class="amt">$1,013,340.00</td></tr>
+          </table>
+          <div class="equilibrium-banner"><span class="dot"></span> Balanced: Total Assets ($1,013,340.00) ≡ Total Liabilities &amp; Equity ($1,013,340.00) · Variance $0.00</div>
+        </div>
+      </div>
+
+      <div id="stmt-pl" class="tab-panel" style="display:none;">
+        <div class="card panel-body">
+          <table class="stmt-table">
+            <tr><td class="stmt-group" colspan="2">Revenue</td></tr>
+            <tr><td class="stmt-sub">Gross Operating Revenue</td><td class="amt">$620,000.00</td></tr>
+            <tr><td class="stmt-sub">Less: Sales Discounts</td><td class="amt">−$14,500.00</td></tr>
+            <tr class="stmt-total"><td>Net Revenue</td><td class="amt">$605,500.00</td></tr>
+            <tr><td class="stmt-group" colspan="2">Cost of Goods &amp; Services Sold</td></tr>
+            <tr><td class="stmt-sub">Linens &amp; Textiles COGS</td><td class="amt">−$42,100.00</td></tr>
+            <tr><td class="stmt-sub">Food &amp; Beverage COGS</td><td class="amt">−$88,400.00</td></tr>
+            <tr><td class="stmt-sub">Amenities &amp; Consumables COGS</td><td class="amt">−$24,800.00</td></tr>
+            <tr><td class="stmt-sub">Maintenance &amp; Operations COGS</td><td class="amt">−$36,000.00</td></tr>
+            <tr><td class="stmt-sub">Purchase Price Variance (net)</td><td class="amt">−$1,200.00</td></tr>
+            <tr class="stmt-total"><td>Total COGS</td><td class="amt">−$192,500.00</td></tr>
+            <tr class="stmt-grand"><td>GROSS PROFIT (68.2%)</td><td class="amt">$413,000.00</td></tr>
+            <tr><td class="stmt-group" colspan="2">Operating Expenses (SG&amp;A)</td></tr>
+            <tr><td class="stmt-sub">Salaries &amp; Employee Benefits</td><td class="amt">−$148,500.00</td></tr>
+            <tr><td class="stmt-sub">Departmental Supplies &amp; Requisitions</td><td class="amt">−$42,850.00</td></tr>
+            <tr><td class="stmt-sub">Rent &amp; Facilities Opex</td><td class="amt">−$38,200.00</td></tr>
+            <tr><td class="stmt-sub">Software &amp; Cloud Subscriptions</td><td class="amt">−$18,400.00</td></tr>
+            <tr><td class="stmt-sub">Fixed Asset Depreciation</td><td class="amt">−$6,500.00</td></tr>
+            <tr><td class="stmt-sub">General &amp; Administrative</td><td class="amt">−$16,250.00</td></tr>
+            <tr class="stmt-total"><td>Total Operating Expenses</td><td class="amt">−$270,700.00</td></tr>
+            <tr class="stmt-grand"><td>NET OPERATING PROFIT (23.5%)</td><td class="amt">$142,300.00</td></tr>
+          </table>
+        </div>
+      </div>
+
+      <div id="stmt-cf" class="tab-panel" style="display:none;">
+        <div class="card panel-body">
+          <table class="stmt-table">
+            <tr><td class="stmt-group" colspan="2">Operating Activities</td></tr>
+            <tr><td class="stmt-sub">Net Income</td><td class="amt">$142,300.00</td></tr>
+            <tr><td class="stmt-sub">+ Depreciation</td><td class="amt">$6,500.00</td></tr>
+            <tr><td class="stmt-sub">± Working Capital Δ (Inv, AR, AP, GR/IR)</td><td class="amt">$12,400.00</td></tr>
+            <tr class="stmt-total"><td>Net Cash from Operations</td><td class="amt">$136,400.00</td></tr>
+            <tr><td class="stmt-group" colspan="2">Investing Activities</td></tr>
+            <tr class="stmt-total"><td>Net Cash from Investing</td><td class="amt">−$45,000.00</td></tr>
+            <tr><td class="stmt-group" colspan="2">Financing Activities</td></tr>
+            <tr class="stmt-total"><td>Net Cash from Financing</td><td class="amt">−$25,000.00</td></tr>
+            <tr class="stmt-grand"><td>Net Cash Inflow / Ending Cash</td><td class="amt">$66,400.00 / $428,950.00</td></tr>
+          </table>
+        </div>
+      </div>
+
+      <div id="stmt-tb" class="tab-panel" style="display:none;">
+        <div class="card">
+          <div class="table-scroll">
+          <table>
+            <thead><tr><th>Account Code</th><th>Title</th><th>Class</th><th>Debit</th><th>Credit</th></tr></thead>
+            <tbody id="tbTbody"></tbody>
+          </table>
+          </div>
+          <div class="subfoot" style="padding:12px 16px;">Total Debits: <b class="mono">$1,824,930.00</b>&nbsp;&nbsp;Total Credits: <b class="mono">$1,824,930.00</b>&nbsp;&nbsp;<span class="badge ok"><span class="d"></span>Balanced Δ $0.00</span></div>
+        </div>
+      </div>
+
+      <div id="stmt-audit" class="tab-panel" style="display:none;">
+        <div class="card">
+          <div class="table-scroll">
+          <table>
+            <thead><tr><th>Timestamp</th><th>Action Type</th><th>Module</th><th>Doc Ref</th><th>Agent</th><th>Target A/C</th><th>Value Δ</th><th>Hash</th><th>Status</th></tr></thead>
+            <tbody id="auditTbody"></tbody>
+          </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+  <div class="footer-note">Harborline Hotel Finance OS — Wireframe build for integration with the Inventory OS · All figures illustrative</div>
+</div>
+
+<script>
+/* ---------------- navigation ---------------- */
+const pageTitles = {
+  dashboard:["Financial & Inventory Executive Dashboard","/ overview"],
+  gl:["General Ledger & Journal Entry Inspector","/ general-ledger"],
+  matching:["3-Way Matching & PPV Cockpit","/ three-way-matching"],
+  ap:["Accounts Payable & Vendor Bills","/ accounts-payable"],
+  ar:["Accounts Receivable & Invoicing","/ accounts-receivable"],
+  parties:["Shared Party Directory","/ parties"],
+  rules:["Inventory Accounting & Valuation Rules","/ inventory-rules"],
+  costcenters:["Departmental Requisitions & Cost Centers","/ cost-centers"],
+  assets:["Fixed Assets & Depreciation","/ fixed-assets"],
+  payroll:["Payroll (WPS) & Tax / VAT Compliance","/ payroll-tax"],
+  reports:["Financial Statements & Audit Trail","/ reports"],
+};
+document.querySelectorAll(".nav-item").forEach(item=>{
+  item.addEventListener("click", ()=>{
+    document.querySelectorAll(".nav-item").forEach(n=>n.classList.remove("active"));
+    item.classList.add("active");
+    const p = item.dataset.page;
+    document.querySelectorAll(".page").forEach(pg=>pg.classList.remove("active"));
+    document.getElementById("page-"+p).classList.add("active");
+    document.getElementById("pageTitle").textContent = pageTitles[p][0];
+    document.getElementById("pageSub").textContent = pageTitles[p][1];
+    document.getElementById("content").scrollTop = 0;
+  });
+});
+
+/* generic pill-tab toggler (visual only) */
+document.querySelectorAll(".pill-tabs").forEach(group=>{
+  group.addEventListener("click", e=>{
+    const t = e.target.closest(".pill-tab");
+    if(!t) return;
+    group.querySelectorAll(".pill-tab").forEach(p=>p.classList.remove("active"));
+    t.classList.add("active");
+  });
+});
+
+/* generic top tabs w/ panels (statements, payroll/vat) */
+function wireTabs(tabsId){
+  const wrap = document.getElementById(tabsId);
+  wrap.addEventListener("click", e=>{
+    const t = e.target.closest(".tab");
+    if(!t) return;
+    wrap.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));
+    t.classList.add("active");
+    const target = t.dataset.tab;
+    const panels = wrap.parentElement.querySelectorAll(".tab-panel");
+    panels.forEach(p=>p.style.display = (p.id===target ? "" : "none"));
+  });
+}
+wireTabs("stmtTabs");
+wireTabs("payrollTabs");
+
+/* ---------------- activity feed ---------------- */
+const activity = [
+  ["Goods Receipt <b>GRN-2026-004</b>: 100× Bath Towels from Global Linens. Auto-posted <b>JV-2026-00412</b> ($1,250.00 Dr Inventory / Cr GR/IR).","5m ago"],
+  ["Sales Delivery <b>SO-DEL-901</b>: Dispatched 50× Linen sets for Booking #2319. Auto-posted <b>JV-2026-00413</b> ($625.00 Dr COGS / Cr Inventory).","18m ago"],
+  ["3-Way Match <b>BILL-2026-089</b>: Matched PO-2026-001 with $50.00 price variance allocated to PPV Account 5120.","45m ago"],
+  ["Internal Requisition <b>REQ-2026-081</b>: Issued $1,240.00 cleaning supplies to Housekeeping CC-100. Auto-posted JV-2026-00388.","2h ago"],
+  ["Customer Payment <b>INV-2026-0412</b>: Received $18,500.00 from Al-Madina Trading via Chase Bank.","3h ago"],
+];
+document.getElementById("activityFeed").innerHTML = activity.map(a=>`
+  <div class="activity-item"><span class="activity-dot"></span>
+    <div><div class="activity-text">${a[0]}</div><div class="activity-time">${a[1]}</div></div>
+  </div>`).join("");
+
+/* ---------------- general ledger ---------------- */
+const journal = [
+  ["JV-2026-00412","15 Aug 2026","INVENTORY","STOCK_RECEIVED","GRN-2026-004","Automated GL posting: GRN receipt for 100x Bath Towels from Global Linens","$1,250.00","$1,250.00","ok",
+    [["13110","Inventory – Linens & Textiles","$1,250.00","$0.00","Warehouse Ops (CC-200)","Main Warehouse","LIN-001","100 units @ $12.50"],
+     ["20200","GR/IR Interim Clearing Account","$0.00","$1,250.00","Procurement (CC-200)","Main Warehouse","LIN-001","Inbound receipt accrual"]]],
+  ["JV-2026-00413","15 Aug 2026","ACCOUNTS RECEIVABLE","GOODS_ISSUE","SO-DEL-901","COGS relief for delivered linen sets, Booking #2319","$625.00","$625.00","ok",
+    [["50110","COGS – Linens & Textiles","$625.00","$0.00","Housekeeping (CC-100)","Main Warehouse","LIN-014","50 sets @ $12.50"],
+     ["13110","Inventory – Linens & Textiles","$0.00","$625.00","Warehouse Ops (CC-200)","Main Warehouse","LIN-014","Perpetual relief"]]],
+  ["JV-2026-00398","14 Aug 2026","ACCOUNTS PAYABLE","3WAY_MATCH_PPV","BILL-2026-089","3-way match variance: PO-2026-001 vs Bill, $50.00 unfavorable PPV","$1,365.00","$1,365.00","ok",
+    [["20200","GR/IR Interim Clearing Account","$1,250.00","$0.00","Procurement (CC-200)","Main Warehouse","LIN-001","Clear GR/IR accrual"],
+     ["51200","Purchase Price Variance","$50.00","$0.00","Procurement (CC-200)","—","LIN-001","Unfavorable PPV"],
+     ["21100","Input VAT Recoverable","$65.00","$0.00","—","—","—","5% recoverable"],
+     ["20100","Accounts Payable – Trade","$0.00","$1,365.00","—","—","—","Global Linens Co."]]],
+  ["JV-2026-00388","14 Aug 2026","MANUAL","DEPT_CONSUMPTION","REQ-2026-081","Internal requisition: cleaning supplies issued to Housekeeping","$1,240.00","$1,240.00","ok",
+    [["61200","Housekeeping Supplies Expense","$1,240.00","$0.00","Housekeeping (CC-100)","Floor 1 Storage","CLN-010","4 SKUs issued"],
+     ["13140","Inventory – Cleaning Supplies","$0.00","$1,240.00","Warehouse Ops (CC-200)","Floor 1 Storage","CLN-010","Perpetual relief"]]],
+  ["JV-2026-00376","13 Aug 2026","ACCOUNTS RECEIVABLE","INVOICE_ISSUED","INV-2026-0412","Customer invoice for Booking #2319, Al-Madina Trading LLC","$16,800.00","$16,800.00","ok",
+    [["11100","Accounts Receivable","$16,800.00","$0.00","—","—","—","Al-Madina Trading LLC"],
+     ["40100","Room & Service Revenue","$0.00","$16,000.00","Front Office (CC-400)","—","—","Booking #2319"],
+     ["21200","Output VAT Payable","$0.00","$800.00","—","—","—","5% VAT"]]],
+  ["JV-2026-00352","12 Aug 2026","PAYROLL","PAYROLL_EXECUTED","PAYROLL-2026-08","August 2026 payroll run – 42 staff, WPS SIF batch","$148,500.00","$148,500.00","ok",
+    [["63100","Salaries & Employee Benefits","$148,500.00","$0.00","Multiple","—","—","Gross payroll"],
+     ["22100","Accrued Wages Payable","$0.00","$124,200.00","—","—","—","Net disbursement"],
+     ["22200","Statutory Tax Withholding","$0.00","$24,300.00","—","—","—","Income tax + SS"]]],
+  ["JV-2026-00341","11 Aug 2026","INVENTORY","CYCLE_COUNT_SHORTAGE","CC-2026-014","Cycle count shortage adjustment – Toiletries store","$180.00","$180.00","ok",
+    [["51950","Inventory Shrinkage Loss","$180.00","$0.00","Warehouse Ops (CC-200)","Kitchen Store","SOP-0044","Count variance"],
+     ["13150","Inventory – Toiletries & Cleaning","$0.00","$180.00","Warehouse Ops (CC-200)","Kitchen Store","SOP-0044","Perpetual relief"]]],
+  ["JV-2026-0143","09 Aug 2026","MANUAL","MANUAL_ADJUSTMENT","—","Manual reclass: prepaid insurance amortization","$2,100.00","$2,100.00","warn",
+    [["13900","Prepayments","$0.00","$2,100.00","Administration (CC-500)","—","—","Monthly amortization"],
+     ["64100","Insurance Expense","$2,100.00","$0.00","Administration (CC-500)","—","—","August allocation"]]],
+];
+document.getElementById("glTbody").innerHTML = journal.map((j,i)=>{
+  const icon = j[2]==="INVENTORY"?"📦":j[2]==="ACCOUNTS RECEIVABLE"?"💼":j[2]==="ACCOUNTS PAYABLE"?"🧾":j[2]==="PAYROLL"?"👥":"✍️";
+  const bal = j[9]==="ok" ? '<span class="badge ok"><span class="d"></span>Balanced Δ $0.00</span>' : '<span class="badge warn"><span class="d"></span>Draft</span>';
+  const lines = j[10];
+  const subrows = lines.map(l=>`<tr><td class="mono">${l[0]}</td><td>${l[1]}</td><td class="mono">${l[2]}</td><td class="mono">${l[3]}</td><td>${l[4]}</td><td>${l[5]}</td><td class="mono">${l[6]}</td><td>${l[7]}</td></tr>`).join("");
+  const totalD = j[6], totalC = j[7];
+  return `<tr class="expand-toggle" onclick="toggleRow(${i})">
+      <td><span class="car">▸</span></td>
+      <td class="mono cell-strong">${j[0]}</td><td class="mono">${j[1]}</td>
+      <td><span class="badge outline">${icon} ${j[2]}</span></td>
+      <td class="mono">${j[3]}</td>
+      <td><span class="link-mono">${j[4]}</span></td>
+      <td style="max-width:260px;">${j[5]}</td>
+      <td class="mono cell-strong">${totalD}</td><td class="mono cell-strong">${totalC}</td>
+      <td>${bal}</td>
+      <td><span class="link-action">Inspect 🔍</span></td>
+    </tr>
+    <tr class="detail-row" id="detail-${i}"><td colspan="11">
+      <div class="detail-wrap">
+        <table class="subtable">
+          <thead><tr><th>Account</th><th>Title</th><th>Debit</th><th>Credit</th><th>Cost Center</th><th>Warehouse</th><th>SKU</th><th>Memo</th></tr></thead>
+          <tbody>${subrows}</tbody>
+        </table>
+        <div class="subfoot">Total Debits: <b class="mono">${totalD}</b>&nbsp;&nbsp;Total Credits: <b class="mono">${totalC}</b>&nbsp;&nbsp;<span class="badge ok"><span class="d"></span>Balanced</span></div>
+      </div>
+    </td></tr>`;
+}).join("");
+function toggleRow(i){
+  const row = document.getElementById("detail-"+i);
+  row.classList.toggle("show");
+}
+
+/* ---------------- 3-way matching ---------------- */
+const matches = [
+  ["ok","PO-2026-001 · 01 Aug · Qty 100 · $12.50/u · $1,250.00","GRN-2026-004 · 04 Aug · Rec 100 · BAT-001 · $1,250.00","—","Global Linens Co.","LIN-001 Bath Towel, White","0 units","$0.00 / unit","$0.00","Within Tolerance"],
+  ["warn","PO-2026-001 · 01 Aug · Qty 100 · $12.50/u · $1,250.00","GRN-2026-004 · 04 Aug · Rec 100 · BAT-001 · $1,250.00","BILL-2026-089 · 10 Aug · Qty 100 · $13.00/u · $1,300.00","Global Linens Co.","LIN-001 Bath Towel, White","0 units","+$0.50 / unit","+$50.00","Exceeds 2.0%"],
+  ["crit","PO-2026-014 · 03 Aug · Qty 200 · $0.55/u · $110.00","GRN-2026-011 · 06 Aug · Rec 180 · BAT-011 · $99.00","BILL-2026-091 · 09 Aug · Qty 200 · $0.55/u · $110.00","Prime Paper & Packaging","TP-0002 Toilet Paper, 2-ply","+20 units overbilled","$0.00 / unit","—","Payment Held"],
+  ["ok","PO-2026-018 · 05 Aug · Qty 40 · $22.00/u · $880.00","GRN-2026-015 · 08 Aug · Rec 40 · BAT-015 · $880.00","BILL-2026-094 · 11 Aug · Qty 40 · $22.00/u · $880.00","CleanPro Solutions","CLN-010 Industrial Degreaser","0 units","$0.00 / unit","$0.00","Within Tolerance"],
+  ["outline","PO-2026-021 · 07 Aug · Qty 60 · $8.40/u · $504.00","GRN-2026-019 · 12 Aug · Rec 60 · BAT-019 · $504.00","Awaiting Bill","Sunrise Beverage Distributors","MINI-0019 Mini Bar Water 500ml","—","—","—","Unbilled GRN"],
+  ["warn","PO-2026-025 · 09 Aug · Qty 25 · $48.00/u · $1,200.00","GRN-2026-022 · 13 Aug · Rec 25 · BAT-022 · $1,200.00","BILL-2026-097 · 14 Aug · Qty 25 · $49.10/u · $1,227.50","Amman Hospitality Goods","AMN-005 Amenity Gift Set","0 units","+$1.10 / unit","+$27.50","Within Tolerance (2.3%)"],
+];
+document.getElementById("matchTbody").innerHTML = matches.map(m=>{
+  const badgeCls = m[0]==="outline"?"outline":m[0];
+  const label = m[0]==="ok"?"Perfect Match":m[0]==="warn"?"PPV Warning":m[0]==="crit"?"Qty Hold":"Unbilled GRN";
+  return `<tr>
+    <td><span class="badge ${badgeCls}"><span class="d"></span>${label}</span></td>
+    <td class="mono" style="max-width:180px;">${m[1]}</td>
+    <td class="mono" style="max-width:180px;">${m[2]}</td>
+    <td class="mono" style="max-width:180px;">${m[3]}</td>
+    <td>${m[4]}</td><td>${m[5]}</td><td class="mono">${m[6]}</td><td class="mono">${m[7]}</td><td class="mono cell-strong">${m[8]}</td>
+    <td><span class="badge ${m[9].includes('Exceeds')||m[9].includes('Held')?'crit':'ok'}"><span class="d"></span>${m[9]}</span></td>
+    <td><span class="link-action">Inspect</span></td>
+  </tr>`;
+}).join("");
+
+/* ---------------- accounts payable ---------------- */
+const bills = [
+  ["BILL-2026-0194","PO-2026-001","Global Linens Co.","Inventory – Linens (13110)","05 Aug 2026","20 Aug 2026","$1,300.00","$65.00","ok","warn","Scheduled"],
+  ["BILL-2026-0195","Non-PO Opex","Amazon Web Services","Cloud SaaS (6210)","06 Aug 2026","21 Aug 2026","$840.00","$0.00","outline","warn","Pending Approval"],
+  ["BILL-2026-0196","PO-2026-014","Prime Paper & Packaging","Inventory – Paper (13130)","09 Aug 2026","24 Aug 2026","$110.00","$5.50","crit","crit","Overdue"],
+  ["BILL-2026-0197","PO-2026-018","CleanPro Solutions","Inventory – Cleaning (13140)","11 Aug 2026","26 Aug 2026","$880.00","$44.00","ok","ok","Paid"],
+  ["BILL-2026-0198","PO-2026-021","Sunrise Beverage Distributors","Inventory – F&B (13120)","12 Aug 2026","27 Aug 2026","$504.00","$25.20","outline","warn","Scheduled"],
+  ["BILL-2026-0199","Freight-2026-004","DHL Global Freight","Freight Clearing (2030)","13 Aug 2026","28 Aug 2026","$212.00","$10.60","outline","warn","Pending Approval"],
+];
+document.getElementById("apTbody").innerHTML = bills.map(b=>{
+  const matchLabel = b[8]==="ok"?"3-Way Matched":b[8]==="warn"?"PPV Approved":"Direct Opex";
+  const statusCls = b[10]==="Paid"?"ok":b[10]==="Overdue"?"crit":"warn";
+  return `<tr>
+    <td><span class="row-check"></span></td>
+    <td class="mono cell-strong">${b[0]}</td><td class="mono">${b[1]}</td><td>${b[2]}</td>
+    <td><span class="badge outline">${b[3]}</span></td>
+    <td class="mono">${b[4]}</td><td class="mono">${b[5]}</td>
+    <td class="mono cell-strong">${b[6]}</td><td class="mono">${b[7]}</td>
+    <td><span class="badge ${b[8]}"><span class="d"></span>${matchLabel}</span></td>
+    <td><span class="badge ${statusCls}"><span class="d"></span>${b[10]}</span></td>
+    <td><span class="link-action">Pay Now</span></td>
+  </tr>`;
+}).join("");
+
+/* ---------------- accounts receivable ---------------- */
+const invoices = [
+  ["INV-2026-0412","SO-2026-042 / Room 118 #2319","Al-Madina Trading LLC","01 Aug 2026","31 Aug 2026","$16,000.00","$800.00","$16,800.00","$0.00","ok","Paid"],
+  ["INV-2026-0413","SO-2026-043","Apex Technologies","03 Aug 2026","02 Sep 2026","$4,200.00","$210.00","$4,410.00","$4,410.00","warn","Pending"],
+  ["INV-2026-0414","SO-2026-044","David Smith","05 Aug 2026","20 Aug 2026","$980.00","$49.00","$1,029.00","$1,029.00","crit","Overdue"],
+  ["INV-2026-0415","SO-2026-045 (Delivered)","Coastal Resorts Group","—","—","$6,400.00","$320.00","$6,720.00","$6,720.00","outline","Ready from SO"],
+  ["INV-2026-0416","SO-2026-046","Al-Madina Trading LLC","08 Aug 2026","07 Sep 2026","$2,150.00","$107.50","$2,257.50","$0.00","ok","Paid"],
+  ["INV-2026-0417","SO-2026-047","Ferris Family Trust","10 Aug 2026","09 Sep 2026","$3,300.00","$165.00","$3,465.00","$3,465.00","warn","Sent / Pending"],
+];
+document.getElementById("arTbody").innerHTML = invoices.map(v=>`
+  <tr>
+    <td><span class="row-check"></span></td>
+    <td class="mono cell-strong">${v[0]}</td>
+    <td><span class="link-mono">${v[1]}</span></td>
+    <td>${v[2]}</td>
+    <td class="mono">${v[3]}</td><td class="mono">${v[4]}</td>
+    <td class="mono">${v[5]}</td><td class="mono">${v[6]}</td>
+    <td class="mono cell-strong">${v[7]}</td><td class="mono cell-strong">${v[8]}</td>
+    <td><span class="badge ${v[9]}"><span class="d"></span>${v[10]}</span></td>
+    <td><span class="link-action">Record Payment</span></td>
+  </tr>`).join("");
+
+/* ---------------- party directory ---------------- */
+const parties = [
+  ["PTY-00042","Global Linens & Hospitality Supply",true,true,"VAT-984-201-992","Sarah Jenkins","Net 30","$50,000.00","$0.00","$12,500.00","-$12,500.00 Net Payable"],
+  ["PTY-00101","Al-Madina Trading LLC",true,false,"VAT-772-104-330","Youssef Amin","Net 30","$40,000.00","$18,500.00","$0.00","+$18,500.00 Net Receivable"],
+  ["PTY-00058","Apex Technologies",true,false,"VAT-441-908-217","Lina Haddad","Net 15","$15,000.00","$4,410.00","$0.00","+$4,410.00 Net Receivable"],
+  ["PTY-00073","CleanPro Solutions",false,true,"VAT-330-552-118","Marcus Webb","Net 30","$20,000.00","$0.00","$880.00","-$880.00 Net Payable"],
+  ["PTY-00019","Prime Paper & Packaging",false,true,"VAT-118-903-004","Dana Farouk","Net 15","$10,000.00","$0.00","$1,100.00","-$1,100.00 Net Payable"],
+  ["PTY-00066","David Smith",true,false,"—","David Smith","Due On Receipt","$2,000.00","$1,029.00","$0.00","+$1,029.00 Net Receivable"],
+  ["PTY-00088","Sunrise Beverage Distributors",true,true,"VAT-554-221-770","Omar Reyes","Net 30","$25,000.00","$1,850.00","$5,040.00","-$3,190.00 Net Payable"],
+];
+document.getElementById("partiesTbody").innerHTML = parties.map(p=>{
+  const roles = (p[2]?'<span class="role-pill cust">Customer</span>':'') + (p[3]?'<span class="role-pill vend">Vendor</span>':'');
+  const netCls = p[10].startsWith("+") ? "ok" : "outline";
+  return `<tr>
+    <td class="mono cell-strong">${p[0]}</td><td>${p[1]}</td><td>${roles}</td><td class="mono">${p[4]}</td><td>${p[5]}</td>
+    <td><span class="badge outline">${p[6]}</span></td><td class="mono">${p[7]}</td>
+    <td class="mono cell-strong">${p[8]}</td><td class="mono cell-strong">${p[9]}</td>
+    <td><span class="badge ${netCls}"><span class="d"></span>${p[10]}</span></td>
+    <td><span class="link-action">360° Profile</span></td>
+  </tr>`;
+}).join("");
+
+/* ---------------- valuation rules ---------------- */
+const rules = [
+  ["Linens & Textiles","14 SKUs","Moving Average (AVCO)","13110","50110","40110","51950","51800"],
+  ["Food & Beverage","48 SKUs","FIFO","13120","50120","40120","51951","51801"],
+  ["Cleaning Supplies","22 SKUs","Moving Average (AVCO)","13140","50140","40140","51952","51802"],
+  ["Guest Toiletries","31 SKUs","FIFO","13150","50150","40150","51953","51803"],
+  ["Operating Equipment","19 SKUs","Standard Cost","13160","50160","40160","51954","51804"],
+  ["Maintenance & Repairs","26 SKUs","Moving Average (AVCO)","13170","50170","40170","51955","51805"],
+];
+document.getElementById("rulesTbody").innerHTML = rules.map(r=>`
+  <tr>
+    <td class="cell-strong">${r[0]}</td><td class="mono">${r[1]}</td>
+    <td><span class="badge outline">${r[2]}</span></td>
+    <td class="mono">${r[3]}</td><td class="mono">${r[4]}</td><td class="mono">${r[5]}</td><td class="mono">${r[6]}</td><td class="mono">${r[7]}</td>
+    <td><span class="link-action">Edit</span></td>
+  </tr>`).join("");
+
+/* ---------------- cost centers & requisitions ---------------- */
+const budgets = [
+  ["Housekeeping","CC-100",15000,11200],
+  ["F&B Kitchen","CC-200",18000,18720],
+  ["Facilities & Maintenance","CC-300",8000,5400],
+  ["Front Office","CC-400",4000,2100],
+];
+document.getElementById("budgetGrid").innerHTML = budgets.map(b=>{
+  const pct = Math.min(100, (b[3]/b[2])*100);
+  const over = b[3] > b[2];
+  const remain = b[2]-b[3];
+  return `<div class="card budget-card">
+    <div class="budget-top"><span class="budget-name">${b[0]}</span><span class="budget-code">${b[1]}</span></div>
+    <div class="progress-track"><div class="progress-fill${over?' over':''}" style="width:${pct}%;"></div></div>
+    <div class="budget-nums">
+      <span>Budget $${b[2].toLocaleString()}</span>
+      <span>${over?'Over':'Remaining'} $${Math.abs(remain).toLocaleString()}</span>
+    </div>
+  </div>`;
+}).join("");
+
+const reqs = [
+  ["REQ-2026-081","14 Aug 2026 10:20","Housekeeping (CC-100)","Aisha T., Housekeeping Lead","Floor 1 / Cart 3","4 SKUs","$1,240.00","6120 Housekeeping Supplies","JV-2026-00388"],
+  ["REQ-2026-080","13 Aug 2026 15:05","F&B Kitchen (CC-200)","Marco D., Sous Chef","Kitchen Store","6 SKUs","$2,180.00","6220 Kitchen Supplies","JV-2026-00379"],
+  ["REQ-2026-079","13 Aug 2026 09:40","Facilities (CC-300)","Omar R., Technician","Maintenance Room","3 SKUs","$540.00","6320 Maintenance Supplies","JV-2026-00371"],
+  ["REQ-2026-078","12 Aug 2026 14:12","Front Office (CC-400)","Layla S., Concierge","Front Desk","2 SKUs","$210.00","6420 Front Office Supplies","JV-2026-00360"],
+  ["REQ-2026-077","11 Aug 2026 08:55","Housekeeping (CC-100)","Aisha T., Housekeeping Lead","Floor 2 / Cart 1","5 SKUs","$980.00","6120 Housekeeping Supplies","JV-2026-00352"],
+];
+document.getElementById("reqTbody").innerHTML = reqs.map(r=>`
+  <tr>
+    <td class="mono cell-strong">${r[0]}</td><td class="mono">${r[1]}</td>
+    <td><span class="badge outline">${r[2]}</span></td><td>${r[3]}</td><td>${r[4]}</td>
+    <td>${r[5]}</td><td class="mono cell-strong">${r[6]}</td><td class="mono">${r[7]}</td>
+    <td><span class="link-mono">${r[8]}</span></td>
+    <td><span class="link-action">View Items</span></td>
+  </tr>`).join("");
+
+/* ---------------- fixed assets ---------------- */
+const assets = [
+  ["FA-2024-0012","Commercial Tunnel Washer 50kg","Laundry Equipment","Laundry (CC-600)","15 Jan 2024","8 yrs","$48,000.00","$15,500.00","$32,500.00"],
+  ["FA-2023-0004","Dell PowerEdge Server Cluster","IT Hardware","Admin (CC-500)","02 Mar 2023","5 yrs","$22,000.00","$11,733.00","$10,267.00"],
+  ["FA-2022-0031","HVAC Chiller Unit A","HVAC & Mechanical","Facilities (CC-300)","19 Jun 2022","12 yrs","$65,000.00","$16,250.00","$48,750.00"],
+  ["FA-2024-0007","Toyota Hiace Shuttle Van","Vehicles","Front Office (CC-400)","28 Feb 2024","6 yrs","$34,000.00","$8,500.00","$25,500.00"],
+  ["FA-2021-0018","Lobby Furniture Set","Furniture","Front Office (CC-400)","10 Nov 2021","7 yrs","$18,500.00","$11,880.00","$6,620.00"],
+  ["FA-2023-0022","POS Terminal Fleet (12 units)","IT Hardware","Front Office (CC-400)","05 Aug 2023","4 yrs","$14,400.00","$6,600.00","$7,800.00"],
+];
+document.getElementById("assetsTbody").innerHTML = assets.map(a=>`
+  <tr>
+    <td class="mono cell-strong">${a[0]}</td><td>${a[1]}</td>
+    <td><span class="badge outline">${a[2]}</span></td><td><span class="badge outline">${a[3]}</span></td>
+    <td class="mono">${a[4]}</td><td class="mono">${a[5]}</td>
+    <td class="mono">${a[6]}</td><td class="mono">${a[7]}</td><td class="mono cell-strong">${a[8]}</td>
+    <td><span class="link-action">Schedule 📈</span></td>
+  </tr>`).join("");
+
+/* ---------------- payroll ---------------- */
+const payroll = [
+  ["EMP-0104","Alex Morgan, Executive Chef","Kitchen (CC-200)","$6,000.00","$2,000.00","$8,000.00","$640.00","$600.00","$6,760.00","ok"],
+  ["EMP-0087","Aisha T., Housekeeping Lead","Housekeeping (CC-100)","$3,800.00","$1,200.00","$5,000.00","$400.00","$375.00","$4,225.00","ok"],
+  ["EMP-0132","Omar Reyes, Maintenance Technician","Facilities (CC-300)","$3,200.00","$900.00","$4,100.00","$328.00","$307.50","$3,464.50","ok"],
+  ["EMP-0011","Layla S., Concierge","Front Office (CC-400)","$2,600.00","$700.00","$3,300.00","$264.00","$247.50","$2,788.50","warn"],
+  ["EMP-0055","Sarah Jenkins, Chief Controller","Administration (CC-500)","$9,500.00","$2,500.00","$12,000.00","$960.00","$900.00","$10,140.00","ok"],
+];
+document.getElementById("payrollTbody").innerHTML = payroll.map(p=>`
+  <tr>
+    <td class="mono">${p[0]}</td><td>${p[1]}</td><td><span class="badge outline">${p[2]}</span></td>
+    <td class="mono">${p[3]}</td><td class="mono">${p[4]}</td><td class="mono cell-strong">${p[5]}</td>
+    <td class="mono">${p[6]}</td><td class="mono">${p[7]}</td><td class="mono cell-strong">${p[8]}</td>
+    <td><span class="badge ${p[9]}"><span class="d"></span>${p[9]==='ok'?'WPS Verified':'Pending Review'}</span></td>
+    <td><span class="link-action">Payslip</span></td>
+  </tr>`).join("");
+
+const vat = [
+  ["01 Aug 2026","INV-2026-0412","Al-Madina Trading LLC","5% Output","$16,000.00","$800.00","Cr 21200"],
+  ["05 Aug 2026","BILL-2026-0194","Global Linens Co.","5% Input","$1,300.00","$65.00","Dr 21100"],
+  ["08 Aug 2026","INV-2026-0416","Al-Madina Trading LLC","5% Output","$2,150.00","$107.50","Cr 21200"],
+  ["11 Aug 2026","BILL-2026-0197","CleanPro Solutions","5% Input","$880.00","$44.00","Dr 21100"],
+];
+document.getElementById("vatTbody").innerHTML = vat.map(v=>`
+  <tr><td class="mono">${v[0]}</td><td class="mono">${v[1]}</td><td>${v[2]}</td>
+  <td><span class="badge outline">${v[3]}</span></td><td class="mono">${v[4]}</td><td class="mono cell-strong">${v[5]}</td><td class="mono">${v[6]}</td></tr>`).join("");
+
+/* ---------------- trial balance ---------------- */
+const tb = [
+  ["1010","Operating Cash","Asset","$180,200.00","$0.00"],
+  ["11100","Accounts Receivable","Asset","$84,120.00","$0.00"],
+  ["13110","Inventory – Linens & Textiles","Asset","$48,200.00","$0.00"],
+  ["1510","Property, Plant & Equipment","Asset","$450,000.00","$0.00"],
+  ["1520","Accumulated Depreciation","Contra-Asset","$0.00","$168,200.00"],
+  ["20100","Accounts Payable – Trade","Liability","$0.00","$36,890.00"],
+  ["20200","GR/IR Interim Clearing","Liability","$0.00","$18,000.00"],
+  ["21200","Output VAT Payable","Liability","$0.00","$32,100.00"],
+  ["30000","Contributed Share Capital","Equity","$0.00","$400,000.00"],
+  ["40100","Room & Service Revenue","Revenue","$0.00","$620,000.00"],
+  ["50110","COGS – Linens & Textiles","Expense","$42,100.00","$0.00"],
+  ["63100","Salaries & Employee Benefits","Expense","$148,500.00","$0.00"],
+];
+document.getElementById("tbTbody").innerHTML = tb.map(t=>`
+  <tr><td class="mono cell-strong">${t[0]}</td><td>${t[1]}</td><td><span class="badge outline">${t[2]}</span></td>
+  <td class="mono">${t[3]}</td><td class="mono">${t[4]}</td></tr>`).join("");
+
+/* ---------------- audit log ---------------- */
+const auditLog = [
+  ["15 Aug 2026 09:12","STOCK_RECEIPT","INVENTORY","GRN-2026-004","Washim (Storekeeper)","13110 / 20200","+$1,250.00","0x8f2a…c19","Verified"],
+  ["15 Aug 2026 09:14","PO_3WAY_MATCHED","AP","BILL-2026-089","System Auto-Match Engine","51200","+$50.00","0x77c1…4e0","Verified"],
+  ["15 Aug 2026 10:05","INVOICE_GENERATED","AR","INV-2026-0412","Sarah Jenkins, CPA","11100 / 40100","+$16,800.00","0x1de9…a22","Verified"],
+  ["15 Aug 2026 11:40","VALUATION_RULE_CHANGED","GL","RULE-CFG-07","Sarah Jenkins, CPA","13140","n/a","0x93fb…7b1","Verified"],
+  ["15 Aug 2026 12:20","PAYROLL_EXECUTED","PAYROLL","PAYROLL-2026-08","System Payroll Engine","63100 / 22100","+$148,500.00","0xa401…9f4","Verified"],
+  ["14 Aug 2026 16:02","CYCLE_COUNT_SHORTAGE","INVENTORY","CC-2026-014","Rami Haddad","51950","-$180.00","0x22b8…d67","Verified"],
+];
+document.getElementById("auditTbody").innerHTML = auditLog.map(a=>`
+  <tr><td class="mono">${a[0]}</td><td class="mono">${a[1]}</td><td><span class="badge outline">${a[2]}</span></td>
+  <td class="mono">${a[3]}</td><td>${a[4]}</td><td class="mono">${a[5]}</td><td class="mono">${a[6]}</td>
+  <td class="mono">${a[7]}</td><td><span class="badge ok"><span class="d"></span>${a[8]}</span></td></tr>`).join("");
+
+/* ---------------- charts ---------------- */
+Chart.defaults.color = "#6b7075";
+Chart.defaults.font.family = "'IBM Plex Sans', sans-serif";
+Chart.defaults.font.size = 11;
+
+new Chart(document.getElementById("cashFlowChart"), {
+  type:"line",
+  data:{
+    labels:Array.from({length:14},(_,i)=>`Aug ${i+1}`),
+    datasets:[
+      {label:"Cash Inflow", data:[18,22,19,26,24,30,29,27,33,31,36,38,34,40], borderColor:"#26292c", backgroundColor:"rgba(38,41,44,0.06)", fill:true, tension:.35, pointRadius:0, borderWidth:2},
+      {label:"Cash Outflow", data:[14,15,13,17,16,19,18,17,20,19,21,22,20,23], borderColor:"#6b7075", backgroundColor:"transparent", borderDash:[4,3], tension:.35, pointRadius:0, borderWidth:1.5},
+      {label:"Inventory Received", data:[3,5,2,6,4,7,5,6,8,6,9,7,8,9], borderColor:"#9aa0a6", backgroundColor:"transparent", borderDash:[2,2], tension:.35, pointRadius:0, borderWidth:1.5},
+    ]
+  },
+  options:{plugins:{legend:{display:true, position:"bottom", labels:{boxWidth:10,padding:12}}}, scales:{x:{grid:{display:false}}, y:{grid:{color:"#e2e5e8"}}}}
+});
+
+new Chart(document.getElementById("inventoryDonut"), {
+  type:"doughnut",
+  data:{
+    labels:["Linens 25.8%","Equipment 29.1%","F&B 18.5%","MRO 16.6%","Toiletries 10.0%"],
+    datasets:[{data:[48.2,54.2,34.5,30.9,18.6], backgroundColor:["#26292c","#4c5054","#6b7075","#9aa0a6","#c9cdd1"], borderColor:"#fff", borderWidth:2}]
+  },
+  options:{plugins:{legend:{position:"bottom", labels:{boxWidth:10, padding:10, font:{size:10}}}}}
+});
+
+new Chart(document.getElementById("agingChart"), {
+  type:"bar",
+  data:{
+    labels:["Current (0-30)","31-60 days","61-90 days","90+ days"],
+    datasets:[
+      {label:"AR", data:[58.2,13.5,7.8,4.6], backgroundColor:"#26292c", borderRadius:3, maxBarThickness:28},
+      {label:"AP", data:[24.1,8.2,3.0,1.6], backgroundColor:"#c9cdd1", borderRadius:3, maxBarThickness:28},
+    ]
+  },
+  options:{indexAxis:"y", plugins:{legend:{position:"bottom", labels:{boxWidth:10,padding:12}}}, scales:{x:{grid:{color:"#e2e5e8"}}, y:{grid:{display:false}}}}
+});
+
+new Chart(document.getElementById("deprecChart"), {
+  type:"line",
+  data:{
+    labels:["Y1","Y2","Y3","Y4","Y5","Y6","Y7","Y8"],
+    datasets:[{data:[48000,42250,36500,30750,25000,19250,13500,7750], borderColor:"#26292c", backgroundColor:"rgba(38,41,44,0.06)", fill:true, stepped:true, pointRadius:0, borderWidth:2}]
+  },
+  options:{plugins:{legend:{display:false}}, scales:{x:{grid:{display:false}}, y:{grid:{color:"#e2e5e8"}}}}
+});
+</script>
+</body>
+</html>

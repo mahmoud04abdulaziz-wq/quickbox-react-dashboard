@@ -1,0 +1,116 @@
+============================================================
+  HOW TO OPEN AND RUN THE FILLO DASHBOARD (Inventory System)
+============================================================
+
+This folder contains a React-based frontend dashboard that
+replicates the Fillo hotel management system's Inventory 
+Management page. Follow the steps below to run it on any computer.
+
+
+------------------------------------------------------------
+  STEP 1: INSTALL NODE.JS (if not already installed)
+------------------------------------------------------------
+This project requires Node.js (version 16 or higher).
+
+  1. Go to: https://nodejs.org/
+  2. Download the LTS (Long Term Support) version.
+  3. Run the installer and follow the prompts.
+  4. Restart your terminal/command prompt after installing.
+
+To verify Node.js is installed, open a terminal and type:
+  node --version
+You should see something like: v18.x.x or v20.x.x
+
+
+------------------------------------------------------------
+  STEP 2: INSTALL PROJECT DEPENDENCIES
+------------------------------------------------------------
+This step downloads all the libraries the project needs.
+You only need to do this ONCE (or after pulling new changes).
+
+  1. Open a terminal (Command Prompt, PowerShell, or Terminal).
+  2. Navigate to this folder:
+       cd path/to/react-dashboard
+  3. Run:
+       npm install
+  4. Wait for it to finish (may take 1-2 minutes).
+
+
+------------------------------------------------------------
+  STEP 3: START THE APPLICATION
+------------------------------------------------------------
+  1. In the same terminal, run:
+       npm run dev
+  2. You will see output like:
+       VITE ready in 500ms
+       Local: http://localhost:5173/
+  3. Open that URL in your web browser (Chrome, Firefox, Edge, etc.).
+  4. The Fillo Inventory Management dashboard should appear!
+
+  To stop the server: press Ctrl+C in the terminal.
+
+
+------------------------------------------------------------
+  PROJECT STRUCTURE
+------------------------------------------------------------
+react-dashboard/
+├── index.html                  Main HTML entry point
+├── package.json                Project config and dependencies
+├── HOW_TO_RUN.txt              This file
+├── src/
+│   ├── main.jsx                React entry point
+│   ├── App.jsx                 Root component & routing
+│   ├── App.css                 All styling (colors, layout, spacing)
+│   ├── components/             Shared UI components
+│   │   ├── Layout.jsx            Main wrapper (Sidebar + Topbar + Content)
+│   │   ├── Sidebar.jsx           Left navigation menu (Inventory Modules)
+│   │   ├── Topbar.jsx            Top header bar
+│   │   ├── Filters.jsx           Multi-tier filters for the inventory
+│   │   └── InventoryTable.jsx    Data table displaying inventory stock
+│   ├── context/
+│   │   └── InventoryContext.jsx  Global state for stock data & batch logs
+│   └── pages/                  Main application views
+│       ├── DashboardView.jsx     Metrics, stock value, usage trends
+│       ├── InventoryView.jsx     Master SKU list and filtering
+│       ├── StockOpsView.jsx      Batch movement cart (Receive, Issue, Transfer)
+│       ├── AuditLogsView.jsx     Grouped transaction logs and CSV export
+│       └── RopAlertsView.jsx     Low stock alerts and automatic reordering
+
+
+------------------------------------------------------------
+  WHAT EACH MODULE DOES
+------------------------------------------------------------
+Dashboard
+  High-level overview showing active SKUs, total units, 
+  estimated capital value, and a 30-day stock usage trend chart.
+
+Inventory Master
+  A categorized view of all items (Linens, Cleaning, F&B, 
+  Toiletries, Equipment, Maintenance). Features multi-tier 
+  filtering, status badges (In Stock, Low Stock, Out of Stock),
+  and quick actions.
+
+Stock Operations
+  A fast, high-speed warehouse POS-style interface to build 
+  batch transactions. Scan or select multiple items, adjust 
+  quantities, and submit them simultaneously as a unified batch.
+
+Audit Logs
+  Tracks full accountability for every movement. Groups items
+  by Transaction ID. Click any row to expand a sub-table 
+  detailing exact items and quantities moved. Includes CSV export.
+
+ROP Alerts
+  Automated Reorder Point warnings. Shows items below their 
+  thresholds and allows one-click drafting of restock emails 
+  to designated suppliers.
+
+
+------------------------------------------------------------
+  TECH STACK
+------------------------------------------------------------
+- React 19
+- Vite (Build Tool)
+- React Router DOM v6 (Routing)
+- Phosphor Icons (UI Iconography)
+- Pure CSS (No Tailwind, custom classes inside App.css)

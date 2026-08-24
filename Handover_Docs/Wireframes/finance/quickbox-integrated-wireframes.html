@@ -1,0 +1,1560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>QuickBox — Integrated Inventory &amp; Finance Wireframes</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+<style>
+  :root{
+    --bg:#eef0f1;
+    --panel:#ffffff;
+    --line:#c9cdd1;
+    --line-soft:#e2e5e8;
+    --ink:#26292c;
+    --ink-soft:#6b7075;
+    --ink-faint:#9aa0a6;
+    --gray-1:#3a3d40;
+    --gray-2:#6b7075;
+    --gray-3:#9aa0a6;
+    --gray-4:#c9cdd1;
+    --gray-5:#e2e5e8;
+    --radius:6px;
+    --mono: "IBM Plex Mono","SFMono-Regular",Consolas,monospace;
+    --sans: "IBM Plex Sans","Inter",-apple-system,Segoe UI,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html,body{height:100%;}
+  body{
+    margin:0;
+    font-family:var(--sans);
+    color:var(--ink);
+    background:var(--bg);
+    display:flex;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  /* ---------- SIDEBAR ---------- */
+  .sidebar{
+    width:222px;
+    flex:0 0 222px;
+    background:var(--panel);
+    border-right:1px solid var(--line);
+    display:flex;
+    flex-direction:column;
+    height:100vh;
+    position:sticky;
+    top:0;
+  }
+  .brand{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:18px 18px 16px 18px;
+    border-bottom:1px solid var(--line-soft);
+  }
+  .brand-mark{
+    width:30px;height:30px;border:1.5px solid var(--ink);border-radius:5px;
+    display:flex;align-items:center;justify-content:center;
+    font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.5px;
+    flex:none;
+  }
+  .brand-text{line-height:1.15;}
+  .brand-text .b1{font-weight:700;font-size:13.5px;letter-spacing:.2px;}
+  .brand-text .b2{font-size:10.5px;color:var(--ink-faint);letter-spacing:.6px;text-transform:uppercase;}
+
+  nav.navlist{padding:10px 10px;flex:1;overflow-y:auto;}
+  .nav-section-label{
+    font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--ink-faint);
+    padding:14px 10px 6px 10px;font-weight:600;
+  }
+  .nav-item{
+    display:flex;align-items:center;gap:10px;
+    padding:9px 10px;border-radius:var(--radius);
+    font-size:13px;color:var(--ink-soft);cursor:pointer;
+    border:1px solid transparent;
+    margin-bottom:2px;
+  }
+  .nav-item:hover{background:var(--gray-5);color:var(--ink);}
+  .nav-item.active{
+    background:var(--ink);color:#fff;
+  }
+  .nav-item .num{
+    font-family:var(--mono);font-size:10px;color:var(--ink-faint);
+    width:16px;flex:none;
+  }
+  .nav-item.active .num{color:rgba(255,255,255,.55);}
+  .nav-icon{width:15px;height:15px;flex:none;display:flex;align-items:center;justify-content:center;}
+  .nav-icon svg{width:100%;height:100%;}
+
+  .sidebar-foot{
+    border-top:1px solid var(--line-soft);
+    padding:12px 16px;
+    font-size:11px;color:var(--ink-faint);
+    display:flex;align-items:center;gap:8px;
+  }
+  .dot-live{width:6px;height:6px;border-radius:50%;background:var(--gray-1);}
+
+  /* ---------- MAIN ---------- */
+  .main{flex:1;min-width:0;display:flex;flex-direction:column;height:100vh;}
+  .topbar{
+    height:58px;flex:none;
+    background:var(--panel);border-bottom:1px solid var(--line);
+    display:flex;align-items:center;justify-content:space-between;
+    padding:0 22px;
+  }
+  .topbar-left{display:flex;align-items:baseline;gap:10px;}
+  .page-title{font-size:16px;font-weight:700;}
+  .page-sub{font-size:11.5px;color:var(--ink-faint);font-family:var(--mono);}
+  .topbar-right{display:flex;align-items:center;gap:14px;}
+  .search-box{
+    display:flex;align-items:center;gap:6px;
+    border:1px solid var(--line);border-radius:5px;
+    padding:6px 10px;color:var(--ink-faint);font-size:12px;width:190px;
+  }
+  .icon-btn{
+    width:30px;height:30px;border:1px solid var(--line);border-radius:5px;
+    display:flex;align-items:center;justify-content:center;color:var(--ink-soft);cursor:pointer;
+  }
+  .avatar{
+    width:30px;height:30px;border-radius:50%;border:1.5px solid var(--ink);
+    display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;
+    font-family:var(--mono);
+  }
+
+  .content{flex:1;overflow-y:auto;padding:24px;}
+  .page{display:none;}
+  .page.active{display:block;animation:fade .18s ease;}
+  @keyframes fade{from{opacity:0;transform:translateY(3px);}to{opacity:1;transform:none;}}
+
+  /* generic elements */
+  .card{
+    background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+  }
+  .grid{display:grid;gap:16px;}
+  .row-actions{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;gap:12px;flex-wrap:wrap;}
+  .btn{
+    font-family:var(--sans);font-size:12.5px;font-weight:600;
+    border-radius:5px;padding:9px 14px;cursor:pointer;border:1px solid var(--ink);
+    display:inline-flex;align-items:center;gap:6px;
+  }
+  .btn-primary{background:var(--ink);color:#fff;}
+  .btn-primary:hover{background:#000;}
+  .btn-ghost{background:#fff;color:var(--ink);border-color:var(--line);}
+  .btn-ghost:hover{border-color:var(--ink);}
+  .select, .input{
+    font-family:var(--sans);font-size:12.5px;
+    border:1px solid var(--line);border-radius:5px;background:#fff;color:var(--ink-soft);
+    padding:8px 10px;
+  }
+  .filters{display:flex;gap:10px;flex-wrap:wrap;}
+
+  .section-label{
+    font-size:11px;text-transform:uppercase;letter-spacing:.8px;color:var(--ink-faint);
+    font-weight:700;margin-bottom:10px;
+  }
+
+  /* metric cards */
+  .metrics{grid-template-columns:repeat(3,1fr);margin-bottom:18px;}
+  .metric-card{padding:16px 18px;}
+  .metric-top{display:flex;justify-content:space-between;align-items:flex-start;}
+  .metric-label{font-size:11.5px;color:var(--ink-faint);font-weight:600;text-transform:uppercase;letter-spacing:.5px;}
+  .metric-icon{width:26px;height:26px;border:1px solid var(--line);border-radius:5px;display:flex;align-items:center;justify-content:center;}
+  .metric-value{font-size:28px;font-weight:700;margin-top:10px;font-family:var(--mono);}
+  .metric-delta{font-size:11.5px;color:var(--ink-faint);margin-top:4px;}
+  .metric-delta.up{color:#3a3d40;font-weight:600;}
+  .metric-delta.down{color:#3a3d40;font-weight:600;}
+
+  .two-col{grid-template-columns:2fr 1fr;align-items:start;}
+  .panel-head{padding:14px 18px;border-bottom:1px solid var(--line-soft);display:flex;justify-content:space-between;align-items:center;}
+  .panel-head .t{font-size:13px;font-weight:700;}
+  .panel-body{padding:16px 18px;}
+
+  .activity-item{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--line-soft);}
+  .activity-item:last-child{border-bottom:none;}
+  .activity-dot{width:7px;height:7px;border-radius:50%;background:var(--gray-3);margin-top:5px;flex:none;}
+  .activity-text{font-size:12.5px;color:var(--ink-soft);line-height:1.4;}
+  .activity-text b{color:var(--ink);}
+  .activity-time{font-size:10.5px;color:var(--ink-faint);font-family:var(--mono);margin-top:2px;}
+
+  /* table */
+  table{width:100%;border-collapse:collapse;font-size:12.5px;}
+  thead th{
+    text-align:left;font-size:10.5px;text-transform:uppercase;letter-spacing:.5px;
+    color:var(--ink-faint);font-weight:700;padding:10px 12px;border-bottom:1px solid var(--line);
+    background:#fafbfb;
+  }
+  tbody td{padding:11px 12px;border-bottom:1px solid var(--line-soft);color:var(--ink-soft);}
+  tbody tr:hover{background:#fafbfb;}
+  .cell-strong{color:var(--ink);font-weight:600;}
+  .mono{font-family:var(--mono);}
+  .avatar-sm{width:20px;height:20px;border-radius:50%;border:1px solid var(--line);display:inline-block;vertical-align:middle;}
+  .swatch{width:22px;height:22px;border:1px solid var(--line);border-radius:4px;display:inline-block;background:repeating-linear-gradient(45deg,var(--gray-5),var(--gray-5) 3px,transparent 3px,transparent 6px);}
+
+  .badge{
+    display:inline-flex;align-items:center;gap:5px;
+    font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:20px;
+    border:1px solid var(--gray-4);color:var(--ink-soft);text-transform:uppercase;letter-spacing:.4px;
+  }
+  .badge .d{width:6px;height:6px;border-radius:50%;background:var(--gray-3);}
+  .badge.ok{border-color:var(--ink);color:var(--ink);background:#f2f3f3;}
+  .badge.ok .d{background:var(--ink);}
+  .badge.warn{border-style:dashed;}
+  .badge.crit{background:var(--ink);color:#fff;border-color:var(--ink);}
+  .badge.crit .d{background:#fff;}
+
+  .row-check{width:16px;height:16px;border:1.5px solid var(--gray-3);border-radius:3px;}
+  .link-action{font-size:11.5px;font-weight:600;color:var(--ink);border-bottom:1px solid var(--ink);cursor:pointer;}
+
+  /* forms */
+  .form-card{max-width:640px;padding:26px;}
+  .form-row{margin-bottom:18px;}
+  .form-label{font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--ink-faint);margin-bottom:8px;display:block;}
+  .form-hint{font-size:11px;color:var(--ink-faint);margin-top:6px;}
+  .input-full{width:100%;padding:12px 12px;font-size:13.5px;}
+  .radio-group{display:flex;gap:10px;}
+  .radio-opt{
+    flex:1;border:1.5px solid var(--line);border-radius:6px;padding:14px;text-align:center;
+    cursor:pointer;font-size:12.5px;font-weight:600;color:var(--ink-soft);
+  }
+  .radio-opt.selected{border-color:var(--ink);background:#f2f3f3;color:var(--ink);}
+  .barcode-strip{
+    display:flex;align-items:center;justify-content:center;gap:2px;height:46px;margin:4px 0 2px;
+    border:1px dashed var(--line);border-radius:5px;background:#fafbfb;
+  }
+  .barcode-strip span{display:block;width:2px;background:var(--gray-2);}
+
+  /* store grid */
+  .store-grid{grid-template-columns:repeat(4,1fr);}
+  .store-card{padding:16px;display:flex;flex-direction:column;gap:10px;}
+  .store-icon{
+    width:100%;height:64px;border:1px dashed var(--line);border-radius:5px;
+    display:flex;align-items:center;justify-content:center;background:#fafbfb;
+  }
+  .store-icon svg{width:26px;height:26px;color:var(--ink-soft);}
+  .store-name{font-size:13px;font-weight:700;}
+  .store-meta{font-size:11px;color:var(--ink-faint);font-family:var(--mono);}
+  .store-stock{font-size:22px;font-weight:700;font-family:var(--mono);}
+  .stepper{display:flex;align-items:center;justify-content:space-between;border:1px solid var(--line);border-radius:5px;overflow:hidden;}
+  .stepper button{
+    flex:1;border:none;background:#fff;padding:9px 0;font-size:15px;font-weight:700;cursor:pointer;color:var(--ink);
+  }
+  .stepper button:hover{background:var(--gray-5);}
+  .stepper .val{flex:1.4;text-align:center;font-family:var(--mono);font-size:12.5px;border-left:1px solid var(--line);border-right:1px solid var(--line);padding:9px 0;}
+
+  /* supplier cards */
+  .supplier-grid{grid-template-columns:repeat(2,1fr);}
+  .supplier-card{padding:18px;display:flex;gap:14px;}
+  .supplier-logo{width:44px;height:44px;border:1px solid var(--line);border-radius:6px;flex:none;background:var(--gray-5);}
+  .supplier-name{font-weight:700;font-size:13.5px;}
+  .supplier-line{font-size:11.5px;color:var(--ink-faint);margin-top:3px;font-family:var(--mono);}
+
+  /* PO / reorder */
+  .po-toolbar{display:flex;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px;}
+
+  .email-frame{max-width:760px;}
+  .email-head{padding:16px 20px;border-bottom:1px solid var(--line-soft);display:flex;flex-direction:column;gap:10px;}
+  .email-field{display:flex;align-items:center;gap:10px;font-size:12.5px;}
+  .email-field label{width:44px;color:var(--ink-faint);font-weight:700;font-size:11px;text-transform:uppercase;}
+  .email-field .val{flex:1;border:1px solid var(--line);border-radius:5px;padding:8px 10px;color:var(--ink-soft);}
+
+  /* settings */
+  .tabs{display:flex;gap:2px;border-bottom:1px solid var(--line);margin-bottom:20px;}
+  .tab{padding:10px 16px;font-size:12.5px;font-weight:600;color:var(--ink-faint);cursor:pointer;border-bottom:2px solid transparent;}
+  .tab.active{color:var(--ink);border-color:var(--ink);}
+  .settings-form{max-width:520px;}
+
+  .placeholder-chart{width:100%;height:210px;}
+  .footer-note{font-size:10.5px;color:var(--ink-faint);text-align:center;padding:14px 0 4px;}
+
+  /* ---------- FINANCE ADD-ONS ---------- */
+  .nav-system-label{
+    font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:1.1px;color:var(--ink);
+    padding:16px 10px 6px 10px;border-top:1px solid var(--line);margin-top:6px;
+    display:flex;align-items:center;gap:6px;
+  }
+  .nav-system-label:first-child{border-top:none;margin-top:0;padding-top:2px;}
+  .nav-system-label .sys-dot{width:6px;height:6px;border:1.5px solid var(--ink);border-radius:1px;transform:rotate(45deg);flex:none;}
+
+  .metrics-4{grid-template-columns:repeat(4,1fr);}
+  .metrics-5{grid-template-columns:repeat(5,1fr);}
+
+  .badge-row{display:flex;gap:6px;flex-wrap:wrap;}
+  .tag-pill{
+    font-size:9.5px;font-weight:700;padding:2px 7px;border-radius:20px;letter-spacing:.3px;
+    border:1px solid var(--gray-4);color:var(--ink-soft);text-transform:uppercase;
+  }
+  .tag-pill.solid{background:var(--ink);color:#fff;border-color:var(--ink);}
+
+  .progress-track{width:100%;height:7px;border:1px solid var(--line);border-radius:20px;overflow:hidden;background:#fafbfb;margin-top:8px;}
+  .progress-fill{height:100%;background:var(--ink);}
+  .progress-fill.over{background:repeating-linear-gradient(45deg,var(--ink),var(--ink) 4px,#6b7075 4px,#6b7075 8px);}
+  .budget-card{padding:15px 16px;}
+  .budget-top{display:flex;justify-content:space-between;font-size:12.5px;font-weight:700;}
+  .budget-meta{font-size:11px;color:var(--ink-faint);font-family:var(--mono);margin-top:9px;display:flex;justify-content:space-between;}
+
+  .aging-bar{display:flex;width:100%;height:26px;border:1px solid var(--line);border-radius:4px;overflow:hidden;}
+  .aging-seg{display:flex;align-items:center;justify-content:center;font-size:9.5px;font-family:var(--mono);font-weight:700;color:#fff;background:var(--ink);border-right:1px solid #fff;}
+  .aging-seg:nth-child(1){background:var(--gray-2);}
+  .aging-seg:nth-child(2){background:var(--gray-1);}
+  .aging-seg:nth-child(3){background:#232527;}
+  .aging-seg:nth-child(4){background:#000;}
+  .aging-legend{display:flex;gap:14px;margin-top:10px;font-size:10.5px;color:var(--ink-faint);}
+  .aging-legend span{display:flex;align-items:center;gap:5px;}
+  .aging-legend i{width:8px;height:8px;display:inline-block;border-radius:2px;}
+
+  .accordion-toggle{cursor:pointer;}
+  .accordion-toggle:hover{background:#fafbfb;}
+  .sub-table{background:#fbfbfb;border-top:1px dashed var(--line);border-bottom:1px solid var(--line-soft);display:none;}
+  .sub-table.open{display:table-row;}
+  .sub-table td{padding:0;}
+  .sub-inner{padding:12px 32px;}
+  .sub-inner table{font-size:11.5px;}
+  .sub-inner thead th{background:transparent;padding:6px 10px;}
+  .sub-foot{font-family:var(--mono);font-size:11px;color:var(--ink-faint);padding:8px 10px 2px;display:flex;gap:18px;}
+
+  .vat-box{border:1px solid var(--line);border-radius:6px;padding:18px 20px;margin-bottom:18px;}
+  .vat-row{display:flex;justify-content:space-between;font-size:12.5px;padding:7px 0;border-bottom:1px solid var(--line-soft);}
+  .vat-row:last-child{border-bottom:none;font-weight:700;padding-top:10px;}
+  .vat-row .l{color:var(--ink-soft);}
+  .vat-row .v{font-family:var(--mono);font-weight:700;}
+
+  .stmt-tabs{display:flex;gap:2px;border-bottom:1px solid var(--line);margin-bottom:18px;flex-wrap:wrap;}
+  .ledger-group{margin-bottom:4px;}
+  .ledger-group-h{font-size:11.5px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;padding:12px 4px 6px;border-bottom:1px solid var(--ink);}
+  .ledger-line{display:flex;justify-content:space-between;padding:7px 4px 7px 16px;font-size:12.5px;color:var(--ink-soft);border-bottom:1px solid var(--line-soft);}
+  .ledger-line .v{font-family:var(--mono);color:var(--ink);}
+  .ledger-total{display:flex;justify-content:space-between;padding:10px 4px;font-size:13px;font-weight:800;border-top:1.5px solid var(--ink);border-bottom:3px double var(--ink);margin-top:2px;}
+  .equilibrium-banner{
+    margin-top:16px;border:1.5px solid var(--ink);border-radius:6px;padding:12px 16px;
+    font-family:var(--mono);font-size:12px;font-weight:700;text-align:center;background:#f2f3f3;
+  }
+  .kpi-note{font-size:11px;color:var(--ink-faint);margin-top:6px;line-height:1.4;}
+</style>
+</head>
+<body>
+
+<!-- ================= SIDEBAR ================= -->
+<aside class="sidebar">
+  <div class="brand">
+    <div class="brand-mark">HI</div>
+    <div class="brand-text">
+      <div class="b1">Harborline Hotel</div>
+      <div class="b2">Operations &amp; Finance OS</div>
+    </div>
+  </div>
+  <nav class="navlist" id="navlist">
+    <div class="nav-system-label"><span class="sys-dot"></span>Inventory System</div>
+    <div class="nav-section-label">Overview</div>
+    <div class="nav-item" data-page="dashboard"><span class="num">01</span><span class="nav-icon">◱</span>Dashboard Summary</div>
+
+    <div class="nav-section-label">Inventory</div>
+    <div class="nav-item" data-page="inventory"><span class="num">02</span><span class="nav-icon">▤</span>Inventory Grid</div>
+    <div class="nav-item" data-page="stockinout"><span class="num">03</span><span class="nav-icon">⇅</span>Stock In / Out</div>
+    <div class="nav-item" data-page="housekeeping"><span class="num">04</span><span class="nav-icon">▦</span>Housekeeping Stores</div>
+    <div class="nav-item" data-page="fnb"><span class="num">05</span><span class="nav-icon">▦</span>F&amp;B Stores</div>
+
+    <div class="nav-section-label">Procurement</div>
+    <div class="nav-item" data-page="suppliers"><span class="num">06</span><span class="nav-icon">◐</span>Suppliers &amp; Vendors</div>
+    <div class="nav-item" data-page="po"><span class="num">07</span><span class="nav-icon">▧</span>Purchase Orders</div>
+    <div class="nav-item" data-page="reorder"><span class="num">08</span><span class="nav-icon">✉</span>Reorder Requests</div>
+
+    <div class="nav-section-label">Oversight</div>
+    <div class="nav-item" data-page="audit"><span class="num">09</span><span class="nav-icon">≡</span>Audit Logs</div>
+    <div class="nav-item" data-page="analytics"><span class="num">10</span><span class="nav-icon">◔</span>Analytics &amp; Reports</div>
+    <div class="nav-item" data-page="settings"><span class="num">11</span><span class="nav-icon">⚙</span>System Settings</div>
+
+    <div class="nav-system-label"><span class="sys-dot"></span>Finance System</div>
+    <div class="nav-section-label">Executive &amp; Ledger</div>
+    <div class="nav-item" data-page="fin-dashboard"><span class="num">F1</span><span class="nav-icon">◈</span>Financial Dashboard</div>
+    <div class="nav-item" data-page="fin-gl"><span class="num">F2</span><span class="nav-icon">☰</span>General Ledger</div>
+
+    <div class="nav-section-label">Procurement &amp; Payables</div>
+    <div class="nav-item" data-page="fin-matching"><span class="num">F3</span><span class="nav-icon">⇌</span>3-Way Matching</div>
+    <div class="nav-item" data-page="fin-payable"><span class="num">F4</span><span class="nav-icon">▣</span>Accounts Payable</div>
+
+    <div class="nav-section-label">Commercial &amp; Receivables</div>
+    <div class="nav-item" data-page="fin-receivable"><span class="num">F5</span><span class="nav-icon">▧</span>Accounts Receivable</div>
+    <div class="nav-item" data-page="fin-parties"><span class="num">F6</span><span class="nav-icon">◐</span>Party Directory</div>
+
+    <div class="nav-section-label">Inventory &amp; Cost Centers</div>
+    <div class="nav-item" data-page="fin-valuation"><span class="num">F7</span><span class="nav-icon">▤</span>Valuation Rules</div>
+    <div class="nav-item" data-page="fin-costcenters"><span class="num">F8</span><span class="nav-icon">▦</span>Cost Centers</div>
+
+    <div class="nav-section-label">Assets, Workforce &amp; Reports</div>
+    <div class="nav-item" data-page="fin-assets"><span class="num">F9</span><span class="nav-icon">◱</span>Fixed Assets</div>
+    <div class="nav-item" data-page="fin-payroll"><span class="num">F10</span><span class="nav-icon">≣</span>Payroll &amp; VAT</div>
+    <div class="nav-item" data-page="fin-statements"><span class="num">F11</span><span class="nav-icon">◔</span>Financial Statements</div>
+  </nav>
+  <div class="sidebar-foot"><span class="dot-live"></span> Synced 2 min ago</div>
+</aside>
+
+<!-- ================= MAIN ================= -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="page-title" id="pageTitle">Dashboard Summary</div>
+      <div class="page-sub" id="pageSub">/ overview</div>
+    </div>
+    <div class="topbar-right">
+      <div class="search-box">⌕ Search inventory &amp; finance…</div>
+      <div class="icon-btn">⚑</div>
+      <div class="icon-btn">⎚</div>
+      <div class="avatar">FD</div>
+    </div>
+  </div>
+
+  <div class="content" id="content">
+
+    <!-- ============ 1. DASHBOARD ============ -->
+    <section class="page active" id="page-dashboard">
+      <div class="grid metrics">
+        <div class="card metric-card">
+          <div class="metric-top"><span class="metric-label">Total Items</span><div class="metric-icon">▤</div></div>
+          <div class="metric-value">4,812</div>
+          <div class="metric-delta up">+126 this month</div>
+        </div>
+        <div class="card metric-card">
+          <div class="metric-top"><span class="metric-label">Low Stock</span><div class="metric-icon">!</div></div>
+          <div class="metric-value">37</div>
+          <div class="metric-delta">across 6 categories</div>
+        </div>
+        <div class="card metric-card">
+          <div class="metric-top"><span class="metric-label">Pending Orders</span><div class="metric-icon">▧</div></div>
+          <div class="metric-value">12</div>
+          <div class="metric-delta">4 due this week</div>
+        </div>
+      </div>
+
+      <div class="grid two-col">
+        <div class="card">
+          <div class="panel-head"><span class="t">Usage Trend — Last 30 Days</span><span class="badge">Housekeeping ▾</span></div>
+          <div class="panel-body"><div class="placeholder-chart"><canvas id="usageTrendChart"></canvas></div></div>
+        </div>
+        <div class="card">
+          <div class="panel-head"><span class="t">Recent Activity</span></div>
+          <div class="panel-body" id="activityFeed"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 2. INVENTORY GRID ============ -->
+    <section class="page" id="page-inventory">
+      <div class="row-actions">
+        <div class="filters">
+          <select class="select"><option>Category: All</option><option>Linen</option><option>Toiletries</option><option>Paper Goods</option></select>
+          <select class="select"><option>Status: All</option><option>In Stock</option><option>Low Stock</option><option>Out of Stock</option></select>
+          <select class="select"><option>Supplier: All</option></select>
+          <input class="input" placeholder="Filter by SKU…" style="width:150px;">
+        </div>
+        <button class="btn btn-primary">+ Add Item</button>
+      </div>
+      <div class="card">
+        <table>
+          <thead><tr>
+            <th><span class="row-check"></span></th><th>SKU</th><th>Item Name</th><th>Category</th>
+            <th>Stock</th><th>Threshold</th><th>Unit Cost</th><th>Total Value</th><th>Status</th><th>Supplier</th><th></th>
+          </tr></thead>
+          <tbody id="inventoryTbody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ============ 3. STOCK IN / OUT ============ -->
+    <section class="page" id="page-stockinout">
+      <div class="card form-card">
+        <div class="section-label">Scan or enter item</div>
+        <div class="barcode-strip" id="barcodeStrip"></div>
+        <div class="form-row">
+          <label class="form-label">SKU</label>
+          <input class="input input-full" placeholder="e.g. LIN-0245 — Queen Bedsheet White" id="skuInput">
+          <div class="form-hint">Matched: Queen Bedsheet, White · Linen · Current stock 84</div>
+        </div>
+        <div class="form-row">
+          <label class="form-label">Movement</label>
+          <div class="radio-group" id="movementGroup">
+            <div class="radio-opt selected" data-val="add">+ Add Stock</div>
+            <div class="radio-opt" data-val="remove">− Remove Stock</div>
+          </div>
+        </div>
+        <div class="form-row">
+          <label class="form-label">Quantity</label>
+          <input class="input input-full" type="number" value="12">
+        </div>
+        <div class="form-row">
+          <label class="form-label">Reason</label>
+          <select class="select input-full">
+            <option>Received from supplier</option>
+            <option>Damaged / write-off</option>
+            <option>Returned by department</option>
+            <option>Transferred between stores</option>
+          </select>
+        </div>
+        <button class="btn btn-primary" style="width:100%;justify-content:center;padding:13px;">Confirm Movement</button>
+      </div>
+    </section>
+
+    <!-- ============ 4. HOUSEKEEPING STORES ============ -->
+    <section class="page" id="page-housekeeping">
+      <div class="row-actions"><div class="section-label" style="margin:0;">Housekeeping Stores — 14 SKUs</div><button class="btn btn-ghost">Print Stock Sheet</button></div>
+      <div class="grid store-grid" id="housekeepingGrid"></div>
+    </section>
+
+    <!-- ============ 5. F&B STORES ============ -->
+    <section class="page" id="page-fnb">
+      <div class="row-actions"><div class="section-label" style="margin:0;">Food &amp; Beverage Stores — 18 SKUs</div><button class="btn btn-ghost">Print Stock Sheet</button></div>
+      <div class="grid store-grid" id="fnbGrid"></div>
+    </section>
+
+    <!-- ============ 6. SUPPLIERS ============ -->
+    <section class="page" id="page-suppliers">
+      <div class="row-actions"><div class="section-label" style="margin:0;">18 Active Suppliers</div><button class="btn btn-primary">+ Add Supplier</button></div>
+      <div class="grid supplier-grid" id="supplierGrid"></div>
+    </section>
+
+    <!-- ============ 7. PURCHASE ORDERS ============ -->
+    <section class="page" id="page-po">
+      <div class="po-toolbar">
+        <div class="filters">
+          <select class="select"><option>Status: All</option><option>Pending</option><option>Delivered</option><option>Cancelled</option></select>
+          <input class="input" placeholder="Date range" style="width:150px;">
+        </div>
+        <button class="btn btn-primary">+ Draft New Order</button>
+      </div>
+      <div class="card">
+        <table>
+          <thead><tr><th>Order ID</th><th>Supplier</th><th>Date</th><th>Items</th><th>Total Amount</th><th>Status</th><th></th></tr></thead>
+          <tbody id="poTbody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ============ 8. REORDER REQUESTS ============ -->
+    <section class="page" id="page-reorder">
+      <div class="section-label">Auto-drafted from 7 low-stock items</div>
+      <div class="card email-frame">
+        <div class="email-head">
+          <div class="email-field"><label>To</label><div class="val">Coastal Linen Supply Co. — orders@coastallinen.example</div></div>
+          <div class="email-field"><label>Subject</label><div class="val">Reorder Request — Harborline Hotel — 30 Jul 2026</div></div>
+        </div>
+        <div class="panel-body">
+          <table>
+            <thead><tr><th>Item</th><th>Current Stock</th><th>Threshold</th><th>Qty Requested</th></tr></thead>
+            <tbody id="reorderTbody"></tbody>
+          </table>
+          <div style="margin-top:18px;">
+            <button class="btn btn-primary" style="padding:12px 22px;">Send Request</button>
+            <button class="btn btn-ghost" style="padding:12px 18px;">Edit Draft</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 9. AUDIT LOGS ============ -->
+    <section class="page" id="page-audit">
+      <div class="row-actions">
+        <div class="filters">
+          <select class="select"><option>Date: Last 7 days</option><option>Last 30 days</option><option>Custom range</option></select>
+          <select class="select"><option>Staff: All</option></select>
+          <select class="select"><option>Action: All</option><option>Added</option><option>Removed</option><option>Adjusted</option></select>
+        </div>
+        <button class="btn btn-ghost">⭳ Export to CSV</button>
+      </div>
+      <div class="card">
+        <table>
+          <thead><tr><th>Timestamp</th><th>Action</th><th>Item</th><th>Qty Changed</th><th>Location</th><th>Staff</th></tr></thead>
+          <tbody id="auditTbody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ============ 10. ANALYTICS ============ -->
+    <section class="page" id="page-analytics">
+      <div class="grid two-col" style="margin-bottom:16px;">
+        <div class="card">
+          <div class="panel-head"><span class="t">Usage Trends by Category</span></div>
+          <div class="panel-body"><div class="placeholder-chart"><canvas id="usageBarChart"></canvas></div></div>
+        </div>
+        <div class="card">
+          <div class="panel-head"><span class="t">Valuation by Category</span></div>
+          <div class="panel-body"><div class="placeholder-chart" style="height:210px;"><canvas id="valuationPie"></canvas></div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="panel-head"><span class="t">Highest Waste Items</span></div>
+        <table>
+          <thead><tr><th>Item</th><th>Category</th><th>Units Wasted</th><th>Est. Value Lost</th></tr></thead>
+          <tbody id="wasteTbody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ============ 11. SETTINGS ============ -->
+    <section class="page" id="page-settings">
+      <div class="tabs" id="settingsTabs">
+        <div class="tab active" data-tab="general">General</div>
+        <div class="tab" data-tab="notifications">Notifications</div>
+        <div class="tab" data-tab="users">Users</div>
+      </div>
+
+      <div class="settings-tab-content" id="tab-general">
+        <div class="card form-card">
+          <div class="form-row"><label class="form-label">Hotel Name</label><input class="input input-full" value="Harborline Hotel &amp; Suites"></div>
+          <div class="form-row"><label class="form-label">Currency</label>
+            <select class="select input-full"><option>USD — US Dollar</option><option>JOD — Jordanian Dinar</option><option>EUR — Euro</option></select>
+          </div>
+          <div class="form-row"><label class="form-label">Default Reorder Threshold</label><input class="input input-full" value="20% of par stock"></div>
+          <button class="btn btn-primary">Save Changes</button>
+        </div>
+      </div>
+      <div class="settings-tab-content" id="tab-notifications" style="display:none;">
+        <div class="card form-card">
+          <div class="form-row"><label class="form-label">Low Stock Alerts</label><div class="form-hint">Email + in-app, sent when an item falls below threshold.</div></div>
+          <div class="form-row"><label class="form-label">Purchase Order Updates</label><div class="form-hint">Notify when a supplier confirms or delays an order.</div></div>
+          <div class="form-row"><label class="form-label">Weekly Digest</label><div class="form-hint">Sunday 8:00 AM summary of stock movement.</div></div>
+        </div>
+      </div>
+      <div class="settings-tab-content" id="tab-users" style="display:none;">
+        <div class="card">
+          <table>
+            <thead><tr><th>Name</th><th>Role</th><th>Store Access</th><th>Status</th></tr></thead>
+            <tbody id="usersTbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ F1. FINANCIAL DASHBOARD ============ -->
+    <section class="page" id="page-fin-dashboard">
+      <div class="grid metrics-5">
+        <div class="card metric-card">
+          <div class="metric-top"><span class="metric-label">Liquid Cash</span><div class="metric-icon">◈</div></div>
+          <div class="metric-value">$428,950</div>
+          <div class="metric-delta up">+4.2% MoM · 3 accounts</div>
+        </div>
+        <div class="card metric-card">
+          <div class="metric-top"><span class="metric-label">Inventory Asset</span><div class="metric-icon">▤</div></div>
+          <div class="metric-value">$186,420</div>
+          <div class="metric-delta">6,850 SKUs · 5 categories</div>
+        </div>
+        <div class="card metric-card">
+          <div class="metric-top"><span class="metric-label">Receivables (AR)</span><div class="metric-icon">▧</div></div>
+          <div class="metric-value">$84,120</div>
+          <div class="metric-delta">$12,400 overdue · 4 clients</div>
+        </div>
+        <div class="card metric-card">
+          <div class="metric-top"><span class="metric-label">Payables + GR/IR</span><div class="metric-icon">▣</div></div>
+          <div class="metric-value">$54,890</div>
+          <div class="metric-delta">$36.9k AP + $18.0k accrual</div>
+        </div>
+        <div class="card metric-card">
+          <div class="metric-top"><span class="metric-label">Net Profit YTD</span><div class="metric-icon">◔</div></div>
+          <div class="metric-value">23.5%</div>
+          <div class="metric-delta up">$142,300 · GM 68.2%</div>
+        </div>
+      </div>
+
+      <div class="grid two-col" style="margin-bottom:16px;">
+        <div class="card">
+          <div class="panel-head"><span class="t">Cash Flow vs. Inventory Movement — 30 Days</span><span class="badge">Aug 2026 ▾</span></div>
+          <div class="panel-body"><div class="placeholder-chart"><canvas id="finCashChart"></canvas></div></div>
+        </div>
+        <div class="card">
+          <div class="panel-head"><span class="t">Cross-Domain Activity Stream</span></div>
+          <div class="panel-body" id="finActivityFeed"></div>
+        </div>
+      </div>
+
+      <div class="grid two-col">
+        <div class="card">
+          <div class="panel-head"><span class="t">AR vs. AP Aging</span></div>
+          <div class="panel-body">
+            <div class="section-label" style="margin-bottom:6px;">Receivables</div>
+            <div class="aging-bar"><div class="aging-seg" style="flex:5;">62%</div><div class="aging-seg" style="flex:2;">18%</div><div class="aging-seg" style="flex:1;">11%</div><div class="aging-seg" style="flex:1;">9%</div></div>
+            <div class="section-label" style="margin:16px 0 6px;">Payables</div>
+            <div class="aging-bar"><div class="aging-seg" style="flex:6;">70%</div><div class="aging-seg" style="flex:2;">15%</div><div class="aging-seg" style="flex:1;">9%</div><div class="aging-seg" style="flex:1;">6%</div></div>
+            <div class="aging-legend">
+              <span><i style="background:var(--gray-2);"></i>Current</span>
+              <span><i style="background:var(--gray-1);"></i>31–60d</span>
+              <span><i style="background:#232527;"></i>61–90d</span>
+              <span><i style="background:#000;"></i>90+d</span>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="panel-head"><span class="t">Inventory Valuation by Category</span></div>
+          <div class="panel-body"><div class="placeholder-chart" style="height:200px;"><canvas id="finValuationDonut"></canvas></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ F2. GENERAL LEDGER ============ -->
+    <section class="page" id="page-fin-gl">
+      <div class="grid metrics-4">
+        <div class="card metric-card"><div class="metric-top"><span class="metric-label">Posted Volume</span><div class="metric-icon">☰</div></div><div class="metric-value">$1.42M</div><div class="metric-delta">142 vouchers MTD</div></div>
+        <div class="card metric-card"><div class="metric-top"><span class="metric-label">Auto-Postings</span><div class="metric-icon">⚙</div></div><div class="metric-value">84 · 59%</div><div class="metric-delta">Zero human touch</div></div>
+        <div class="card metric-card"><div class="metric-top"><span class="metric-label">Equilibrium</span><div class="metric-icon">✓</div></div><div class="metric-value">Balanced</div><div class="metric-delta">Δ $0.00</div></div>
+        <div class="card metric-card"><div class="metric-top"><span class="metric-label">Pending Review</span><div class="metric-icon">!</div></div><div class="metric-value">4</div><div class="metric-delta">Totaling $18,200</div></div>
+      </div>
+      <div class="row-actions">
+        <div class="filters">
+          <select class="select"><option>All Modules (142)</option><option>Inventory Automated (84)</option><option>Accounts Payable (24)</option><option>Accounts Receivable (18)</option><option>Payroll (12)</option><option>Manual (4)</option></select>
+          <input class="input" placeholder="Search voucher #, account, doc ref…" style="width:220px;">
+        </div>
+        <button class="btn btn-primary">+ New Journal Voucher</button>
+      </div>
+      <div class="card">
+        <table>
+          <thead><tr><th></th><th>Voucher</th><th>Date</th><th>Source</th><th>Doc Ref</th><th>Memo</th><th>Debit</th><th>Credit</th><th>Status</th></tr></thead>
+          <tbody id="glTbody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ============ F3. 3-WAY MATCHING ============ -->
+    <section class="page" id="page-fin-matching">
+      <div class="grid metrics-4">
+        <div class="card metric-card"><div class="metric-top"><span class="metric-label">Fully Matched</span><div class="metric-icon">✓</div></div><div class="metric-value">$184,250</div><div class="metric-delta">42 POs cleared</div></div>
+        <div class="card metric-card"><div class="metric-top"><span class="metric-label">Price Variance (PPV)</span><div class="metric-icon">!</div></div><div class="metric-value">$8,420</div><div class="metric-delta">5 bills &gt; 2.0%</div></div>
+        <div class="card metric-card"><div class="metric-top"><span class="metric-label">Qty Discrepancy</span><div class="metric-icon">✕</div></div><div class="metric-value">$12,100</div><div class="metric-delta">3 bills on hold</div></div>
+        <div class="card metric-card"><div class="metric-top"><span class="metric-label">GR/IR Clearing</span><div class="metric-icon">◔</div></div><div class="metric-value">$18,000</div><div class="metric-delta">8 unbilled receipts</div></div>
+      </div>
+      <div class="row-actions">
+        <div class="filters">
+          <select class="select"><option>All Matches (58)</option><option>Perfect Match (42)</option><option>PPV (5)</option><option>Qty Mismatch (3)</option><option>Unbilled GRN (8)</option></select>
+        </div>
+        <div>
+          <button class="btn btn-ghost">▶ Run Auto-Match</button>
+          <button class="btn btn-primary">+ Manual Override</button>
+        </div>
+      </div>
+      <div class="card">
+        <table>
+          <thead><tr><th>Status</th><th>PO Ref</th><th>GRN Ref</th><th>Bill Ref</th><th>Vendor</th><th>SKU</th><th>PPV Variance</th><th>Tolerance</th><th></th></tr></thead>
+          <tbody id="matchTbody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ============ F4. ACCOUNTS PAYABLE ============ -->
+    <section class="page" id="page-fin-payable">
+      <div class="grid metrics-4">
+        <div class="card metric-card"><div class="metric-top"><span class="metric-label">Total Payable</span><div class="metric-icon">▣</div></div><div class="metric-value">$36,890</div><div class="metric-delta">12 open bills</div></div>
+        <div class="card metric-card"><div class="metric-top"><span class="metric-label">Due This Week</span><div class="metric-icon">!</div></div><div class="metric-value">$14,200</div><div class="metric-delta">6 disbursements</div></div>
+        <div class="card metric-card"><div class="metric-top"><span class="metric-label">Landed Costs (MTD)</span><div class="metric-icon">▧</div></div><div class="metric-value">$4,350</div><div class="metric-delta">Freight &amp; customs</div></div>
+        <div class="card metric-card"><div class="metric-top"><span class="metric-label">Settled (MTD)</span><div class="metric-icon">✓</div></div><div class="metric-value">$92,100</div><div class="metric-delta">18 payments · 0 late fees</div></div>
+      </div>
+      <div class="row-actions">
+        <div class="filters">
+          <select class="select"><option>All Payables</option><option>PO-Backed</option><option>Direct Opex</option><option>Landed Costs</option><option>Overdue</option></select>
+        </div>
+        <div>
+          <button class="btn btn-ghost">Create Bill from PO</button>
+          <button class="btn btn-primary">Execute Payment Run</button>
+        </div>
+      </div>
+      <div class="card">
+        <table>
+          <thead><tr><th></th><th>Bill Ref</th><th>Vendor</th><th>Category</th><th>Due Date</th><th>Amount</th><th>Match</th><th>Status</th><th></th></tr></thead>
+          <tbody id="billTbody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ============ F5. ACCOUNTS RECEIVABLE ============ -->
+    <section class="page" id="page-fin-receivable">
+      <div class="grid metrics-4">
+        <div class="card metric-card"><div class="metric-top"><span class="metric-label">Outstanding AR</span><div class="metric-icon">▧</div></div><div class="metric-value">$84,120</div><div class="metric-delta">18 unpaid invoices</div></div>
+        <div class="card metric-card"><div class="metric-top"><span class="metric-label">Collected (MTD)</span><div class="metric-icon">✓</div></div><div class="metric-value">$112,450</div><div class="metric-delta up">+14.8% MoM</div></div>
+        <div class="card metric-card"><div class="metric-top"><span class="metric-label">Overdue</span><div class="metric-icon">!</div></div><div class="metric-value">$12,400</div><div class="metric-delta">4 invoices &gt; 30 days</div></div>
+        <div class="card metric-card"><div class="metric-top"><span class="metric-label">Uninvoiced Orders</span><div class="metric-icon">◐</div></div><div class="metric-value">$24,800</div><div class="metric-delta">6 dispatched SOs</div></div>
+      </div>
+      <div class="row-actions">
+        <div class="filters">
+          <select class="select"><option>All Invoices</option><option>Ready from SO</option><option>Draft</option><option>Sent / Pending</option><option>Paid</option><option>Overdue</option></select>
+        </div>
+        <div>
+          <button class="btn btn-ghost">Generate from Delivered Orders</button>
+          <button class="btn btn-primary">+ Create Invoice</button>
+        </div>
+      </div>
+      <div class="card">
+        <table>
+          <thead><tr><th></th><th>Invoice #</th><th>SO / Booking Ref</th><th>Customer</th><th>Due Date</th><th>Total</th><th>Balance Due</th><th>Status</th><th></th></tr></thead>
+          <tbody id="invTbody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ============ F6. PARTY DIRECTORY ============ -->
+    <section class="page" id="page-fin-parties">
+      <div class="grid metrics-4">
+        <div class="card metric-card"><div class="metric-top"><span class="metric-label">Master Parties</span><div class="metric-icon">◐</div></div><div class="metric-value">128</div><div class="metric-delta">Zero duplicate records</div></div>
+        <div class="card metric-card"><div class="metric-top"><span class="metric-label">Dual-Role</span><div class="metric-icon">⇌</div></div><div class="metric-value">14</div><div class="metric-delta">Customer &amp; Vendor</div></div>
+        <div class="card metric-card"><div class="metric-top"><span class="metric-label">Open AR</span><div class="metric-icon">▧</div></div><div class="metric-value">$84,120</div><div class="metric-delta">68 active customers</div></div>
+        <div class="card metric-card"><div class="metric-top"><span class="metric-label">Open AP</span><div class="metric-icon">▣</div></div><div class="metric-value">$36,890</div><div class="metric-delta">46 active vendors</div></div>
+      </div>
+      <div class="row-actions">
+        <div class="filters">
+          <select class="select"><option>All Parties (128)</option><option>Customers (68)</option><option>Vendors (46)</option><option>Dual-Role (14)</option></select>
+          <input class="input" placeholder="Search parties…" style="width:170px;">
+        </div>
+        <button class="btn btn-primary">+ Add Party</button>
+      </div>
+      <div class="card">
+        <table>
+          <thead><tr><th>Party Code</th><th>Legal Name</th><th>Roles</th><th>Terms</th><th>AR Balance</th><th>AP Balance</th><th>Net Position</th><th></th></tr></thead>
+          <tbody id="partyTbody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ============ F7. VALUATION RULES ============ -->
+    <section class="page" id="page-fin-valuation">
+      <div class="grid metrics-4">
+        <div class="card metric-card"><div class="metric-top"><span class="metric-label">SKU Categories</span><div class="metric-icon">▤</div></div><div class="metric-value">6</div><div class="metric-delta">100% GL mapped</div></div>
+        <div class="card metric-card"><div class="metric-top"><span class="metric-label">Valuation Policy</span><div class="metric-icon">≣</div></div><div class="metric-value">FIFO / AVCO</div><div class="metric-delta">Per-category enforcement</div></div>
+        <div class="card metric-card"><div class="metric-top"><span class="metric-label">Auto-Posting Engine</span><div class="metric-icon">✓</div></div><div class="metric-value">Active</div><div class="metric-delta">Idempotency protected</div></div>
+        <div class="card metric-card"><div class="metric-top"><span class="metric-label">Reconciliation Δ</span><div class="metric-icon">◔</div></div><div class="metric-value">0.00%</div><div class="metric-delta">Sub-ledger == GL</div></div>
+      </div>
+      <div class="row-actions"><div class="section-label" style="margin:0;">Category → GL Account Mapping</div><button class="btn btn-ghost">+ Add Mapping</button></div>
+      <div class="card" style="margin-bottom:18px;">
+        <table>
+          <thead><tr><th>Category</th><th>SKUs</th><th>Policy</th><th>Asset Acct</th><th>COGS Acct</th><th>Variance Acct</th><th></th></tr></thead>
+          <tbody id="valTbody"></tbody>
+        </table>
+      </div>
+      <div class="card form-card" style="max-width:none;">
+        <div class="section-label">Landed Cost &amp; PPV Tolerance</div>
+        <div class="form-row">
+          <label class="form-label">Landed Cost Basis</label>
+          <div class="radio-group">
+            <div class="radio-opt selected">Allocate by Item Value</div>
+            <div class="radio-opt">Allocate by Weight / Qty</div>
+          </div>
+        </div>
+        <div class="form-row" style="display:flex;gap:16px;">
+          <div style="flex:1;"><label class="form-label">PPV Tolerance</label><input class="input input-full" value="± 2.0%"></div>
+          <div style="flex:1;"><label class="form-label">Absolute Cap</label><input class="input input-full" value="$50.00"></div>
+        </div>
+        <button class="btn btn-primary">Save Configuration</button>
+      </div>
+    </section>
+
+    <!-- ============ F8. COST CENTERS ============ -->
+    <section class="page" id="page-fin-costcenters">
+      <div class="grid metrics-4">
+        <div class="card metric-card"><div class="metric-top"><span class="metric-label">Consumption (MTD)</span><div class="metric-icon">▦</div></div><div class="metric-value">$42,850</div><div class="metric-delta">58 requisitions</div></div>
+        <div class="card metric-card"><div class="metric-top"><span class="metric-label">Active Cost Centers</span><div class="metric-icon">◐</div></div><div class="metric-value">6</div><div class="metric-delta">CC-100 to CC-600</div></div>
+        <div class="card metric-card"><div class="metric-top"><span class="metric-label">Budget Utilization</span><div class="metric-icon">◔</div></div><div class="metric-value">74.2%</div><div class="metric-delta">1 dept over target</div></div>
+        <div class="card metric-card"><div class="metric-top"><span class="metric-label">Avg Requisition</span><div class="metric-icon">≣</div></div><div class="metric-value">$738.80</div><div class="metric-delta">1.2h avg turnaround</div></div>
+      </div>
+      <div class="grid store-grid" id="costCenterGrid" style="margin-bottom:18px;"></div>
+      <div class="row-actions"><div class="section-label" style="margin:0;">Departmental Requisitions</div><button class="btn btn-primary">+ New Requisition</button></div>
+      <div class="card">
+        <table>
+          <thead><tr><th>Req ID</th><th>Date</th><th>Cost Center</th><th>Staff</th><th>Total Cost</th><th>GL Voucher</th><th></th></tr></thead>
+          <tbody id="reqTbody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ============ F9. FIXED ASSETS ============ -->
+    <section class="page" id="page-fin-assets">
+      <div class="grid metrics-4">
+        <div class="card metric-card"><div class="metric-top"><span class="metric-label">Gross Capex</span><div class="metric-icon">◱</div></div><div class="metric-value">$450,000</div><div class="metric-delta">24 registered assets</div></div>
+        <div class="card metric-card"><div class="metric-top"><span class="metric-label">Accum. Depreciation</span><div class="metric-icon">▤</div></div><div class="metric-value">$168,200</div><div class="metric-delta">Contra-asset 1520</div></div>
+        <div class="card metric-card"><div class="metric-top"><span class="metric-label">Net Book Value</span><div class="metric-icon">✓</div></div><div class="metric-value">$281,800</div><div class="metric-delta">Current B/S value</div></div>
+        <div class="card metric-card"><div class="metric-top"><span class="metric-label">Monthly Dep. Run</span><div class="metric-icon">◔</div></div><div class="metric-value">$6,500</div><div class="metric-delta">Next: 31 Aug 2026</div></div>
+      </div>
+      <div class="row-actions">
+        <div class="filters">
+          <select class="select"><option>All Assets</option><option>Laundry &amp; Equipment</option><option>HVAC &amp; Mechanical</option><option>IT &amp; POS</option><option>Vehicles</option><option>Furniture</option></select>
+        </div>
+        <div>
+          <button class="btn btn-ghost">▶ Run Monthly Depreciation</button>
+          <button class="btn btn-primary">+ Register Asset</button>
+        </div>
+      </div>
+      <div class="card">
+        <table>
+          <thead><tr><th>Asset Tag</th><th>Name</th><th>Category</th><th>Acquired</th><th>Useful Life</th><th>Cost</th><th>NBV</th><th></th></tr></thead>
+          <tbody id="assetTbody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ============ F10. PAYROLL & VAT ============ -->
+    <section class="page" id="page-fin-payroll">
+      <div class="grid metrics-4">
+        <div class="card metric-card"><div class="metric-top"><span class="metric-label">Monthly Payroll</span><div class="metric-icon">≣</div></div><div class="metric-value">$148,500</div><div class="metric-delta">42 staff · Aug 2026</div></div>
+        <div class="card metric-card"><div class="metric-top"><span class="metric-label">Net Disbursement</span><div class="metric-icon">◈</div></div><div class="metric-value">$124,200</div><div class="metric-delta">100% WPS compliant</div></div>
+        <div class="card metric-card"><div class="metric-top"><span class="metric-label">Net VAT Due</span><div class="metric-icon">◔</div></div><div class="metric-value">$18,450</div><div class="metric-delta">Due in 14 days</div></div>
+        <div class="card metric-card"><div class="metric-top"><span class="metric-label">Total Remittances</span><div class="metric-icon">✓</div></div><div class="metric-value">$42,750</div><div class="metric-delta">0 compliance penalties</div></div>
+      </div>
+      <div class="tabs" id="payrollTabs">
+        <div class="tab active" data-ptab="wps">Workforce Payroll &amp; WPS</div>
+        <div class="tab" data-ptab="vat">VAT Filing &amp; Tax Audit</div>
+      </div>
+      <div class="payroll-tab-content" id="ptab-wps">
+        <div class="row-actions"><div></div><div><button class="btn btn-ghost">Export WPS SIF File</button><button class="btn btn-primary">▶ Execute Payroll Run</button></div></div>
+        <div class="card">
+          <table>
+            <thead><tr><th>Emp ID</th><th>Name &amp; Role</th><th>Dept</th><th>Gross Salary</th><th>Deductions</th><th>Net Payout</th><th>WPS</th><th></th></tr></thead>
+            <tbody id="payrollTbody"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="payroll-tab-content" id="ptab-vat" style="display:none;">
+        <div class="vat-box">
+          <div class="vat-row"><span class="l">Taxable Sales Revenue</span><span class="v">$642,000.00</span></div>
+          <div class="vat-row"><span class="l">Output VAT Collected (5%)</span><span class="v">$32,100.00</span></div>
+          <div class="vat-row"><span class="l">Taxable Inbound Purchases</span><span class="v">$273,000.00</span></div>
+          <div class="vat-row"><span class="l">Input VAT Recoverable (5%)</span><span class="v">-$13,650.00</span></div>
+          <div class="vat-row"><span class="l">Net VAT Payable</span><span class="v">$18,450.00</span></div>
+        </div>
+        <button class="btn btn-primary" style="margin-bottom:18px;">Submit VAT Return &amp; Post Settlement</button>
+        <div class="card">
+          <table>
+            <thead><tr><th>Date</th><th>Doc Ref</th><th>Party</th><th>Tax Type</th><th>Taxable Base</th><th>Tax Amount</th></tr></thead>
+            <tbody id="vatTbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ F11. FINANCIAL STATEMENTS ============ -->
+    <section class="page" id="page-fin-statements">
+      <div class="stmt-tabs" id="stmtTabs">
+        <div class="tab active" data-stab="bs">Balance Sheet</div>
+        <div class="tab" data-stab="pl">Profit &amp; Loss</div>
+        <div class="tab" data-stab="cf">Cash Flow</div>
+        <div class="tab" data-stab="tb">Trial Balance</div>
+        <div class="tab" data-stab="audit">Audit Trail</div>
+      </div>
+
+      <div class="stmt-tab-content" id="stab-bs">
+        <div class="card" style="padding:22px 26px;max-width:640px;">
+          <div class="ledger-group">
+            <div class="ledger-group-h">Assets</div>
+            <div class="ledger-line"><span>Cash &amp; Cash Equivalents</span><span class="v">$428,950.00</span></div>
+            <div class="ledger-line"><span>Accounts Receivable (Net)</span><span class="v">$84,120.00</span></div>
+            <div class="ledger-line"><span>Perpetual Inventory Asset</span><span class="v">$186,420.00</span></div>
+            <div class="ledger-line"><span>Prepayments &amp; Input VAT</span><span class="v">$32,050.00</span></div>
+            <div class="ledger-line"><span>PP&amp;E, Net of Depreciation</span><span class="v">$281,800.00</span></div>
+            <div class="ledger-total"><span>Total Assets</span><span>$1,013,340.00</span></div>
+          </div>
+          <div class="ledger-group">
+            <div class="ledger-group-h">Liabilities</div>
+            <div class="ledger-line"><span>Accounts Payable</span><span class="v">$36,890.00</span></div>
+            <div class="ledger-line"><span>GR/IR Interim Clearing</span><span class="v">$18,000.00</span></div>
+            <div class="ledger-line"><span>Accrued Payroll &amp; Taxes</span><span class="v">$24,300.00</span></div>
+            <div class="ledger-line"><span>Output VAT Payable</span><span class="v">$32,100.00</span></div>
+            <div class="ledger-line"><span>Bank Term Facility (LT)</span><span class="v">$200,000.00</span></div>
+            <div class="ledger-line"><span>End of Service Benefits (LT)</span><span class="v">$42,500.00</span></div>
+            <div class="ledger-total"><span>Total Liabilities</span><span>$368,790.00</span></div>
+          </div>
+          <div class="ledger-group">
+            <div class="ledger-group-h">Equity</div>
+            <div class="ledger-line"><span>Contributed Share Capital</span><span class="v">$400,000.00</span></div>
+            <div class="ledger-line"><span>Retained Earnings (Prior)</span><span class="v">$102,250.00</span></div>
+            <div class="ledger-line"><span>Current Year Net Income</span><span class="v">$142,300.00</span></div>
+            <div class="ledger-total"><span>Total Equity</span><span>$644,550.00</span></div>
+          </div>
+          <div class="equilibrium-banner">✓ BALANCED — Assets $1,013,340.00 ≡ Liabilities + Equity $1,013,340.00 · Δ $0.00</div>
+        </div>
+      </div>
+
+      <div class="stmt-tab-content" id="stab-pl" style="display:none;">
+        <div class="card" style="padding:22px 26px;max-width:640px;">
+          <div class="ledger-group">
+            <div class="ledger-line"><span>Gross Operating Revenue</span><span class="v">$620,000.00</span></div>
+            <div class="ledger-line"><span>Less: Sales Discounts</span><span class="v">-$14,500.00</span></div>
+            <div class="ledger-total"><span>Net Revenue</span><span>$605,500.00</span></div>
+          </div>
+          <div class="ledger-group">
+            <div class="ledger-group-h">Cost of Goods Sold</div>
+            <div class="ledger-line"><span>Linens &amp; Textiles COGS</span><span class="v">-$42,100.00</span></div>
+            <div class="ledger-line"><span>Food &amp; Beverage COGS</span><span class="v">-$88,400.00</span></div>
+            <div class="ledger-line"><span>Amenities &amp; Consumables COGS</span><span class="v">-$24,800.00</span></div>
+            <div class="ledger-line"><span>Purchase Price Variance (Net)</span><span class="v">-$1,200.00</span></div>
+            <div class="ledger-total"><span>Gross Profit</span><span>$413,000.00</span></div>
+          </div>
+          <div class="ledger-group">
+            <div class="ledger-group-h">Operating Expenses</div>
+            <div class="ledger-line"><span>Salaries &amp; Employee Benefits</span><span class="v">-$148,500.00</span></div>
+            <div class="ledger-line"><span>Departmental Supplies</span><span class="v">-$42,850.00</span></div>
+            <div class="ledger-line"><span>Rent &amp; Facilities Opex</span><span class="v">-$38,200.00</span></div>
+            <div class="ledger-line"><span>Depreciation Expense</span><span class="v">-$6,500.00</span></div>
+            <div class="ledger-line"><span>General &amp; Administrative</span><span class="v">-$16,250.00</span></div>
+            <div class="ledger-total"><span>Net Operating Profit (EBIT)</span><span>$142,300.00</span></div>
+          </div>
+          <div class="equilibrium-banner">Operating Margin: 23.5% · Gross Margin: 68.2%</div>
+        </div>
+      </div>
+
+      <div class="stmt-tab-content" id="stab-cf" style="display:none;">
+        <div class="card" style="padding:22px 26px;max-width:640px;">
+          <div class="ledger-group">
+            <div class="ledger-group-h">Operating Activities</div>
+            <div class="ledger-line"><span>Net Income</span><span class="v">$142,300.00</span></div>
+            <div class="ledger-line"><span>+ Depreciation</span><span class="v">$6,500.00</span></div>
+            <div class="ledger-line"><span>± Working Capital Changes</span><span class="v">-$12,400.00</span></div>
+            <div class="ledger-total"><span>Net Cash from Operations</span><span>$136,400.00</span></div>
+          </div>
+          <div class="ledger-group">
+            <div class="ledger-line"><span>Capital Expenditures</span><span class="v">-$45,000.00</span></div>
+            <div class="ledger-total"><span>Net Cash from Investing</span><span>-$45,000.00</span></div>
+          </div>
+          <div class="ledger-group">
+            <div class="ledger-line"><span>Loan Repayments &amp; Dividends</span><span class="v">-$25,000.00</span></div>
+            <div class="ledger-total"><span>Net Cash from Financing</span><span>-$25,000.00</span></div>
+          </div>
+          <div class="equilibrium-banner">Net Cash Inflow +$66,400.00 · Ending Cash $428,950.00</div>
+        </div>
+      </div>
+
+      <div class="stmt-tab-content" id="stab-tb" style="display:none;">
+        <div class="card">
+          <table>
+            <thead><tr><th>Account Code</th><th>Account Title</th><th>Class</th><th>Debit</th><th>Credit</th></tr></thead>
+            <tbody id="tbTbody"></tbody>
+          </table>
+          <div class="sub-foot" style="padding:12px 16px;border-top:1px solid var(--line);">Total Debits: $1,824,930.00 &nbsp;|&nbsp; Total Credits: $1,824,930.00 &nbsp;|&nbsp; Δ Balanced</div>
+        </div>
+      </div>
+
+      <div class="stmt-tab-content" id="stab-audit" style="display:none;">
+        <div class="card">
+          <table>
+            <thead><tr><th>Timestamp</th><th>Action Type</th><th>Source</th><th>Doc Ref</th><th>Agent</th><th>Verification</th></tr></thead>
+            <tbody id="auditFinTbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <div class="footer-note">Harborline Hotel Inventory OS — wireframe prototype, all data illustrative</div>
+  </div>
+</div>
+
+<script>
+/* ---------------- static config ---------------- */
+const PAGES = {
+  dashboard:{title:"Dashboard Summary", sub:"/ overview"},
+  inventory:{title:"Inventory Grid", sub:"/ inventory / all items"},
+  stockinout:{title:"Stock In / Out", sub:"/ inventory / movement"},
+  housekeeping:{title:"Housekeeping Stores", sub:"/ inventory / housekeeping"},
+  fnb:{title:"Food & Beverage Stores", sub:"/ inventory / f&b"},
+  suppliers:{title:"Suppliers & Vendors", sub:"/ procurement / directory"},
+  po:{title:"Purchase Orders", sub:"/ procurement / orders"},
+  reorder:{title:"Reorder Requests", sub:"/ procurement / auto-draft"},
+  audit:{title:"Audit Logs", sub:"/ oversight / history"},
+  analytics:{title:"Analytics & Reports", sub:"/ oversight / reports"},
+  settings:{title:"System Settings", sub:"/ system / general"},
+  "fin-dashboard":{title:"Financial Dashboard", sub:"/ finance / overview"},
+  "fin-gl":{title:"General Ledger", sub:"/ finance / general ledger"},
+  "fin-matching":{title:"3-Way Matching", sub:"/ finance / procurement"},
+  "fin-payable":{title:"Accounts Payable", sub:"/ finance / payables"},
+  "fin-receivable":{title:"Accounts Receivable", sub:"/ finance / receivables"},
+  "fin-parties":{title:"Party Directory", sub:"/ finance / parties"},
+  "fin-valuation":{title:"Valuation Rules", sub:"/ finance / inventory rules"},
+  "fin-costcenters":{title:"Cost Centers", sub:"/ finance / cost centers"},
+  "fin-assets":{title:"Fixed Assets", sub:"/ finance / assets"},
+  "fin-payroll":{title:"Payroll & VAT", sub:"/ finance / payroll & tax"},
+  "fin-statements":{title:"Financial Statements", sub:"/ finance / reports"},
+};
+
+/* ---------------- nav wiring ---------------- */
+document.querySelectorAll(".nav-item").forEach(item=>{
+  item.addEventListener("click", ()=> switchPage(item.dataset.page));
+});
+function switchPage(key){
+  document.querySelectorAll(".nav-item").forEach(n=>n.classList.toggle("active", n.dataset.page===key));
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  document.getElementById("page-"+key).classList.add("active");
+  document.getElementById("pageTitle").textContent = PAGES[key].title;
+  document.getElementById("pageSub").textContent = PAGES[key].sub;
+  document.getElementById("content").scrollTop = 0;
+}
+switchPage("dashboard");
+
+/* ---------------- barcode strip ---------------- */
+const strip = document.getElementById("barcodeStrip");
+for(let i=0;i<46;i++){
+  const bar=document.createElement("span");
+  const h = 14 + Math.round(Math.random()*26);
+  bar.style.height = h+"px";
+  bar.style.opacity = 0.55+Math.random()*0.45;
+  strip.appendChild(bar);
+}
+
+/* ---------------- movement radio toggle ---------------- */
+document.querySelectorAll("#movementGroup .radio-opt").forEach(opt=>{
+  opt.addEventListener("click", ()=>{
+    document.querySelectorAll("#movementGroup .radio-opt").forEach(o=>o.classList.remove("selected"));
+    opt.classList.add("selected");
+  });
+});
+
+/* ---------------- settings tabs ---------------- */
+document.querySelectorAll("#settingsTabs .tab").forEach(tab=>{
+  tab.addEventListener("click", ()=>{
+    document.querySelectorAll("#settingsTabs .tab").forEach(t=>t.classList.remove("active"));
+    tab.classList.add("active");
+    document.querySelectorAll(".settings-tab-content").forEach(c=>c.style.display="none");
+    document.getElementById("tab-"+tab.dataset.tab).style.display="block";
+  });
+});
+
+/* ---------------- activity feed ---------------- */
+const activities = [
+  ["<b>M. Alvarez</b> logged 24 units removed — Bath Towels","4 min ago"],
+  ["<b>Purchase Order #PO-1042</b> marked Delivered — Coastal Linen","22 min ago"],
+  ["<b>Low stock alert</b> triggered — Shampoo 30ml (F&amp;B)","1 hr ago"],
+  ["<b>R. Haddad</b> added 120 units — Toilet Paper, 2-ply","2 hr ago"],
+  ["<b>Reorder request</b> auto-drafted — 7 items below threshold","3 hr ago"],
+];
+document.getElementById("activityFeed").innerHTML = activities.map(a=>`
+  <div class="activity-item"><span class="activity-dot"></span>
+    <div><div class="activity-text">${a[0]}</div><div class="activity-time">${a[1]}</div></div>
+  </div>`).join("");
+
+/* ---------------- inventory table ---------------- */
+const inv = [
+  ["TWL-0113","Bath Towel, White","Linen",212,80,4.20,"ok"],
+  ["SHM-0087","Shampoo 30ml Bottle","Toiletries",18,50,0.65,"crit"],
+  ["LIN-0245","Queen Bedsheet, White","Linen",84,40,11.90,"ok"],
+  ["TP-0002","Toilet Paper, 2-ply","Paper Goods",340,150,0.55,"ok"],
+  ["SOP-0044","Bar Soap 20g","Toiletries",41,60,0.30,"warn"],
+  ["PIL-0301","Pillowcase, Standard","Linen",96,50,3.40,"ok"],
+  ["MINI-0019","Mini Bar Water 500ml","F&B",22,40,0.80,"warn"],
+];
+document.getElementById("inventoryTbody").innerHTML = inv.map(r=>{
+  const total=(r[3]*r[5]).toFixed(2);
+  const badge = r[6]==="ok"?["ok","In Stock"]:r[6]==="warn"?["warn","Low Stock"]:["crit","Critical"];
+  return `<tr>
+    <td><span class="row-check"></span></td>
+    <td class="mono">${r[0]}</td>
+    <td class="cell-strong">${r[1]}</td>
+    <td>${r[2]}</td>
+    <td class="mono">${r[3]}</td>
+    <td class="mono">${r[4]}</td>
+    <td class="mono">$${r[5].toFixed(2)}</td>
+    <td class="mono">$${total}</td>
+    <td><span class="badge ${badge[0]}"><span class="d"></span>${badge[1]}</span></td>
+    <td><span class="swatch" title="Supplier logo"></span></td>
+    <td><span class="link-action">View Log</span></td>
+  </tr>`;
+}).join("");
+
+/* ---------------- store grids ---------------- */
+function iconSvg(kind){
+  const icons = {
+    towel:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="4" y="4" width="16" height="16" rx="1"/><path d="M4 9h16M9 4v16"/></svg>',
+    sheet:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M4 8c4-3 12-3 16 0v8c-4 3-12 3-16 0z"/></svg>',
+    bottle:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M9 3h6v3l2 2v11a2 2 0 01-2 2H9a2 2 0 01-2-2V8l2-2z"/></svg>',
+    snack:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="5" y="4" width="14" height="16" rx="2"/><path d="M9 9h6M9 13h6"/></svg>',
+    glass:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M6 3h12l-2 13a4 4 0 01-8 0z"/><path d="M9 21h6"/></svg>',
+    box:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M3 7l9-4 9 4-9 4-9-4z"/><path d="M3 7v10l9 4 9-4V7M12 11v10"/></svg>',
+  };
+  return icons[kind]||icons.box;
+}
+const housekeeping = [
+  ["Bath Towels","towel",212,"pcs"],["Hand Towels","towel",188,"pcs"],
+  ["Bed Sheets, Queen","sheet",84,"pcs"],["Bed Sheets, King","sheet",52,"pcs"],
+  ["Pillowcases","sheet",96,"pcs"],["Shampoo 30ml","bottle",18,"pcs"],
+  ["Conditioner 30ml","bottle",26,"pcs"],["Bar Soap","box",41,"pcs"],
+];
+const fnb = [
+  ["Water Bottles 500ml","bottle",22,"pcs"],["Sparkling Water","bottle",34,"pcs"],
+  ["Mixed Nuts Snack","snack",58,"pcs"],["Chocolate Bar","snack",67,"pcs"],
+  ["Red Wine, Mini","glass",14,"btl"],["White Wine, Mini","glass",19,"btl"],
+  ["Whiskey Miniature","glass",9,"btl"],["Coffee Capsules","box",120,"pcs"],
+];
+function renderStoreGrid(elId, items){
+  document.getElementById(elId).innerHTML = items.map((it,i)=>`
+    <div class="card store-card">
+      <div class="store-icon">${iconSvg(it[1])}</div>
+      <div><div class="store-name">${it[0]}</div><div class="store-meta">Unit: ${it[3]}</div></div>
+      <div class="store-stock" id="${elId}-val-${i}">${it[2]}</div>
+      <div class="stepper">
+        <button onclick="stepStore('${elId}',${i},-1)">−</button>
+        <span class="val" id="${elId}-mid-${i}">on hand</span>
+        <button onclick="stepStore('${elId}',${i},1)">+</button>
+      </div>
+    </div>`).join("");
+}
+renderStoreGrid("housekeepingGrid", housekeeping);
+renderStoreGrid("fnbGrid", fnb);
+function stepStore(elId, i, dir){
+  const el = document.getElementById(`${elId}-val-${i}`);
+  let v = parseInt(el.textContent,10) + dir;
+  if(v<0) v=0;
+  el.textContent = v;
+}
+
+/* ---------------- suppliers ---------------- */
+const suppliers = [
+  ["Coastal Linen Supply Co.","orders@coastallinen.example","+1 (555) 014-2231"],
+  ["Amman Hospitality Goods","sales@ahg.example","+962 6 555 0142"],
+  ["Prime Paper & Packaging","hello@primepaper.example","+1 (555) 077-3390"],
+  ["Sunrise Beverage Distributors","team@sunrisebev.example","+1 (555) 902-1187"],
+];
+document.getElementById("supplierGrid").innerHTML = suppliers.map(s=>`
+  <div class="card supplier-card">
+    <div class="supplier-logo"></div>
+    <div>
+      <div class="supplier-name">${s[0]}</div>
+      <div class="supplier-line">${s[1]}</div>
+      <div class="supplier-line">${s[2]}</div>
+      <div style="margin-top:8px;"><span class="link-action">View Contracts</span></div>
+    </div>
+  </div>`).join("");
+
+/* ---------------- purchase orders ---------------- */
+const pos = [
+  ["PO-1042","Coastal Linen Supply Co.","24 Jul 2026","6 items","$1,240.00","ok","Delivered"],
+  ["PO-1043","Prime Paper & Packaging","26 Jul 2026","3 items","$412.50","warn","Pending"],
+  ["PO-1044","Sunrise Beverage Distributors","28 Jul 2026","9 items","$2,015.30","warn","Pending"],
+  ["PO-1045","Amman Hospitality Goods","29 Jul 2026","2 items","$188.00","crit","Cancelled"],
+];
+document.getElementById("poTbody").innerHTML = pos.map(p=>`
+  <tr>
+    <td class="mono cell-strong">${p[0]}</td><td>${p[1]}</td><td class="mono">${p[2]}</td>
+    <td>${p[3]}</td><td class="mono">${p[4]}</td>
+    <td><span class="badge ${p[5]}"><span class="d"></span>${p[6]}</span></td>
+    <td><span class="link-action">Open</span></td>
+  </tr>`).join("");
+
+/* ---------------- reorder ---------------- */
+const reorder = [
+  ["Shampoo 30ml Bottle",18,50,60],
+  ["Mini Bar Water 500ml",22,40,50],
+  ["Bar Soap 20g",41,60,40],
+  ["Conditioner 30ml",26,50,40],
+];
+document.getElementById("reorderTbody").innerHTML = reorder.map(r=>`
+  <tr><td class="cell-strong">${r[0]}</td><td class="mono">${r[1]}</td><td class="mono">${r[2]}</td><td class="mono">${r[3]}</td></tr>
+`).join("");
+
+/* ---------------- audit ---------------- */
+const audit = [
+  ["30 Jul 2026, 09:12","Removed","Bath Towel, White","-24","Housekeeping L2","M. Alvarez"],
+  ["30 Jul 2026, 08:40","Adjusted","Shampoo 30ml Bottle","-2 (damaged)","F&B Store","R. Haddad"],
+  ["29 Jul 2026, 17:05","Added","Toilet Paper, 2-ply","+120","Main Warehouse","M. Alvarez"],
+  ["29 Jul 2026, 15:22","Removed","Queen Bedsheet, White","-8","Housekeeping L1","S. Nasser"],
+  ["29 Jul 2026, 11:50","Added","Mixed Nuts Snack","+60","F&B Store","R. Haddad"],
+];
+document.getElementById("auditTbody").innerHTML = audit.map(a=>`
+  <tr><td class="mono">${a[0]}</td><td>${a[1]}</td><td class="cell-strong">${a[2]}</td>
+  <td class="mono">${a[3]}</td><td>${a[4]}</td><td>${a[5]}</td></tr>`).join("");
+
+/* ---------------- waste table ---------------- */
+const waste = [
+  ["Shampoo 30ml Bottle","Toiletries",34,"$22.10"],
+  ["Mini Bar Water 500ml","F&B",21,"$16.80"],
+  ["Bar Soap 20g","Toiletries",19,"$5.70"],
+];
+document.getElementById("wasteTbody").innerHTML = waste.map(w=>`
+  <tr><td class="cell-strong">${w[0]}</td><td>${w[1]}</td><td class="mono">${w[2]}</td><td class="mono">${w[3]}</td></tr>`).join("");
+
+/* ---------------- users ---------------- */
+const users = [
+  ["Maria Alvarez","Store Manager","Housekeeping + F&B","ok"],
+  ["Rami Haddad","Storekeeper","F&B only","ok"],
+  ["Sara Nasser","Storekeeper","Housekeeping only","ok"],
+  ["Faisal Deeb","Administrator","All Stores","ok"],
+];
+document.getElementById("usersTbody").innerHTML = users.map(u=>`
+  <tr><td class="cell-strong">${u[0]}</td><td>${u[1]}</td><td>${u[2]}</td>
+  <td><span class="badge ok"><span class="d"></span>Active</span></td></tr>`).join("");
+
+/* ==========================================================
+   FINANCE MODULE — data, rendering, tab wiring
+   ========================================================== */
+
+/* ---------------- GL activity feed (fin dashboard) ---------------- */
+const finActivities = [
+  ["<b>GRN-2026-004</b> received 100x Bath Towels — auto-posted <b>JV-2026-00412</b> (+$1,250.00)","5m ago"],
+  ["<b>SO-DEL-901</b> dispatched 50x Linen sets — auto-posted <b>JV-2026-00413</b> ($625.00 COGS)","18m ago"],
+  ["<b>BILL-2026-089</b> matched to PO-2026-001 — $50.00 PPV allocated to Acct 5120","45m ago"],
+  ["<b>REQ-2026-081</b> issued $1,240.00 supplies to Housekeeping CC-100","2h ago"],
+  ["<b>INV-2026-0412</b> — $18,500.00 received from Al-Madina Trading","3h ago"],
+];
+document.getElementById("finActivityFeed").innerHTML = finActivities.map(a=>`
+  <div class="activity-item"><span class="activity-dot"></span>
+    <div><div class="activity-text">${a[0]}</div><div class="activity-time">${a[1]}</div></div>
+  </div>`).join("");
+
+/* ---------------- General Ledger ---------------- */
+const glRows = [
+  ["JV-2026-00412","15 Aug 2026","INVENTORY","GRN-2026-004","GRN receipt — 100x Bath Towels, Global Linens","$1,250.00","$1,250.00","ok",
+    [["13110","Inventory – Linens & Textiles","$1,250.00","$0.00"],["20200","GR/IR Interim Clearing","$0.00","$1,250.00"]]],
+  ["JV-2026-00413","15 Aug 2026","ACCOUNTS RECEIVABLE","SO-DEL-901","COGS relief — 50x Linen sets, Booking #2319","$625.00","$625.00","ok",
+    [["50110","COGS – Linens","$625.00","$0.00"],["13110","Inventory – Linens & Textiles","$0.00","$625.00"]]],
+  ["JV-2026-00411","14 Aug 2026","ACCOUNTS PAYABLE","BILL-2026-089","3-way match PPV — Global Linens","$1,365.00","$1,365.00","ok",
+    [["20200","GR/IR Interim Clearing","$1,250.00","$0.00"],["51200","Purchase Price Variance","$50.00","$0.00"],["21010","Trade Accounts Payable","$0.00","$1,365.00"]]],
+  ["JV-2026-00388","14 Aug 2026","MANUAL","REQ-2026-081","Housekeeping supplies requisition, CC-100","$1,240.00","$1,240.00","ok",
+    [["61200","Housekeeping Supplies Expense","$1,240.00","$0.00"],["13110","Inventory Asset","$0.00","$1,240.00"]]],
+  ["JV-2026-00405","13 Aug 2026","PAYROLL","PAY-2026-08","August payroll batch, 42 staff","$148,500.00","$148,500.00","ok",
+    [["63100","Salaries & Wages","$148,500.00","$0.00"],["22100","Accrued Wages Payable","$0.00","$148,500.00"]]],
+  ["JV-2026-0143","12 Aug 2026","MANUAL","—","Draft — pending controller sign-off","$18,200.00","$0.00","crit",
+    [["59000","Suspense / Unposted","$18,200.00","$0.00"]]],
+];
+document.getElementById("glTbody").innerHTML = glRows.map((r,i)=>`
+  <tr class="accordion-toggle" onclick="toggleGl(${i})">
+    <td><span class="link-action">▾</span></td>
+    <td class="mono cell-strong">${r[0]}</td><td class="mono">${r[1]}</td>
+    <td><span class="tag-pill">${r[2]}</span></td><td class="mono">${r[3]}</td>
+    <td>${r[4]}</td><td class="mono cell-strong">${r[5]}</td><td class="mono cell-strong">${r[6]}</td>
+    <td><span class="badge ${r[7]}"><span class="d"></span>${r[7]==='ok'?'Balanced':'Unbalanced'}</span></td>
+  </tr>
+  <tr class="sub-table" id="gl-sub-${i}"><td colspan="9"><div class="sub-inner">
+    <table><thead><tr><th>Account</th><th>Title</th><th>Debit</th><th>Credit</th></tr></thead>
+    <tbody>${r[8].map(l=>`<tr><td class="mono">${l[0]}</td><td>${l[1]}</td><td class="mono">${l[2]}</td><td class="mono">${l[3]}</td></tr>`).join("")}</tbody></table>
+  </div></td></tr>`).join("");
+function toggleGl(i){ document.getElementById(`gl-sub-${i}`).classList.toggle("open"); }
+document.getElementById("gl-sub-0").classList.add("open");
+
+/* ---------------- 3-Way Matching ---------------- */
+const matches = [
+  ["ok","PO-2026-001","GRN-2026-004","BILL-2026-089","Global Linens Co.","LIN-001 Bath Towel","$0.00","Within 1.2%"],
+  ["warn","PO-2026-002","GRN-2026-005","BILL-2026-090","CleanPro Solutions","CLN-010 Bleach 5L","+$50.00","Exceeds 2.0%"],
+  ["crit","PO-2026-003","GRN-2026-006","BILL-2026-091","Global Linens Co.","LIN-004 Pillowcase","+$120.00 Qty","Hold Payment"],
+  ["ok","PO-2026-004","GRN-2026-007","BILL-2026-092","Apex Hospitality Supply","EQP-018 Ice Machine","$0.00","Within 0.4%"],
+  ["warn","PO-2026-005","—","—","Sunrise Beverage Distributors","FNB-022 Mixed Nuts","—","Unbilled GRN"],
+];
+document.getElementById("matchTbody").innerHTML = matches.map(m=>`
+  <tr><td><span class="badge ${m[0]}"><span class="d"></span>${m[0]==='ok'?'Perfect':m[0]==='warn'?'PPV':'Qty Hold'}</span></td>
+  <td class="mono cell-strong">${m[1]}</td><td class="mono">${m[2]}</td><td class="mono">${m[3]}</td>
+  <td>${m[4]}</td><td>${m[5]}</td><td class="mono">${m[6]}</td>
+  <td><span class="badge ${m[0]}"><span class="d"></span>${m[7]}</span></td>
+  <td><span class="link-action">Inspect</span></td></tr>`).join("");
+
+/* ---------------- Accounts Payable ---------------- */
+const bills = [
+  ["BILL-2026-0194","Global Linens Co.","Inventory (13110)","20 Aug 2026","$4,850.00","ok","Scheduled"],
+  ["BILL-2026-0195","CleanPro Solutions","Cleaning Supplies (61300)","18 Aug 2026","$1,120.00","warn","Pending Approval"],
+  ["BILL-2026-0196","Amazon Web Services","Cloud SaaS (62100)","22 Aug 2026","$680.00","ok","Scheduled"],
+  ["BILL-2026-0197","Apex Hospitality Supply","Equipment (14200)","12 Aug 2026","$9,400.00","crit","Overdue"],
+  ["BILL-2026-0198","Sunrise Beverage Distributors","F&B (13120)","28 Aug 2026","$2,015.30","ok","Paid"],
+];
+document.getElementById("billTbody").innerHTML = bills.map(b=>`
+  <tr><td><span class="row-check"></span></td><td class="mono cell-strong">${b[0]}</td><td>${b[1]}</td>
+  <td><span class="tag-pill">${b[2]}</span></td><td class="mono">${b[3]}</td><td class="mono cell-strong">${b[4]}</td>
+  <td><span class="badge ${b[5]}"><span class="d"></span>${b[5]==='ok'?'3-Way Matched':b[5]==='warn'?'PPV Approved':'Direct Opex'}</span></td>
+  <td><span class="badge ${b[6]==='Overdue'?'crit':b[6]==='Paid'?'ok':'warn'}"><span class="d"></span>${b[6]}</span></td>
+  <td><span class="link-action">Pay</span></td></tr>`).join("");
+
+/* ---------------- Accounts Receivable ---------------- */
+const invoices = [
+  ["INV-2026-0412","SO-2026-042 · Booking #2319","Al-Madina Trading LLC","31 Aug 2026","$16,800.00","$0.00","ok"],
+  ["INV-2026-0413","SO-2026-043","Apex Technologies","25 Aug 2026","$8,400.00","$8,400.00","warn"],
+  ["INV-2026-0414","Room 118 Booking","David Smith","10 Aug 2026","$1,260.00","$1,260.00","crit"],
+  ["INV-2026-0415","SO-2026-045","Coastal Resorts Group","05 Sep 2026","$24,800.00","$24,800.00","info"],
+  ["INV-2026-0416","SO-2026-041","Al-Madina Trading LLC","30 Jul 2026","$5,200.00","$0.00","ok"],
+];
+document.getElementById("invTbody").innerHTML = invoices.map(v=>`
+  <tr><td><span class="row-check"></span></td><td class="mono cell-strong">${v[0]}</td><td class="mono">${v[1]}</td>
+  <td>${v[2]}</td><td class="mono">${v[3]}</td><td class="mono cell-strong">${v[4]}</td><td class="mono cell-strong">${v[5]}</td>
+  <td><span class="badge ${v[6]==='info'?'':v[6]}"><span class="d"></span>${v[6]==='ok'?'Paid':v[6]==='warn'?'Pending':v[6]==='crit'?'Overdue':'Ready from SO'}</span></td>
+  <td><span class="link-action">Open</span></td></tr>`).join("");
+
+/* ---------------- Party Directory ---------------- */
+const parties = [
+  ["PTY-00042","Global Linens & Hospitality Supply","Vendor","Net 30","$0.00","$4,850.00","-$4,850.00"],
+  ["PTY-00101","Al-Madina Trading LLC","Customer","Net 30","$22,000.00","$0.00","+$22,000.00"],
+  ["PTY-00088","Apex Technologies","Customer + Vendor","Net 15","$8,400.00","$680.00","+$7,720.00"],
+  ["PTY-00019","CleanPro Solutions","Vendor","COD","$0.00","$1,120.00","-$1,120.00"],
+  ["PTY-00133","Coastal Resorts Group","Customer","Net 30","$24,800.00","$0.00","+$24,800.00"],
+];
+document.getElementById("partyTbody").innerHTML = parties.map(p=>`
+  <tr><td class="mono cell-strong">${p[0]}</td><td>${p[1]}</td>
+  <td><div class="badge-row">${p[2].includes('Customer')?'<span class="tag-pill solid">Customer</span>':''}${p[2].includes('Vendor')?'<span class="tag-pill">Vendor</span>':''}</div></td>
+  <td><span class="tag-pill">${p[3]}</span></td><td class="mono">${p[4]}</td><td class="mono">${p[5]}</td>
+  <td class="mono cell-strong">${p[6]}</td><td><span class="link-action">Profile</span></td></tr>`).join("");
+
+/* ---------------- Valuation Rules ---------------- */
+const valRules = [
+  ["Linens & Textiles","14 SKUs","AVCO","13110","50110","51950"],
+  ["Food & Beverage","48 SKUs","FIFO","13120","50120","51951"],
+  ["Cleaning Supplies","22 SKUs","AVCO","13130","50130","51952"],
+  ["Guest Toiletries","19 SKUs","AVCO","13140","50140","51953"],
+  ["Operating Equipment","9 SKUs","Standard Cost","13150","50150","51954"],
+  ["Maintenance & Repairs","16 SKUs","AVCO","13160","50160","51955"],
+];
+document.getElementById("valTbody").innerHTML = valRules.map(v=>`
+  <tr><td class="cell-strong">${v[0]}</td><td class="mono">${v[1]}</td><td><span class="tag-pill">${v[2]}</span></td>
+  <td class="mono">${v[3]}</td><td class="mono">${v[4]}</td><td class="mono">${v[5]}</td>
+  <td><span class="link-action">Edit</span></td></tr>`).join("");
+
+/* ---------------- Cost Centers ---------------- */
+const costCenters = [
+  ["Housekeeping","CC-100","$15,000.00","$11,200.00",74.7,false],
+  ["F&B Kitchen","CC-200","$18,000.00","$18,720.00",104.0,true],
+  ["Facilities & Maintenance","CC-300","$8,000.00","$5,400.00",67.5,false],
+  ["Front Office","CC-400","$4,000.00","$2,100.00",52.5,false],
+];
+document.getElementById("costCenterGrid").innerHTML = costCenters.map(c=>`
+  <div class="card budget-card">
+    <div class="budget-top"><span>${c[0]}</span><span class="mono" style="font-weight:400;color:var(--ink-faint);">${c[1]}</span></div>
+    <div class="progress-track"><div class="progress-fill${c[5]?' over':''}" style="width:${Math.min(c[4],100)}%;"></div></div>
+    <div class="budget-meta"><span>${c[4]}% used</span><span>${c[3]} / ${c[2]}</span></div>
+  </div>`).join("");
+
+const requisitions = [
+  ["REQ-2026-081","14 Aug 2026","Housekeeping (CC-100)","Aisha T.","$1,240.00","JV-2026-00388"],
+  ["REQ-2026-080","14 Aug 2026","F&B Kitchen (CC-200)","Marco D.","$2,860.00","JV-2026-00387"],
+  ["REQ-2026-079","13 Aug 2026","Facilities (CC-300)","Omar S.","$540.00","JV-2026-00381"],
+  ["REQ-2026-078","13 Aug 2026","Front Office (CC-400)","Lina K.","$210.00","JV-2026-00379"],
+];
+document.getElementById("reqTbody").innerHTML = requisitions.map(r=>`
+  <tr><td class="mono cell-strong">${r[0]}</td><td class="mono">${r[1]}</td><td><span class="tag-pill">${r[2]}</span></td>
+  <td>${r[3]}</td><td class="mono cell-strong">${r[4]}</td><td class="mono">${r[5]}</td>
+  <td><span class="link-action">View</span></td></tr>`).join("");
+
+/* ---------------- Fixed Assets ---------------- */
+const assets = [
+  ["FA-2024-0012","Commercial Tunnel Washer 50kg","Laundry Equipment","15 Jan 2024","8 Years","$48,000.00","$32,500.00"],
+  ["FA-2023-0004","Dell PowerEdge Server Cluster","IT Hardware","02 Mar 2023","5 Years","$22,000.00","$9,800.00"],
+  ["FA-2022-0021","HVAC Chiller Unit A","HVAC & Mechanical","20 Jun 2022","12 Years","$65,000.00","$47,100.00"],
+  ["FA-2024-0031","Front Office Reception Desk","Furniture","10 Sep 2024","10 Years","$6,200.00","$5,270.00"],
+];
+document.getElementById("assetTbody").innerHTML = assets.map(a=>`
+  <tr><td class="mono cell-strong">${a[0]}</td><td>${a[1]}</td><td><span class="tag-pill">${a[2]}</span></td>
+  <td class="mono">${a[3]}</td><td class="mono">${a[4]}</td><td class="mono">${a[5]}</td><td class="mono cell-strong">${a[6]}</td>
+  <td><span class="link-action">Schedule</span></td></tr>`).join("");
+
+/* ---------------- Payroll ---------------- */
+const payroll = [
+  ["EMP-0104","Alex Morgan — Executive Chef","Kitchen (CC-200)","$8,000.00","$1,240.00","$6,760.00","ok"],
+  ["EMP-0055","Aisha T. — Housekeeping Lead","Housekeeping (CC-100)","$5,200.00","$780.00","$4,420.00","ok"],
+  ["EMP-0089","Lina K. — Front Desk Agent","Front Office (CC-400)","$3,600.00","$540.00","$3,060.00","warn"],
+  ["EMP-0031","Omar S. — Maintenance Tech","Facilities (CC-300)","$4,100.00","$615.00","$3,485.00","ok"],
+];
+document.getElementById("payrollTbody").innerHTML = payroll.map(p=>`
+  <tr><td class="mono">${p[0]}</td><td class="cell-strong">${p[1]}</td><td><span class="tag-pill">${p[2]}</span></td>
+  <td class="mono">${p[3]}</td><td class="mono">${p[4]}</td><td class="mono cell-strong">${p[5]}</td>
+  <td><span class="badge ${p[6]}"><span class="d"></span>${p[6]==='ok'?'WPS Verified':'Pending'}</span></td>
+  <td><span class="link-action">Payslip</span></td></tr>`).join("");
+
+const vatLog = [
+  ["12 Aug 2026","INV-2026-0410","Al-Madina Trading LLC","5% Output","$16,000.00","$800.00"],
+  ["10 Aug 2026","BILL-2026-089","Global Linens Co.","5% Input","$1,250.00","-$62.50"],
+  ["08 Aug 2026","INV-2026-0408","Apex Technologies","5% Output","$8,000.00","$400.00"],
+  ["05 Aug 2026","BILL-2026-085","CleanPro Solutions","5% Input","$980.00","-$49.00"],
+];
+document.getElementById("vatTbody").innerHTML = vatLog.map(v=>`
+  <tr><td class="mono">${v[0]}</td><td class="mono cell-strong">${v[1]}</td><td>${v[2]}</td>
+  <td><span class="tag-pill">${v[3]}</span></td><td class="mono">${v[4]}</td><td class="mono">${v[5]}</td></tr>`).join("");
+
+document.querySelectorAll("#payrollTabs .tab").forEach(tab=>{
+  tab.addEventListener("click", ()=>{
+    document.querySelectorAll("#payrollTabs .tab").forEach(t=>t.classList.remove("active"));
+    tab.classList.add("active");
+    document.querySelectorAll(".payroll-tab-content").forEach(c=>c.style.display="none");
+    document.getElementById("ptab-"+tab.dataset.ptab).style.display="block";
+  });
+});
+
+/* ---------------- Financial Statements ---------------- */
+const trialBalance = [
+  ["10100","Operating Cash — Chase","Asset","$318,950.00","$0.00"],
+  ["10110","Operating Cash — HSBC","Asset","$110,000.00","$0.00"],
+  ["11100","Accounts Receivable","Asset","$84,120.00","$0.00"],
+  ["13110","Inventory — Linens","Asset","$48,200.00","$0.00"],
+  ["15100","Property, Plant & Equipment","Asset","$450,000.00","$0.00"],
+  ["15200","Accumulated Depreciation","Contra-Asset","$0.00","$168,200.00"],
+  ["21010","Accounts Payable","Liability","$0.00","$36,890.00"],
+  ["20200","GR/IR Interim Clearing","Liability","$0.00","$18,000.00"],
+  ["30000","Share Capital","Equity","$0.00","$400,000.00"],
+  ["40100","Sales Revenue","Revenue","$0.00","$620,000.00"],
+  ["50110","COGS — Linens","Expense","$42,100.00","$0.00"],
+  ["63100","Salaries & Wages","Expense","$148,500.00","$0.00"],
+];
+document.getElementById("tbTbody").innerHTML = trialBalance.map(t=>`
+  <tr><td class="mono cell-strong">${t[0]}</td><td>${t[1]}</td><td><span class="tag-pill">${t[2]}</span></td>
+  <td class="mono">${t[3]}</td><td class="mono">${t[4]}</td></tr>`).join("");
+
+const auditFin = [
+  ["15 Aug 2026 09:12","STOCK_RECEIPT","INVENTORY","GRN-2026-004","System (Auto-GL)","0x8f2c…a91"],
+  ["15 Aug 2026 08:40","PO_3WAY_MATCHED","AP","BILL-2026-089","Sarah Jenkins, CPA","0x1b7d…44e"],
+  ["14 Aug 2026 17:05","INVOICE_GENERATED","AR","INV-2026-0412","System (Auto-GL)","0x9a03…c12"],
+  ["14 Aug 2026 15:22","VALUATION_RULE_CHANGED","GL","CAT-LIN-001","Sarah Jenkins, CPA","0x22e8…7f0"],
+  ["13 Aug 2026 11:50","PAYROLL_EXECUTED","PAYROLL","PAY-2026-08","System (Auto-GL)","0x66ab…d33"],
+];
+document.getElementById("auditFinTbody").innerHTML = auditFin.map(a=>`
+  <tr><td class="mono">${a[0]}</td><td>${a[1]}</td><td><span class="tag-pill">${a[2]}</span></td>
+  <td class="mono">${a[3]}</td><td>${a[4]}</td>
+  <td class="mono">${a[5]} <span class="badge ok" style="margin-left:4px;"><span class="d"></span>Verified</span></td></tr>`).join("");
+
+document.querySelectorAll("#stmtTabs .tab").forEach(tab=>{
+  tab.addEventListener("click", ()=>{
+    document.querySelectorAll("#stmtTabs .tab").forEach(t=>t.classList.remove("active"));
+    tab.classList.add("active");
+    document.querySelectorAll(".stmt-tab-content").forEach(c=>c.style.display="none");
+    document.getElementById("stab-"+tab.dataset.stab).style.display="block";
+  });
+});
+
+/* ---------------- charts (inventory + finance) ---------------- */
+try{
+  Chart.defaults.color = "#6b7075";
+  Chart.defaults.font.family = "'IBM Plex Sans', sans-serif";
+  Chart.defaults.font.size = 11;
+
+  new Chart(document.getElementById("usageTrendChart"), {
+    type:"line",
+    data:{
+      labels:Array.from({length:14},(_,i)=>`D${i+1}`),
+      datasets:[{
+        data:[40,44,38,52,49,60,58,55,62,57,66,70,64,72],
+        borderColor:"#26292c", backgroundColor:"rgba(38,41,44,0.06)",
+        fill:true, tension:.35, pointRadius:0, borderWidth:2
+      }]
+    },
+    options:{plugins:{legend:{display:false}}, scales:{x:{grid:{display:false}}, y:{grid:{color:"#e2e5e8"}}}}
+  });
+
+  new Chart(document.getElementById("usageBarChart"), {
+    type:"bar",
+    data:{
+      labels:["Linen","Toiletries","Paper","F&B","Cleaning","Misc"],
+      datasets:[{data:[320,410,180,260,150,90], backgroundColor:"#3a3d40", borderRadius:3, maxBarThickness:34}]
+    },
+    options:{plugins:{legend:{display:false}}, scales:{x:{grid:{display:false}}, y:{grid:{color:"#e2e5e8"}}}}
+  });
+
+  new Chart(document.getElementById("valuationPie"), {
+    type:"doughnut",
+    data:{
+      labels:["Linen","Toiletries","Paper Goods","F&B","Other"],
+      datasets:[{data:[38,22,14,18,8], backgroundColor:["#26292c","#4c5054","#6b7075","#9aa0a6","#c9cdd1"], borderColor:"#fff", borderWidth:2}]
+    },
+    options:{plugins:{legend:{position:"bottom", labels:{boxWidth:10, padding:12}}}}
+  });
+
+  new Chart(document.getElementById("finCashChart"), {
+    type:"line",
+    data:{
+      labels:Array.from({length:14},(_,i)=>`D${i+1}`),
+      datasets:[
+        {label:"Cash Inflow", data:[12,15,11,18,16,20,19,17,22,19,24,26,23,25].map(v=>v*1000), borderColor:"#26292c", backgroundColor:"rgba(38,41,44,0.06)", fill:true, tension:.35, pointRadius:0, borderWidth:2},
+        {label:"Cash Outflow", data:[9,10,12,9,11,10,13,12,10,14,12,11,13,12].map(v=>v*1000), borderColor:"#9aa0a6", borderDash:[4,3], fill:false, tension:.35, pointRadius:0, borderWidth:2},
+      ]
+    },
+    options:{plugins:{legend:{position:"bottom", labels:{boxWidth:10, padding:12}}}, scales:{x:{grid:{display:false}}, y:{grid:{color:"#e2e5e8"}}}}
+  });
+
+  new Chart(document.getElementById("finValuationDonut"), {
+    type:"doughnut",
+    data:{
+      labels:["Equipment","Linens","F&B","MRO","Toiletries"],
+      datasets:[{data:[29.1,25.8,18.5,16.6,10.0], backgroundColor:["#26292c","#3a3d40","#6b7075","#9aa0a6","#c9cdd1"], borderColor:"#fff", borderWidth:2}]
+    },
+    options:{plugins:{legend:{position:"bottom", labels:{boxWidth:10, padding:12}}}}
+  });
+}catch(e){ console.warn("Chart.js unavailable — chart placeholders left blank", e); }
+</script>
+</body>
+</html>

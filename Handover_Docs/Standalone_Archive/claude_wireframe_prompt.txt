@@ -1,0 +1,508 @@
+================================================================================
+CLAUDE ARTIFACT PROMPT: QUICKBOX FINANCIAL MANAGEMENT SYSTEM (STANDALONE)
+Interactive React 19 UI Wireframes & High-Density Enterprise Accounting Workstation
+================================================================================
+
+[COPY & PASTE THE ENTIRE PROMPT BELOW DIRECTLY INTO CLAUDE]
+
+--------------------------------------------------------------------------------
+PROMPT BEGINS
+--------------------------------------------------------------------------------
+
+You are an elite Principal Enterprise Frontend Architect and Senior UI/UX Product Designer specializing in mission-critical financial ERP systems, double-entry accounting software (e.g., SAP S/4HANA, Oracle NetSuite, Workday Financials, QuickBooks Enterprise), and high-density React web applications.
+
+Your mission is to generate a comprehensive, fully-interactive, single-file React 19 application wireframe artifact using Claude Artifacts for the "QuickBox Financial Management System" (QFMS). The application must serve as a high-density, professional financial workstation that delivers an end-to-end accounting workflow across 10 distinct core views.
+
+================================================================================
+1. CORE ARCHITECTURAL REQUIREMENTS & CONSTRAINTS
+================================================================================
+
+1.1 Standalone System Boundary
+- The QuickBox Financial Management System is a strictly standalone financial platform.
+- It has ZERO dependencies on inventory, warehouse stock, physical SKUs, linen/hospitality rooms, supply logistics, or hotel reservation models.
+- All entities, calculations, tables, and workflows represent pure financial accounting constructs: General Ledger, Chart of Accounts, Double-Entry Journal Vouchers, Invoices (AR), Bills & Expenses (AP), Payroll & WPS Tax Withholdings, VAT / Regulatory Compliance, Fixed Asset Depreciation Schedules, Bank Statement Feeds & 2-Way Reconciliation, and Formal IFRS/GAAP Financial Statements.
+
+1.2 Technical Stack Specification
+- Framework: React 19 (Functional Components, React Hooks: `useState`, `useMemo`, `useCallback`, `useReducer`, `useRef`, `useEffect`).
+- Styling: Tailwind CSS utility classes paired with custom CSS custom properties (design tokens) for pixel-perfect density, crisp 1px borders, and elevated card aesthetics.
+- Iconography: Lucide React (or Phosphor Icons React) icons across navigation, action buttons, table menus, metric cards, and status badges.
+- Charts & Visualizations: Custom inline responsive SVG charts (smooth continuous area curves, dual-axis bar charts, donut distribution graphs, horizontal aging bars) with interactive node hover states, tooltips, and legends.
+- Interactivity & State Management: In-memory stateful React implementation with instant view switching, dynamic multi-tier filtering, real-time search, interactive modal dialogs, slide-over drawers, expandable sub-tables (accordions), live debit/credit balancing validation, and floating alert toast notifications.
+- Language: 100% English across all UI labels, code, mock data, and tooltips.
+
+1.3 Global Design Tokens & Theme Variables
+The UI must implement a clean, light-mode financial theme with high information density, subtle borders, and distinct semantic status colors:
+- Background Canvas: `#f3f4f6` (Cool Grey 100)
+- Surface Background (Main Cards/Tables): `#ffffff` (Pure White)
+- Sidebar Background: `#f8faf9` (Soft Mint / Light Grey)
+- Primary Brand Accent: `#5eb160` (Emerald Accounting Green) / Hover: `#4e9e50`
+- Primary Brand Navy: `#0f172a` (Deep Slate / Navy 900)
+- Border Subtle: `#e5e7eb` (Cool Grey 200) / Border Highlight: `#d1d5db`
+- Typography:
+  - Base UI Font: Inter / system-ui, -apple-system, sans-serif (11px to 14px for high density)
+  - Monospace Data Font: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace (used for Account Codes, Voucher IDs, Invoice Numbers, Currency Amounts, and Dates)
+- Semantic Status Colors:
+  - Success (Paid / Balanced / Reconciled / Active): Background `#dcfce7`, Text `#16a34a`, Dot `#22c55e`
+  - Warning (Pending / Scheduled / Draft / Due Soon): Background `#fef9c3`, Text `#ca8a04`, Dot `#eab308`
+  - Danger (Overdue / Unbalanced / High Discrepancy): Background `#fee2e2`, Text `#dc2626`, Dot `#ef4444`
+  - Info (Processing / Capitalized / Non-Operating): Background `#e0e7ff`, Text `#4f46e5`, Dot `#6366f1`
+
+================================================================================
+2. GLOBAL APPLICATION SHELL & LAYOUT GEOMETRY
+================================================================================
+
+The application shell consists of four synchronized layout components:
+
+2.1 Left Navigation Sidebar (Fixed 240px Width)
+- Header Branding: Financial icon (`Landmark` or `Wallet`) + "QuickBox" bold wordmark with a small "FINANCE" green pill tag (`bg-emerald-100 text-emerald-800 text-[10px] font-bold px-1.5 py-0.5 rounded`).
+- Pinned Action: "Executive Dashboard" nav button with active green border indicator (`border-l-4 border-emerald-600 bg-emerald-50 text-emerald-900 font-semibold`).
+- Navigation Section Dividers (Tracked uppercase 9px text, `text-gray-400 font-bold tracking-wider px-3 pt-3 pb-1`):
+  * SECTION 1: "GENERAL LEDGER & CORE"
+    - General Ledger & COA (Icon: `BookOpen`) [Badge: "68 Accts"]
+    - Journal Entries (Icon: `FileText`) [Badge: "100% Balanced", green]
+  * SECTION 2: "SALES & PURCHASING"
+    - Invoicing & Accounts Receivable (Icon: `Receipt`) [Badge: "4 Overdue", red]
+    - Bills & Accounts Payable (Icon: `CreditCard`) [Badge: "6 Due", yellow]
+  * SECTION 3: "WORKFORCE & ASSETS"
+    - Payroll & Compensation (Icon: `Users`) [Badge: "42 Staff"]
+    - Tax & VAT Compliance (Icon: `ShieldCheck`) [Badge: "14 Days", blue]
+    - Fixed Assets Register (Icon: `Building2`) [Badge: "$281k NBV"]
+  * SECTION 4: "TREASURY & REPORTING"
+    - Banking & Reconciliation (Icon: `Landmark`) [Badge: "97.8% Reconciled"]
+    - Financial Statements & Reports (Icon: `BarChart3`) [Badge: "IFRS / GAAP"]
+- Pinned Footer Section: Settings & Fiscal Period Selector (Icon: `Settings`) with current active fiscal year ("FY 2026 - Q3") and user profile pill.
+
+2.2 Topbar Control Header (Height 58px, Sticky Top)
+- Global Search Input: 320px wide rounded-full search bar (`bg-gray-50 border border-gray-200 text-xs px-3 py-1.5 flex items-center gap-2`) with search icon and keyboard shortcut badge (`Ctrl + K`) allowing instant search across accounts, invoices, vouchers, and vendors.
+- Period Quick Switcher: Dropdown selector (Options: "August 2026 (Active)", "Q3-2026", "YTD 2026", "FY 2025").
+- Base Currency Indicator: Pill displaying "USD ($) - Base Currency".
+- Quick Action Button: Emerald dropdown button "+ New Transaction" revealing:
+  * "New Journal Entry"
+  * "Create Customer Invoice"
+  * "Record Vendor Bill"
+  * "Execute Payroll Run"
+- Notification Bell Icon: Bell icon with animated pulsing red badge (`pulse-ring`) indicating active financial alerts (e.g., 2 low-liquidity accounts, 4 overdue invoices). Clicking opens a notification drawer.
+- User Profile Pill: Avatar thumbnail ("Sarah Jenkins, CPA"), title "Senior Controller", and dropdown chevron.
+
+2.3 Floating Toast Financial Alert System (Top-Right Viewport Overlay)
+- Real-time notification card anchored at top-right (`top-4 right-4 z-50 max-w-md shadow-2xl rounded-xl border border-amber-200 bg-white p-4`).
+- Content:
+  * Warning icon in glowing yellow circle (`AlertTriangle`).
+  * Header: "Liquidity & Compliance Alert".
+  * Description: "Operating cash reserve dropped below $25,000 threshold ($18,450 current). 4 invoices totaling $12,400.00 have passed Net 30 terms."
+  * Action Buttons: "Review Accounts" (switches to GL/AR view) and "Dismiss".
+
+2.4 Main Scrollable Content Panel
+- Fluid width (`calc(100vw - 240px)`), background `#ffffff` with rounded inner corners, padding `p-6`, and independent smooth scrolling.
+
+================================================================================
+3. DETAILED UI SPECIFICATIONS FOR ALL 10 DISTINCT FRONTEND VIEWS
+================================================================================
+
+--------------------------------------------------------------------------------
+VIEW 1: EXECUTIVE FINANCIAL DASHBOARD (`/dashboard`)
+--------------------------------------------------------------------------------
+1. Objective: Deliver an executive financial cockpit for CFOs and Controllers to monitor liquidity, cash runway, gross/net margins, working capital, and urgent compliance items.
+2. Layout Geometry:
+   - Row 1: Page Title Header ("Financial Performance Overview") + Period Selector ("Aug 2026") + "Export Board Report (PDF)" button.
+   - Row 2: 4-Column KPI Metric Cards Grid.
+   - Row 3: 2-Column Split View (Left 65%: 30-Day Operating Cash Flow Curve; Right 35%: Working Capital & Liquidity Breakdown).
+   - Row 4: 2-Column Split View (Left 50%: AR vs. AP Aging Distribution Chart; Right 50%: Recent High-Value Financial Activity Stream).
+3. KPI Metric Cards (4 Cards):
+   * Card 1 (Cash & Liquidity): Title: "Total Cash & Bank Balance", Value: "$428,950.00", Trend: "+4.2% vs last month" (green up arrow), Icon: Landmark, Subtext: "3 Active Bank Accounts".
+   * Card 2 (Accounts Receivable): Title: "Outstanding Receivables (AR)", Value: "$84,120.00", Trend: "$12,400.00 Overdue (4 clients)" (red alert), Icon: ArrowDownLeft, Subtext: "DSO: 28 Days".
+   * Card 3 (Accounts Payable): Title: "Upcoming Payables (AP)", Value: "$36,890.00", Trend: "6 bills due this week" (yellow warning), Icon: ArrowUpRight, Subtext: "DPO: 22 Days".
+   * Card 4 (Net Profit YTD): Title: "Net Profit Margin (YTD)", Value: "23.5% ($142,300.00)", Trend: "+2.8% vs Budget Target" (green up arrow), Icon: TrendingUp, Subtext: "Gross Revenue: $605,500.00".
+4. Visual Charts:
+   * Chart 1: 30-Day Continuous Cash Flow Curve (SVG Area Chart):
+     - X-Axis: 30 Days (Aug 1 to Aug 30).
+     - Two Curves: Inflow (Green Line `#16a34a` with soft green gradient fill) vs. Outflow (Red Line `#dc2626` with soft red gradient fill).
+     - Interactive node points with hover tooltip showing Date, Inflow Amount, Outflow Amount, and Net Daily Liquidity Delta.
+   * Chart 2: AR vs. AP Aging Matrix (Horizontal Stacked Bar Chart):
+     - Buckets: Current (0-30 days), 31-60 days, 61-90 days, 90+ days past due.
+     - Color Coding: Green (Current), Yellow (31-60), Orange (61-90), Red (90+).
+5. Recent Activity Feed:
+   - Chronological list of recent ledger events:
+     * "Client Payment: Al-Madina Trading +$18,500.00" (`INV-2026-0412`, 12m ago, Reconciled 🟢)
+     * "Vendor Disbursement: AWS Infrastructure -$3,400.00" (`BILL-2026-089`, 1h ago, Paid 🟢)
+     * "Payroll Execution: August 2026 Batch -$124,200.00" (`PAY-2026-08`, 3h ago, Processed 🟢)
+     * "Tax Filing: Q2 VAT Return Settled -$18,450.00" (`VAT-2026-Q2`, 1d ago, Filed 🟢)
+   - Each item includes entity avatar/logo, transaction ref badge, timestamp, and status pill.
+
+--------------------------------------------------------------------------------
+VIEW 2: GENERAL LEDGER & CHART OF ACCOUNTS (`/general-ledger`)
+--------------------------------------------------------------------------------
+1. Objective: Provide a master accounting directory (COA) structured into standard 5-tier classification (Assets, Liabilities, Equity, Revenue, Expenses) with individual account ledger drilldowns.
+2. Layout Geometry:
+   - Row 1: Header ("General Ledger & Chart of Accounts") + "Download COA (CSV)" + "+ Add New Account" button.
+   - Row 2: 4-Column KPI Metric Cards Grid.
+   - Row 3: Filter Toolbar with Category Tabs (All, 1000 Assets, 2000 Liabilities, 3000 Equity, 4000 Revenue, 5000 Expenses).
+   - Row 4: High-Density COA Master Table with inline sub-account expansion.
+3. KPI Metric Cards (4 Cards):
+   * Card 1: Title: "Total Active Accounts", Value: "68 Accounts", Trend: "5 Account Classes", Icon: ListTree, Subtext: "Standard 4-Digit Architecture".
+   * Card 2: Title: "Total Asset Valuation", Value: "$1,240,500.00", Trend: "Normal Balance: Debit", Icon: Wallet, Subtext: "Cash + AR + Fixed Assets".
+   * Card 3: Title: "Total Liabilities", Value: "$350,790.00", Trend: "Normal Balance: Credit", Icon: Scale, Subtext: "AP + Accrued Taxes + Loans".
+   * Card 4: Title: "Total Net Equity", Value: "$889,710.00", Trend: "Assets - Liabilities", Icon: Shield, Subtext: "Share Capital + Retained Earnings".
+4. Filter Toolbar:
+   - Category Tabs: `All Accounts (68)`, `1000 Assets (22)`, `2000 Liabilities (14)`, `3000 Equity (8)`, `4000 Revenue (10)`, `5000 Expenses (14)`.
+   - Search: Filter by Account Code (e.g. `1020`) or Account Name (e.g. `Operating Bank`).
+   - Normal Balance Filter: Dropdown (`All`, `Debit`, `Credit`).
+   - Status Filter: Dropdown (`All`, `Active`, `Archived`).
+5. Main Data Table Specifications (8 Columns):
+   * Col 1: Account Code (Monospace bold, e.g. `1010`, `1020`, `2010`, `4010`).
+   * Col 2: Account Title (e.g. `Main Operating Cash Account`, `Accounts Receivable`, `Output VAT Payable`).
+   * Col 3: Class & Subcategory (e.g. `Current Assets / Cash & Cash Equivalents`).
+   * Col 4: Normal Balance (Badge: `DEBIT` in blue pill or `CREDIT` in purple pill).
+   * Col 5: Currency (e.g. `USD`).
+   * Col 6: Current Ledger Balance (Monospace bold, formatted e.g. `$426,450.00`).
+   * Col 7: Status Badge (🟢 `Active`, ⚪ `Inactive`).
+   * Col 8: Action Controls (Button: `View Ledger` [opens Account Drilldown Drawer], `Edit`, `⋯`).
+6. Interactive Modals & Drawers:
+   * Modal: "+ Add New Account":
+     - Fields: Account Code (auto-suggested 4-digit number), Account Name, Parent Category dropdown, Subcategory, Normal Balance toggle (Debit/Credit), Description, Opening Balance input with effective date.
+   * Drawer: "Account Ledger Transaction History":
+     - Slide-over drawer displaying full chronological debit/credit postings for the selected account, starting balance, transaction lines with journal references, running balance column, and export button.
+
+--------------------------------------------------------------------------------
+VIEW 3: JOURNAL ENTRIES & DOUBLE-ENTRY BOOKKEEPING (`/journals`)
+--------------------------------------------------------------------------------
+1. Objective: Record, validate, and audit double-entry journal vouchers ensuring mathematical equilibrium ($\sum \text{Debits} \equiv \sum \text{Credits}$) with strict audit trails.
+2. Layout Geometry:
+   - Row 1: Header ("Journal Entries & General Journal") + Filter Range + "+ New Journal Voucher" button.
+   - Row 2: 4-Column KPI Metric Cards Grid.
+   - Row 3: Filter Bar (Search by Voucher #, Date Range, Status: All/Posted/Draft/Reversed).
+   - Row 4: Master Journal Vouchers Grid with Expandable Accordion Line Rows.
+3. KPI Metric Cards (4 Cards):
+   * Card 1: Title: "Posted Journals (MTD)", Value: "142 Vouchers", Trend: "100% Audit Logged", Icon: CheckCircle2, Subtext: "Period: Aug 2026".
+   * Card 2: Title: "Total Journal Volume", Value: "$580,240.00", Trend: "Cumulative Debits/Credits", Icon: DollarSign, Subtext: "Average Voucher: $4,086.00".
+   * Card 3: Title: "Pending / Draft Entries", Value: "3 Drafts", Trend: "Requires Controller Review", Icon: Clock, Subtext: "Totaling $14,500.00".
+   * Card 4: Title: "Equilibrium Status", Value: "🟢 100% Balanced", Trend: "Zero Discrepancy (Δ = $0.00)", Icon: CheckSquare, Subtext: "Double-Entry Invariant Satisfied".
+4. Main Data Table Specifications (9 Columns):
+   * Col 1: Voucher Reference (Monospace bold, e.g. `JV-2026-0089`).
+   * Col 2: Posting Date (e.g. `14 Aug 2026`).
+   * Col 3: Memo / Transaction Summary (e.g. `Monthly Office Lease & Utilities Payment`).
+   * Col 4: Primary Debit Account (e.g. `6110 Rent Expense`).
+   * Col 5: Primary Credit Account (e.g. `1020 Operating Bank Account`).
+   * Col 6: Total Amount (Monospace bold, e.g. `$8,500.00`).
+   * Col 7: Authorizing Accountant (Avatar thumbnail + "Sarah Jenkins").
+   * Col 8: Status Badge (🟢 `Posted`, 🟡 `Draft`, 🔴 `Reversed`).
+   * Col 9: Actions (Button: `Expand Lines ▾`, `Print Voucher`, `Reverse Entry`).
+5. Expandable Accordion Sub-Table (Multi-Line Breakdown):
+   - Clicking any journal row expands a clean embedded sub-table showing:
+     * Line # | Account Code | Account Description | Debit ($) | Credit ($) | Line Memo | Cost Center
+     * Example Line 1: `6110` | `Office Rent Expense` | `$7,000.00` | `$0.00` | Head Office Lease | Corporate HQ
+     * Example Line 2: `6120` | `Electricity & Utilities` | `$1,500.00` | `$0.00` | Power & Water Bill | Facilities
+     * Example Line 3: `1020` | `Operating Bank Account` | `$0.00` | `$8,500.00` | Wire Transfer Direct | Treasury
+     * Sub-table Footer: Total Debits: `$8,500.00` | Total Credits: `$8,500.00` | Discrepancy: `🟢 $0.00 (Balanced)`.
+6. Interactive Modal / Drawer: "Create Journal Voucher Builder (POS/Two-Pane Style)":
+   - Header: Voucher ID (auto-generated `JV-2026-0143`), Posting Date picker, Fiscal Period, Memo textarea.
+   - Dynamic Line Item Grid:
+     * User can add unlimited debit/credit rows (`+ Add Row` button).
+     * Per row: Account Selector (Searchable COA dropdown), Debit Input, Credit Input, Description, Cost Center.
+   - Live Totalizer Footer:
+     * Total Debits Box: `$XX,XXX.XX`
+     * Total Credits Box: `$XX,XXX.XX`
+     * Discrepancy Delta Box: if `Debits != Credits`, shows red warning pill `"UNBALANCED: Difference of $X.XX"` and DISABLES the "Post Journal" button.
+     * When balanced: shows green pill `"BALANCED ✅"` and enables "Post to General Ledger" button.
+
+--------------------------------------------------------------------------------
+VIEW 4: INVOICING & ACCOUNTS RECEIVABLE (`/invoicing`)
+--------------------------------------------------------------------------------
+1. Objective: Manage customer invoices, credit terms, multi-line tax calculations, payment tracking, and AR aging buckets.
+2. Layout Geometry:
+   - Row 1: Header ("Invoicing & Accounts Receivable") + "Customer Statements" + "+ Create New Invoice" button.
+   - Row 2: 4-Column KPI Metric Cards Grid.
+   - Row 3: Status Tabs (All, Draft, Pending / Sent, Paid, Overdue) + Search and Customer Filter.
+   - Row 4: High-Density Invoices Data Table with multi-select checkboxes for batch emailing or payment collection.
+3. KPI Metric Cards (4 Cards):
+   * Card 1: Title: "Total Outstanding AR", Value: "$84,120.00", Trend: "18 Unpaid Invoices", Icon: Receipt, Subtext: "Average Invoice: $4,673.00".
+   * Card 2: Title: "Collected Cash (MTD)", Value: "$112,450.00", Trend: "+14.8% vs last month", Icon: CheckCircle, Subtext: "24 Settled Invoices".
+   * Card 3: Title: "Overdue Invoices", Value: "$12,400.00", Trend: "4 Invoices > 30 Days Late" (red alert), Icon: AlertCircle, Subtext: "Requires Follow-up".
+   * Card 4: Title: "Days Sales Outstanding (DSO)", Value: "28 Days", Trend: "Benchmark: < 35 Days", Icon: Clock, Subtext: "Healthy Collection Velocity".
+4. Status Tabs: `All Invoices (36)`, `Draft (3)`, `Sent / Pending (11)`, `Paid (18)`, `Overdue (4)`.
+5. Main Invoices Table Specifications (11 Columns):
+   * Col 1: Checkbox (Multi-select for batch reminders or export).
+   * Col 2: Invoice Number (Monospace bold, e.g. `INV-2026-0412`).
+   * Col 3: Customer / Client Name (Bold text + company logo/initials, e.g. *Al-Madina Trading LLC*, *Apex Technologies*).
+   * Col 4: Issue Date (e.g. `01 Aug 2026`).
+   * Col 5: Due Date (e.g. `31 Aug 2026` or red if overdue).
+   * Col 6: Subtotal ($) (Monospace, e.g. `$16,000.00`).
+   * Col 7: Tax / VAT ($) (Monospace, e.g. `$800.00` at 5% VAT).
+   * Col 8: Total Invoice Amount ($) (Monospace bold, e.g. `$16,800.00`).
+   * Col 9: Balance Due ($) (Monospace bold, e.g. `$0.00` or `$16,800.00`).
+   * Col 10: Status Badge (🟢 `Paid`, 🟡 `Pending`, 🔴 `Overdue`, ⚪ `Draft`).
+   * Col 11: Action Menu (`Record Payment`, `Download PDF`, `Send Reminder`, `Void`).
+6. Interactive Modals & Drawers:
+   * Slide-over Drawer: "Invoice Creator & Line Item Builder":
+     - Customer selector, Billing Address, Payment Terms dropdown (Net 15, Net 30, Due Upon Receipt), Issue Date, Due Date.
+     - Dynamic Line Items Table: Item Description, Quantity, Unit Rate ($), Discount %, Tax / VAT Rate % (0%, 5%, 15%), Line Net ($), and Remove button.
+     - Dynamic Calculation Summary Card:
+       * Subtotal: `$XX,XXX.XX`
+       * Total Discount: `-$X,XXX.XX`
+       * Output VAT (Tax): `+$X,XXX.XX`
+       * Grand Total: `$XX,XXX.XX`
+     - Action Buttons: "Save as Draft", "Approve & Issue Invoice", "Print Tax Invoice".
+   * Modal: "Record Customer Payment":
+     - Invoice Ref, Customer Name, Payment Amount input (supports partial payment), Payment Date, Deposit Bank Account selector (e.g. `1020 Operating Bank`), Payment Method (Wire Transfer, Check, Credit Card), Reference #, and "Confirm Payment" button (automatically posts cash journal entry).
+
+--------------------------------------------------------------------------------
+VIEW 5: BILLS, EXPENSES & ACCOUNTS PAYABLE (`/expenses`)
+--------------------------------------------------------------------------------
+1. Objective: Record vendor invoices, track operating expenditures (Opex), manage payment approvals, schedule disbursements, and monitor AP aging.
+2. Layout Geometry:
+   - Row 1: Header ("Bills, Expenses & Accounts Payable") + "Payment Batch Schedule" + "+ Record New Bill" button.
+   - Row 2: 4-Column KPI Metric Cards Grid.
+   - Row 3: Category Tabs (All Payables, Utilities & Rent, Software & SaaS, Professional Fees, Office & General, Travel & Meals).
+   - Row 4: High-Density Vendor Bills Grid.
+3. KPI Metric Cards (4 Cards):
+   * Card 1: Title: "Total Accounts Payable", Value: "$36,890.00", Trend: "12 Open Bills", Icon: CreditCard, Subtext: "Average Bill: $3,074.00".
+   * Card 2: Title: "Due This Week", Value: "$14,200.00", Trend: "6 Critical Disbursements" (yellow alert), Icon: CalendarAlert, Subtext: "Requires Treasury Funding".
+   * Card 3: Title: "Monthly Opex (MTD)", Value: "$68,450.00", Trend: "84% of Monthly Budget", Icon: DollarSign, Subtext: "Operating Run Rate".
+   * Card 4: Title: "Settled Bills (MTD)", Value: "$92,100.00", Trend: "18 Vendor Payments Executed", Icon: CheckCircle2, Subtext: "Zero Late Penalties".
+4. Category Tabs: `All Payables (12)`, `Utilities & Rent (3)`, `Software & Tech (4)`, `Professional Fees (2)`, `Office & General (2)`, `Travel (1)`.
+5. Main Bills & Expenses Table Specifications (11 Columns):
+   * Col 1: Checkbox (Multi-select for batch payment processing).
+   * Col 2: Bill # / Ref (Monospace bold, e.g. `BILL-2026-089`).
+   * Col 3: Vendor Name (e.g. *Amazon Web Services*, *WeWork Properties*, *Deloitte Advisory*).
+   * Col 4: Expense Category (Badge: e.g. `Cloud Infrastructure`, `Office Lease`, `Legal Audit`).
+   * Col 5: Bill Date (e.g. `05 Aug 2026`).
+   * Col 6: Payment Due Date (e.g. `20 Aug 2026` or red if overdue).
+   * Col 7: Total Bill Amount ($) (Monospace bold, e.g. `$4,850.00`).
+   * Col 8: Eligible Input VAT ($) (Monospace, e.g. `$242.50` recoverable).
+   * Col 9: Payment Method (e.g. `Corporate Wire`, `Credit Card`).
+   * Col 10: Status Badge (🟢 `Paid`, 🟡 `Scheduled`, 🔵 `Pending Approval`, 🔴 `Overdue`).
+   * Col 11: Actions (Button: `Pay Now`, `Approve Bill`, `View Receipt`, `⋯`).
+6. Interactive Modals & Drawers:
+   * Modal: "Record Vendor Bill / Expense Entry":
+     - Vendor dropdown (with TRN / Tax ID), Bill Number, Bill Date, Due Date, Expense Account selector (e.g. `6210 Software & SaaS`), Amount, Input VAT eligibility toggle, Payment terms, Drag-and-drop receipt file uploader, and "Submit for Approval" button.
+   * Modal: "Execute Vendor Payment":
+     - Amount to Pay, Paying Bank Account (`1020 Operating Bank`), Payment Date, Transfer Reference, and "Confirm Disbursement" button (automatically posts AP clearing journal).
+
+--------------------------------------------------------------------------------
+VIEW 6: PAYROLL & COMPENSATION MANAGEMENT (`/payroll`)
+--------------------------------------------------------------------------------
+1. Objective: Execute recurring employee payroll runs, compute gross-to-net salary distributions, apply statutory tax and social security deductions, and export WPS-compliant SIF files.
+2. Layout Geometry:
+   - Row 1: Header ("Payroll & Compensation Management") + Period Switcher ("August 2026") + "Export WPS (SIF) File" + "▶ Run Monthly Payroll" button.
+   - Row 2: 4-Column KPI Metric Cards Grid.
+   - Row 3: Filter & Department Toolbar (All Departments, Engineering, Sales, Operations, Finance, Executive).
+   - Row 4: Master Employee Payroll Register Grid.
+3. KPI Metric Cards (4 Cards):
+   * Card 1: Title: "Total Payroll Cost", Value: "$148,500.00", Trend: "Gross Pay + Employer Contributions", Icon: Users, Subtext: "August 2026 Cycle".
+   * Card 2: Title: "Net Pay Disbursement", Value: "$124,200.00", Trend: "Direct Payout to Staff Accounts", Icon: Landmark, Subtext: "42 Bank Transfers".
+   * Card 3: Title: "Statutory Deductions & Taxes", Value: "$24,300.00", Trend: "Employee Tax + Social Security", Icon: ShieldAlert, Subtext: "Due to Tax Authorities".
+   * Card 4: Title: "Active Headcount", Value: "42 Employees", Trend: "100% Wage Protection Compliant", Icon: UserCheck, Subtext: "Zero Payment Discrepancies".
+4. Main Payroll Register Table Specifications (11 Columns):
+   * Col 1: Employee ID (Monospace, e.g. `EMP-0104`).
+   * Col 2: Employee Name & Avatar (e.g. *Alex Morgan*, *Senior Software Engineer*).
+   * Col 3: Department (Badge: `Engineering`, `Sales & Marketing`, `Operations`).
+   * Col 4: Basic Salary ($) (Monospace, e.g. `$6,000.00`).
+   * Col 5: Allowances ($) (Housing + Transport + Mobile, e.g. `$2,000.00`).
+   * Col 6: Gross Salary ($) (Monospace bold: Basic + Allowances, e.g. `$8,000.00`).
+   * Col 7: Income Tax Withholding ($) (Monospace, e.g. `$640.00`).
+   * Col 8: Social Security Deduction ($) (Monospace: 7.5% Employee share, e.g. `$600.00`).
+   * Col 9: Net Payout ($) (Monospace bold green: Gross - Deductions, e.g. `$6,760.00`).
+   * Col 10: Status Badge (🟢 `Processed`, 🟡 `Pending Review`, ⚪ `Draft`).
+   * Col 11: Actions (Button: `View Payslip`, `Download PDF`).
+5. Interactive Modals:
+   * Modal: "Employee Payslip Breakdown Viewer":
+     - Clean itemized payslip view displaying Company Header, Employee Info, Earnings column (Basic, Housing, Transport, Overtime), Deductions column (Income Tax, Social Security, Loan Advance), Net Pay Total, Employer Social Security contribution line, and "Print Payslip" button.
+   * Modal: "Execute Monthly Payroll Run (Wizard)":
+     - Step 1: Summary of total headcount (42), gross salaries ($148,500), total deductions ($24,300), and net disbursement ($124,200).
+     - Step 2: Bank Account selection for salary wire (`1030 Payroll Account`).
+     - Step 3: Checkbox: "Automatically post salary journal voucher to General Ledger (Account 6010 / 2110 / 2120 / 2230)".
+     - Step 4: "Confirm & Generate WPS SIF File" button.
+
+--------------------------------------------------------------------------------
+VIEW 7: TAX, VAT & REGULATORY COMPLIANCE (`/tax-compliance`)
+--------------------------------------------------------------------------------
+1. Objective: Monitor indirect and direct tax liabilities, track Output VAT (collected on sales) vs. Input VAT (paid on purchases), calculate net tax payable, and manage tax filing returns.
+2. Layout Geometry:
+   - Row 1: Header ("Tax, VAT & Regulatory Compliance") + Tax Period Filter + "Export Tax Audit File" + "File VAT Return" button.
+   - Row 2: 4-Column KPI Metric Cards Grid.
+   - Row 3: 2-Column Split View (Left 60%: VAT Return Filings History Table; Right 40%: Live VAT Settlement Gauge & Breakdown).
+   - Row 4: Full-Width Tax Transaction Audit Log Table.
+3. KPI Metric Cards (4 Cards):
+   * Card 1: Title: "Net VAT Liability", Value: "$18,450.00", Trend: "Output VAT minus Input VAT", Icon: Scale, Subtext: "Current Liability Due".
+   * Card 2: Title: "Output VAT Collected", Value: "$32,100.00", Trend: "From $642,000 Taxable Sales (5%)", Icon: ArrowDownRight, Subtext: "Customer Invoices".
+   * Card 3: Title: "Input VAT Recoverable", Value: "$13,650.00", Trend: "From $273,000 Eligible Purchases", Icon: ArrowUpLeft, Subtext: "Vendor Bills Credit".
+   * Card 4: Title: "Filing Deadline", Value: "14 Days Remaining", Trend: "Due Date: 28 Aug 2026", Icon: Clock, Subtext: "Q2-2026 VAT Return".
+4. VAT Return Filings Table Specifications (8 Columns):
+   * Col 1: Tax Period (e.g. `2026-Q2 VAT Return`, `2026-Q1 VAT Return`).
+   * Col 2: Tax Type (e.g. `Standard VAT 5% / 15%`).
+   * Col 3: Taxable Sales ($) (Monospace, e.g. `$642,000.00`).
+   * Col 4: Output VAT ($) (Monospace, e.g. `$32,100.00`).
+   * Col 5: Taxable Purchases ($) (Monospace, e.g. `$273,000.00`).
+   * Col 6: Input VAT ($) (Monospace, e.g. `$13,650.00`).
+   * Col 7: Net VAT Payable ($) (Monospace bold, e.g. `$18,450.00`).
+   * Col 8: Status Badge (🟢 `Filed & Settled`, 🟡 `Pending Review`, ⚪ `Upcoming`).
+5. Tax Audit Log Table Specifications (7 Columns):
+   * Col 1: Transaction Date (e.g. `12 Aug 2026`).
+   * Col 2: Source Doc Ref (Monospace, e.g. `INV-2026-0412`, `BILL-2026-089`).
+   * Col 3: Counterparty Name (e.g. *Al-Madina Trading*, *AWS Infrastructure*).
+   * Col 4: Tax Type (e.g. `5% Output VAT`, `5% Input VAT`, `0% Exempt`).
+   * Col 5: Taxable Base Amount ($) (Monospace, e.g. `$16,000.00`).
+   * Col 6: Tax Amount ($) (Monospace bold, e.g. `$800.00`).
+   * Col 7: GL Account Impacted (e.g. `2210 Output VAT`, `2220 Input VAT`).
+6. Interactive Modals:
+   * Modal: "Submit & Settle VAT Return":
+     - Review taxable revenue and expenses, show final net settlement amount, choose paying bank account (`1020 Operating Bank`), and "Post Tax Settlement Journal" button.
+
+--------------------------------------------------------------------------------
+VIEW 8: FIXED ASSETS & DEPRECIATION REGISTER (`/fixed-assets`)
+--------------------------------------------------------------------------------
+1. Objective: Track capital assets (IT equipment, vehicles, buildings, fixtures), calculate periodic depreciation (Straight-Line, Accelerated), maintain Net Book Values (NBV), and automate monthly amortization journals.
+2. Layout Geometry:
+   - Row 1: Header ("Fixed Assets & Depreciation Register") + "Export Asset Schedule" + "+ Register New Asset" button.
+   - Row 2: 4-Column KPI Metric Cards Grid.
+   - Row 3: Category Filter Tabs (All Assets, IT Equipment, Office Furniture, Vehicles, Buildings & Leasehold).
+   - Row 4: Master Fixed Assets Register Data Table.
+3. KPI Metric Cards (4 Cards):
+   * Card 1: Title: "Gross Historical Cost", Value: "$450,000.00", Trend: "24 Capital Assets", Icon: Building2, Subtext: "Total Original Capex".
+   * Card 2: Title: "Accumulated Depreciation", Value: "$168,200.00", Trend: "Amortized to Date", Icon: TrendingDown, Subtext: "Contra-Asset (Account 1539)".
+   * Card 3: Title: "Net Book Value (NBV)", Value: "$281,800.00", Trend: "Current Balance Sheet Value", Icon: ShieldCheck, Subtext: "Gross Cost - Accum. Dep.".
+   * Card 4: Title: "Monthly Depreciation Run", Value: "$6,500.00 / mo", Trend: "Scheduled for 31 Aug 2026", Icon: Calendar, Subtext: "Automated GL Journal".
+4. Main Fixed Assets Table Specifications (11 Columns):
+   * Col 1: Asset Code (Monospace bold, e.g. `FA-2024-0012`).
+   * Col 2: Asset Name (e.g. *Dell PowerEdge Server Cluster*, *Executive Office Furniture Suite*).
+   * Col 3: Category (Badge: `IT Equipment`, `Furniture & Fixtures`, `Vehicles`).
+   * Col 4: Purchase Date (e.g. `15 Jan 2024`).
+   * Col 5: Useful Life (e.g. `4 Years (48 mo)`).
+   * Col 6: Purchase Cost ($) (Monospace, e.g. `$24,000.00`).
+   * Col 7: Salvage Value ($) (Monospace, e.g. `$0.00`).
+   * Col 8: Method (Badge: `Straight-Line`).
+   * Col 9: Accumulated Depreciation ($) (Monospace, e.g. `$15,500.00`).
+   * Col 10: Net Book Value ($) (Monospace bold green: Cost - Accum Dep, e.g. `$8,500.00`).
+   * Col 11: Actions (Button: `Schedule Drawer`, `Post Depreciation`, `Dispose`).
+5. Interactive Modals & Drawers:
+   * Modal: "+ Register New Capital Asset":
+     - Fields: Asset Name, Category, Acquisition Date, Purchase Cost ($), Salvage Value ($), Useful Life in Years, Depreciation Method dropdown (Straight-Line, Double Declining Balance), Fixed Asset GL Account (`1530`), Accumulated Depreciation GL Account (`1539`), Depreciation Expense GL Account (`6410`), Custodian / Location.
+   * Slide-over Drawer: "Asset Amortization Schedule & Curve":
+     - Visual chart showing straight-line downward curve of Net Book Value over time.
+     - Amortization Table: Year | Fiscal Period | Opening NBV | Depreciation Expense | Closing NBV | Status (`Posted` / `Scheduled`).
+     - Action Button: "Post Monthly Depreciation Journal Now".
+
+--------------------------------------------------------------------------------
+VIEW 9: BANKING, CASH MANAGEMENT & BANK RECONCILIATION (`/banking`)
+--------------------------------------------------------------------------------
+1. Objective: Aggregate treasury accounts, import live bank statement feeds, and perform high-speed dual-pane bank reconciliation against internal General Ledger cash book records.
+2. Layout Geometry:
+   - Row 1: Header ("Banking, Cash Management & Reconciliation") + Bank Account Switcher Tabs (Chase Operating, HSBC International, Silicon Valley Reserve, Petty Cash) + "+ Import Bank Statement (OFX/CSV)" button.
+   - Row 2: 4-Column KPI Metric Cards Grid.
+   - Row 3: Dual-Pane Interactive Reconciliation Workspace (Left 50%: Bank Statement Feed; Right 50%: General Ledger Cash Book).
+   - Row 4: Bottom Reconciliation Status & Clearance Bar.
+3. KPI Metric Cards (4 Cards):
+   * Card 1: Title: "Bank Statement Balance", Value: "$428,950.00", Trend: "As of 14 Aug 2026 (Live Feed)", Icon: Landmark, Subtext: "Verified by Statement".
+   * Card 2: Title: "GL Cash Book Balance", Value: "$426,800.00", Trend: "System Book Balance (Acct 1020)", Icon: BookOpen, Subtext: "Internal Ledger".
+   * Card 3: Title: "Unreconciled Difference", Value: "$2,150.00", Trend: "3 Items Pending Match" (yellow alert), Icon: AlertTriangle, Subtext: "Timing / Bank Fees".
+   * Card 4: Title: "Reconciliation Rate", Value: "97.8% Matched", Trend: "44 of 47 Transactions Cleared", Icon: CheckCircle2, Subtext: "Near Complete".
+4. Dual-Pane Interactive Reconciliation Workspace:
+   * Left Pane (External Bank Statement Feed):
+     - Header: "Bank Statement Feed (Chase Operating ****8821)" + "Auto-Match All (44)" button.
+     - Table Columns: Match Checkbox | Date | Bank Description | Withdrawal (-) | Deposit (+) | Matched Ref.
+     - Row Items:
+       * `[X]` 12 Aug | Wire In: Al-Madina Trading | — | `+$18,500.00` | Matched `INV-0412` 🟢
+       * `[X]` 10 Aug | Direct Debit: AWS Cloud Services | `-$3,400.00` | — | Matched `BILL-089` 🟢
+       * `[ ]` 14 Aug | Bank Monthly Service Fee | `-$150.00` | — | *Unmatched (Fee)* 🟡
+       * `[ ]` 14 Aug | Wire In: Apex Technologies | — | `+$2,000.00` | *Unmatched Deposit* 🟡
+   * Right Pane (Internal General Ledger Cash Book - Account 1020):
+     - Header: "General Ledger Cash Book" + "+ Create Adjusting Entry" button.
+     - Table Columns: Match Checkbox | Date | Voucher / Doc Ref | Entity / Memo | Debit (+) | Credit (-) | Status.
+     - Row Items:
+       * `[X]` 12 Aug | `JV-2026-0088` | Client Collection - Al-Madina | `+$18,500.00` | — | Cleared 🟢
+       * `[X]` 10 Aug | `JV-2026-0084` | Cloud Infrastructure Payment | — | `-$3,400.00` | Cleared 🟢
+       * `[ ]` 13 Aug | `JV-2026-0091` | Office Supplies Cash Reimburse | — | `-$350.00` | Pending 🟡
+5. Bottom Sticky Reconciliation Bar:
+   - Summary display:
+     * Statement Balance: `$428,950.00`
+     * Less Cleared Withdrawals: `-$3,400.00`
+     * Plus Cleared Deposits: `+$18,500.00`
+     * Adjusted Bank Balance: `$426,800.00`
+     * Adjusted GL Balance: `$426,800.00`
+     * Discrepancy: `🟢 $0.00 (Zero Variance)`
+   - Action Button: "Confirm & Finalize Monthly Bank Reconciliation" (locks period reconciliation and generates reconciliation certificate).
+
+--------------------------------------------------------------------------------
+VIEW 10: FINANCIAL STATEMENTS & COMPREHENSIVE REPORTS (`/reports`)
+--------------------------------------------------------------------------------
+1. Objective: Deliver formal, audit-ready financial statements compliant with IFRS/GAAP standards and analytical financial intelligence reports with period-over-period comparisons.
+2. Layout Geometry:
+   - Row 1: Header ("Financial Statements & Intelligence Reports") + Period Range Dropdown + "Comparative View Toggle" + "Export PDF / CSV" + "Print Statement" button.
+   - Row 2: Tabbed Statement Switcher:
+     * Tab 1: Balance Sheet (Statement of Financial Position)
+     * Tab 2: Profit & Loss / Income Statement
+     * Tab 3: Statement of Cash Flows (Indirect Method)
+     * Tab 4: Trial Balance (Debit / Credit Equilibrium Check)
+     * Tab 5: AR & AP Aging Matrix
+   - Row 3: Full-Width Hierarchical Statement Table with collapsible account groups and percentage variance calculations.
+3. Interactive Statement Specifications:
+   * Statement 1: Balance Sheet:
+     - ASSETS:
+       * Current Assets: Cash & Cash Equivalents ($428,950), Accounts Receivable Net ($84,120), Prepayments ($18,400), Input VAT Recoverable ($13,650) $\rightarrow$ Total Current Assets: `$545,120.00`.
+       * Non-Current Assets: Property, Plant & Equipment Gross ($450,000) Less: Accumulated Depreciation (-$168,200) $\rightarrow$ Net Fixed Assets: `$281,800.00`.
+       * TOTAL ASSETS: `$826,920.00`.
+     - LIABILITIES:
+       * Current Liabilities: Accounts Payable ($36,890), Accrued Payroll & Benefits ($24,300), Output VAT Payable ($32,100), Short-Term Debt ($15,000) $\rightarrow$ Total Current Liabilities: `$108,290.00`.
+       * Long-Term Liabilities: Long-Term Bank Loan ($200,000), End of Service Provision ($42,500) $\rightarrow$ Total Long-Term Liabilities: `$242,500.00`.
+       * TOTAL LIABILITIES: `$350,790.00`.
+     - EQUITY:
+       * Share Capital ($300,000), Retained Earnings ($33,830), Current Year Net Income ($142,300) $\rightarrow$ TOTAL EQUITY: `$476,130.00`.
+     - TOTAL LIABILITIES & EQUITY: `$826,920.00`.
+     - Equilibrium Check Banner: `🟢 BALANCED: Total Assets ($826,920.00) ≡ Total Liabilities & Equity ($826,920.00) | Variance: $0.00`.
+   * Statement 2: Profit & Loss (Income Statement):
+     - Operating Revenue: Gross Sales & Services ($620,000) Less: Discounts (-$14,500) $\rightarrow$ Net Revenue: `$605,500.00`.
+     - Cost of Goods & Services: Direct Execution Labor & Costs: `-$185,000.00`.
+     - GROSS PROFIT: `$420,500.00` (Gross Margin: 69.4%).
+     - Operating Expenses (SG&A):
+       * Salaries & Benefits: `-$148,500.00`
+       * Rent & Facilities: `-$38,200.00`
+       * Software & SaaS: `-$18,400.00`
+       * Marketing & Professional: `-$22,600.00`
+       * Depreciation Expense: `-$36,000.00`
+       * General & Administrative: `-$14,500.00`
+       * Total Operating Expenses: `-$278,200.00`
+     - OPERATING PROFIT (EBIT): `$142,300.00` (Operating Margin: 23.5%).
+     - Other Income / Expenses: Interest Net: `$0.00`.
+     - NET PROFIT / NET INCOME: `$142,300.00`.
+   * Statement 3: Statement of Cash Flows (Indirect Method):
+     - Operating Cash Flows (CFO): Net Income ($142,300) + Non-Cash Depreciation ($36,000) + Non-Cash End of Service ($8,500) + Working Capital Changes (AR -$18,400, Prepaids -$3,200, AP +$12,400, Accrued +$14,800) $\rightarrow$ Net CFO: `+$192,400.00`.
+     - Investing Cash Flows (CFI): Capital Expenditures (Asset Purchases) $\rightarrow$ Net CFI: `-$45,000.00`.
+     - Financing Cash Flows (CFF): Bank Loan Repayments (-$25,000) + Dividends Paid (-$30,000) $\rightarrow$ Net CFF: `-$55,000.00`.
+     - NET INCREASE IN CASH: `+$92,400.00`.
+     - Beginning Cash Balance: `$336,550.00` $\rightarrow$ Ending Cash Balance: `$428,950.00`.
+   * Statement 4: Trial Balance:
+     - Exhaustive listing of all 68 accounts with Account Code, Account Title, Class, Debit Column ($), Credit Column ($).
+     - Footer Totals: Total Debits: `$1,387,170.00` | Total Credits: `$1,387,170.00` | Delta: `🟢 $0.00 (Perfect Equilibrium)`.
+4. Export & Interactive Options:
+   - "Toggle Prior Period Comparison": dynamically renders columns for "Aug 2026", "Jul 2026", "$ Variance", and "% Change" with color-coded badges.
+   - "Export PDF / CSV": generates clean downloadable files.
+   - "@media print" styles for browser printing.
+
+================================================================================
+4. SAMPLE MOCK DATA SCHEMA & STATE MODEL REQUIREMENTS
+================================================================================
+
+The generated React application must include realistic, internally consistent mock data structures stored in React State:
+1. `accounts`: Array of 20+ master COA accounts across 1000, 2000, 3000, 4000, 5000 series with opening and current balances.
+2. `journals`: Array of 8+ journal vouchers containing header info and balanced multi-line line arrays.
+3. `invoices`: Array of 8+ customer invoices with line items, tax computations, payment status, and due dates.
+4. `bills`: Array of 8+ vendor bills with expense categorization, due dates, and payment status.
+5. `payroll`: Array of 10+ employee salary contracts with gross pay, tax deductions, social security, and net pay.
+6. `taxReturns`: Array of quarterly VAT return records with output VAT, input VAT, and net liabilities.
+7. `fixedAssets`: Array of 6+ capital assets with acquisition costs, useful lives, and accumulated depreciation.
+8. `bankFeeds`: Array of 10+ bank statement lines and matching GL cash book entries for interactive reconciliation.
+
+================================================================================
+5. CLAUDE ARTIFACT EXECUTION INSTRUCTIONS
+================================================================================
+
+When executing this prompt:
+1. Generate a single, fully-formed, self-contained React 19 component artifact.
+2. Ensure ALL 10 views are accessible via the sidebar navigation.
+3. Provide working interactive UI states (tab switching, search filtering, modals opening/closing, expandable rows, and form actions).
+4. Maintain strict visual polish with high density, clear typography, monospace financial figures, and custom inline SVG charts.
+5. Ensure zero external dependencies other than React 19, Tailwind CSS utility classes, and Lucide React (or standard inline SVGs).
+
+--------------------------------------------------------------------------------
+PROMPT ENDS
+================================================================================

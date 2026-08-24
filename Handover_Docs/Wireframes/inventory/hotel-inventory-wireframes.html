@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Hotel Inventory System — Wireframes</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+<style>
+  :root{
+    --bg:#eef0f1;
+    --panel:#ffffff;
+    --line:#c9cdd1;
+    --line-soft:#e2e5e8;
+    --ink:#26292c;
+    --ink-soft:#6b7075;
+    --ink-faint:#9aa0a6;
+    --gray-1:#3a3d40;
+    --gray-2:#6b7075;
+    --gray-3:#9aa0a6;
+    --gray-4:#c9cdd1;
+    --gray-5:#e2e5e8;
+    --radius:6px;
+    --mono: "IBM Plex Mono","SFMono-Regular",Consolas,monospace;
+    --sans: "IBM Plex Sans","Inter",-apple-system,Segoe UI,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html,body{height:100%;}
+  body{
+    margin:0;
+    font-family:var(--sans);
+    color:var(--ink);
+    background:var(--bg);
+    display:flex;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  /* ---------- SIDEBAR ---------- */
+  .sidebar{
+    width:222px;
+    flex:0 0 222px;
+    background:var(--panel);
+    border-right:1px solid var(--line);
+    display:flex;
+    flex-direction:column;
+    height:100vh;
+    position:sticky;
+    top:0;
+  }
+  .brand{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:18px 18px 16px 18px;
+    border-bottom:1px solid var(--line-soft);
+  }
+  .brand-mark{
+    width:30px;height:30px;border:1.5px solid var(--ink);border-radius:5px;
+    display:flex;align-items:center;justify-content:center;
+    font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.5px;
+    flex:none;
+  }
+  .brand-text{line-height:1.15;}
+  .brand-text .b1{font-weight:700;font-size:13.5px;letter-spacing:.2px;}
+  .brand-text .b2{font-size:10.5px;color:var(--ink-faint);letter-spacing:.6px;text-transform:uppercase;}
+
+  nav.navlist{padding:10px 10px;flex:1;overflow-y:auto;}
+  .nav-section-label{
+    font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--ink-faint);
+    padding:14px 10px 6px 10px;font-weight:600;
+  }
+  .nav-item{
+    display:flex;align-items:center;gap:10px;
+    padding:9px 10px;border-radius:var(--radius);
+    font-size:13px;color:var(--ink-soft);cursor:pointer;
+    border:1px solid transparent;
+    margin-bottom:2px;
+  }
+  .nav-item:hover{background:var(--gray-5);color:var(--ink);}
+  .nav-item.active{
+    background:var(--ink);color:#fff;
+  }
+  .nav-item .num{
+    font-family:var(--mono);font-size:10px;color:var(--ink-faint);
+    width:16px;flex:none;
+  }
+  .nav-item.active .num{color:rgba(255,255,255,.55);}
+  .nav-icon{width:15px;height:15px;flex:none;display:flex;align-items:center;justify-content:center;}
+  .nav-icon svg{width:100%;height:100%;}
+
+  .sidebar-foot{
+    border-top:1px solid var(--line-soft);
+    padding:12px 16px;
+    font-size:11px;color:var(--ink-faint);
+    display:flex;align-items:center;gap:8px;
+  }
+  .dot-live{width:6px;height:6px;border-radius:50%;background:var(--gray-1);}
+
+  /* ---------- MAIN ---------- */
+  .main{flex:1;min-width:0;display:flex;flex-direction:column;height:100vh;}
+  .topbar{
+    height:58px;flex:none;
+    background:var(--panel);border-bottom:1px solid var(--line);
+    display:flex;align-items:center;justify-content:space-between;
+    padding:0 22px;
+  }
+  .topbar-left{display:flex;align-items:baseline;gap:10px;}
+  .page-title{font-size:16px;font-weight:700;}
+  .page-sub{font-size:11.5px;color:var(--ink-faint);font-family:var(--mono);}
+  .topbar-right{display:flex;align-items:center;gap:14px;}
+  .search-box{
+    display:flex;align-items:center;gap:6px;
+    border:1px solid var(--line);border-radius:5px;
+    padding:6px 10px;color:var(--ink-faint);font-size:12px;width:190px;
+  }
+  .icon-btn{
+    width:30px;height:30px;border:1px solid var(--line);border-radius:5px;
+    display:flex;align-items:center;justify-content:center;color:var(--ink-soft);cursor:pointer;
+  }
+  .avatar{
+    width:30px;height:30px;border-radius:50%;border:1.5px solid var(--ink);
+    display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;
+    font-family:var(--mono);
+  }
+
+  .content{flex:1;overflow-y:auto;padding:24px;}
+  .page{display:none;}
+  .page.active{display:block;animation:fade .18s ease;}
+  @keyframes fade{from{opacity:0;transform:translateY(3px);}to{opacity:1;transform:none;}}
+
+  /* generic elements */
+  .card{
+    background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+  }
+  .grid{display:grid;gap:16px;}
+  .row-actions{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;gap:12px;flex-wrap:wrap;}
+  .btn{
+    font-family:var(--sans);font-size:12.5px;font-weight:600;
+    border-radius:5px;padding:9px 14px;cursor:pointer;border:1px solid var(--ink);
+    display:inline-flex;align-items:center;gap:6px;
+  }
+  .btn-primary{background:var(--ink);color:#fff;}
+  .btn-primary:hover{background:#000;}
+  .btn-ghost{background:#fff;color:var(--ink);border-color:var(--line);}
+  .btn-ghost:hover{border-color:var(--ink);}
+  .select, .input{
+    font-family:var(--sans);font-size:12.5px;
+    border:1px solid var(--line);border-radius:5px;background:#fff;color:var(--ink-soft);
+    padding:8px 10px;
+  }
+  .filters{display:flex;gap:10px;flex-wrap:wrap;}
+
+  .section-label{
+    font-size:11px;text-transform:uppercase;letter-spacing:.8px;color:var(--ink-faint);
+    font-weight:700;margin-bottom:10px;
+  }
+
+  /* metric cards */
+  .metrics{grid-template-columns:repeat(3,1fr);margin-bottom:18px;}
+  .metric-card{padding:16px 18px;}
+  .metric-top{display:flex;justify-content:space-between;align-items:flex-start;}
+  .metric-label{font-size:11.5px;color:var(--ink-faint);font-weight:600;text-transform:uppercase;letter-spacing:.5px;}
+  .metric-icon{width:26px;height:26px;border:1px solid var(--line);border-radius:5px;display:flex;align-items:center;justify-content:center;}
+  .metric-value{font-size:28px;font-weight:700;margin-top:10px;font-family:var(--mono);}
+  .metric-delta{font-size:11.5px;color:var(--ink-faint);margin-top:4px;}
+  .metric-delta.up{color:#3a3d40;font-weight:600;}
+  .metric-delta.down{color:#3a3d40;font-weight:600;}
+
+  .two-col{grid-template-columns:2fr 1fr;align-items:start;}
+  .panel-head{padding:14px 18px;border-bottom:1px solid var(--line-soft);display:flex;justify-content:space-between;align-items:center;}
+  .panel-head .t{font-size:13px;font-weight:700;}
+  .panel-body{padding:16px 18px;}
+
+  .activity-item{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--line-soft);}
+  .activity-item:last-child{border-bottom:none;}
+  .activity-dot{width:7px;height:7px;border-radius:50%;background:var(--gray-3);margin-top:5px;flex:none;}
+  .activity-text{font-size:12.5px;color:var(--ink-soft);line-height:1.4;}
+  .activity-text b{color:var(--ink);}
+  .activity-time{font-size:10.5px;color:var(--ink-faint);font-family:var(--mono);margin-top:2px;}
+
+  /* table */
+  table{width:100%;border-collapse:collapse;font-size:12.5px;}
+  thead th{
+    text-align:left;font-size:10.5px;text-transform:uppercase;letter-spacing:.5px;
+    color:var(--ink-faint);font-weight:700;padding:10px 12px;border-bottom:1px solid var(--line);
+    background:#fafbfb;
+  }
+  tbody td{padding:11px 12px;border-bottom:1px solid var(--line-soft);color:var(--ink-soft);}
+  tbody tr:hover{background:#fafbfb;}
+  .cell-strong{color:var(--ink);font-weight:600;}
+  .mono{font-family:var(--mono);}
+  .avatar-sm{width:20px;height:20px;border-radius:50%;border:1px solid var(--line);display:inline-block;vertical-align:middle;}
+  .swatch{width:22px;height:22px;border:1px solid var(--line);border-radius:4px;display:inline-block;background:repeating-linear-gradient(45deg,var(--gray-5),var(--gray-5) 3px,transparent 3px,transparent 6px);}
+
+  .badge{
+    display:inline-flex;align-items:center;gap:5px;
+    font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:20px;
+    border:1px solid var(--gray-4);color:var(--ink-soft);text-transform:uppercase;letter-spacing:.4px;
+  }
+  .badge .d{width:6px;height:6px;border-radius:50%;background:var(--gray-3);}
+  .badge.ok{border-color:var(--ink);color:var(--ink);background:#f2f3f3;}
+  .badge.ok .d{background:var(--ink);}
+  .badge.warn{border-style:dashed;}
+  .badge.crit{background:var(--ink);color:#fff;border-color:var(--ink);}
+  .badge.crit .d{background:#fff;}
+
+  .row-check{width:16px;height:16px;border:1.5px solid var(--gray-3);border-radius:3px;}
+  .link-action{font-size:11.5px;font-weight:600;color:var(--ink);border-bottom:1px solid var(--ink);cursor:pointer;}
+
+  /* forms */
+  .form-card{max-width:640px;padding:26px;}
+  .form-row{margin-bottom:18px;}
+  .form-label{font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--ink-faint);margin-bottom:8px;display:block;}
+  .form-hint{font-size:11px;color:var(--ink-faint);margin-top:6px;}
+  .input-full{width:100%;padding:12px 12px;font-size:13.5px;}
+  .radio-group{display:flex;gap:10px;}
+  .radio-opt{
+    flex:1;border:1.5px solid var(--line);border-radius:6px;padding:14px;text-align:center;
+    cursor:pointer;font-size:12.5px;font-weight:600;color:var(--ink-soft);
+  }
+  .radio-opt.selected{border-color:var(--ink);background:#f2f3f3;color:var(--ink);}
+  .barcode-strip{
+    display:flex;align-items:center;justify-content:center;gap:2px;height:46px;margin:4px 0 2px;
+    border:1px dashed var(--line);border-radius:5px;background:#fafbfb;
+  }
+  .barcode-strip span{display:block;width:2px;background:var(--gray-2);}
+
+  /* store grid */
+  .store-grid{grid-template-columns:repeat(4,1fr);}
+  .store-card{padding:16px;display:flex;flex-direction:column;gap:10px;}
+  .store-icon{
+    width:100%;height:64px;border:1px dashed var(--line);border-radius:5px;
+    display:flex;align-items:center;justify-content:center;background:#fafbfb;
+  }
+  .store-icon svg{width:26px;height:26px;color:var(--ink-soft);}
+  .store-name{font-size:13px;font-weight:700;}
+  .store-meta{font-size:11px;color:var(--ink-faint);font-family:var(--mono);}
+  .store-stock{font-size:22px;font-weight:700;font-family:var(--mono);}
+  .stepper{display:flex;align-items:center;justify-content:space-between;border:1px solid var(--line);border-radius:5px;overflow:hidden;}
+  .stepper button{
+    flex:1;border:none;background:#fff;padding:9px 0;font-size:15px;font-weight:700;cursor:pointer;color:var(--ink);
+  }
+  .stepper button:hover{background:var(--gray-5);}
+  .stepper .val{flex:1.4;text-align:center;font-family:var(--mono);font-size:12.5px;border-left:1px solid var(--line);border-right:1px solid var(--line);padding:9px 0;}
+
+  /* supplier cards */
+  .supplier-grid{grid-template-columns:repeat(2,1fr);}
+  .supplier-card{padding:18px;display:flex;gap:14px;}
+  .supplier-logo{width:44px;height:44px;border:1px solid var(--line);border-radius:6px;flex:none;background:var(--gray-5);}
+  .supplier-name{font-weight:700;font-size:13.5px;}
+  .supplier-line{font-size:11.5px;color:var(--ink-faint);margin-top:3px;font-family:var(--mono);}
+
+  /* PO / reorder */
+  .po-toolbar{display:flex;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px;}
+
+  .email-frame{max-width:760px;}
+  .email-head{padding:16px 20px;border-bottom:1px solid var(--line-soft);display:flex;flex-direction:column;gap:10px;}
+  .email-field{display:flex;align-items:center;gap:10px;font-size:12.5px;}
+  .email-field label{width:44px;color:var(--ink-faint);font-weight:700;font-size:11px;text-transform:uppercase;}
+  .email-field .val{flex:1;border:1px solid var(--line);border-radius:5px;padding:8px 10px;color:var(--ink-soft);}
+
+  /* settings */
+  .tabs{display:flex;gap:2px;border-bottom:1px solid var(--line);margin-bottom:20px;}
+  .tab{padding:10px 16px;font-size:12.5px;font-weight:600;color:var(--ink-faint);cursor:pointer;border-bottom:2px solid transparent;}
+  .tab.active{color:var(--ink);border-color:var(--ink);}
+  .settings-form{max-width:520px;}
+
+  .placeholder-chart{width:100%;height:210px;}
+  .footer-note{font-size:10.5px;color:var(--ink-faint);text-align:center;padding:14px 0 4px;}
+</style>
+</head>
+<body>
+
+<!-- ================= SIDEBAR ================= -->
+<aside class="sidebar">
+  <div class="brand">
+    <div class="brand-mark">HI</div>
+    <div class="brand-text">
+      <div class="b1">Harborline Hotel</div>
+      <div class="b2">Inventory OS</div>
+    </div>
+  </div>
+  <nav class="navlist" id="navlist">
+    <div class="nav-section-label">Overview</div>
+    <div class="nav-item" data-page="dashboard"><span class="num">01</span><span class="nav-icon">◱</span>Dashboard Summary</div>
+
+    <div class="nav-section-label">Inventory</div>
+    <div class="nav-item" data-page="inventory"><span class="num">02</span><span class="nav-icon">▤</span>Inventory Grid</div>
+    <div class="nav-item" data-page="stockinout"><span class="num">03</span><span class="nav-icon">⇅</span>Stock In / Out</div>
+    <div class="nav-item" data-page="housekeeping"><span class="num">04</span><span class="nav-icon">▦</span>Housekeeping Stores</div>
+    <div class="nav-item" data-page="fnb"><span class="num">05</span><span class="nav-icon">▦</span>F&amp;B Stores</div>
+
+    <div class="nav-section-label">Procurement</div>
+    <div class="nav-item" data-page="suppliers"><span class="num">06</span><span class="nav-icon">◐</span>Suppliers &amp; Vendors</div>
+    <div class="nav-item" data-page="po"><span class="num">07</span><span class="nav-icon">▧</span>Purchase Orders</div>
+    <div class="nav-item" data-page="reorder"><span class="num">08</span><span class="nav-icon">✉</span>Reorder Requests</div>
+
+    <div class="nav-section-label">Oversight</div>
+    <div class="nav-item" data-page="audit"><span class="num">09</span><span class="nav-icon">≡</span>Audit Logs</div>
+    <div class="nav-item" data-page="analytics"><span class="num">10</span><span class="nav-icon">◔</span>Analytics &amp; Reports</div>
+    <div class="nav-item" data-page="settings"><span class="num">11</span><span class="nav-icon">⚙</span>System Settings</div>
+  </nav>
+  <div class="sidebar-foot"><span class="dot-live"></span> Synced 2 min ago</div>
+</aside>
+
+<!-- ================= MAIN ================= -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="page-title" id="pageTitle">Dashboard Summary</div>
+      <div class="page-sub" id="pageSub">/ overview</div>
+    </div>
+    <div class="topbar-right">
+      <div class="search-box">⌕ Search inventory…</div>
+      <div class="icon-btn">⚑</div>
+      <div class="icon-btn">⎚</div>
+      <div class="avatar">FD</div>
+    </div>
+  </div>
+
+  <div class="content" id="content">
+
+    <!-- ============ 1. DASHBOARD ============ -->
+    <section class="page active" id="page-dashboard">
+      <div class="grid metrics">
+        <div class="card metric-card">
+          <div class="metric-top"><span class="metric-label">Total Items</span><div class="metric-icon">▤</div></div>
+          <div class="metric-value">4,812</div>
+          <div class="metric-delta up">+126 this month</div>
+        </div>
+        <div class="card metric-card">
+          <div class="metric-top"><span class="metric-label">Low Stock</span><div class="metric-icon">!</div></div>
+          <div class="metric-value">37</div>
+          <div class="metric-delta">across 6 categories</div>
+        </div>
+        <div class="card metric-card">
+          <div class="metric-top"><span class="metric-label">Pending Orders</span><div class="metric-icon">▧</div></div>
+          <div class="metric-value">12</div>
+          <div class="metric-delta">4 due this week</div>
+        </div>
+      </div>
+
+      <div class="grid two-col">
+        <div class="card">
+          <div class="panel-head"><span class="t">Usage Trend — Last 30 Days</span><span class="badge">Housekeeping ▾</span></div>
+          <div class="panel-body"><div class="placeholder-chart"><canvas id="usageTrendChart"></canvas></div></div>
+        </div>
+        <div class="card">
+          <div class="panel-head"><span class="t">Recent Activity</span></div>
+          <div class="panel-body" id="activityFeed"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 2. INVENTORY GRID ============ -->
+    <section class="page" id="page-inventory">
+      <div class="row-actions">
+        <div class="filters">
+          <select class="select"><option>Category: All</option><option>Linen</option><option>Toiletries</option><option>Paper Goods</option></select>
+          <select class="select"><option>Status: All</option><option>In Stock</option><option>Low Stock</option><option>Out of Stock</option></select>
+          <select class="select"><option>Supplier: All</option></select>
+          <input class="input" placeholder="Filter by SKU…" style="width:150px;">
+        </div>
+        <button class="btn btn-primary">+ Add Item</button>
+      </div>
+      <div class="card">
+        <table>
+          <thead><tr>
+            <th><span class="row-check"></span></th><th>SKU</th><th>Item Name</th><th>Category</th>
+            <th>Stock</th><th>Threshold</th><th>Unit Cost</th><th>Total Value</th><th>Status</th><th>Supplier</th><th></th>
+          </tr></thead>
+          <tbody id="inventoryTbody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ============ 3. STOCK IN / OUT ============ -->
+    <section class="page" id="page-stockinout">
+      <div class="card form-card">
+        <div class="section-label">Scan or enter item</div>
+        <div class="barcode-strip" id="barcodeStrip"></div>
+        <div class="form-row">
+          <label class="form-label">SKU</label>
+          <input class="input input-full" placeholder="e.g. LIN-0245 — Queen Bedsheet White" id="skuInput">
+          <div class="form-hint">Matched: Queen Bedsheet, White · Linen · Current stock 84</div>
+        </div>
+        <div class="form-row">
+          <label class="form-label">Movement</label>
+          <div class="radio-group" id="movementGroup">
+            <div class="radio-opt selected" data-val="add">+ Add Stock</div>
+            <div class="radio-opt" data-val="remove">− Remove Stock</div>
+          </div>
+        </div>
+        <div class="form-row">
+          <label class="form-label">Quantity</label>
+          <input class="input input-full" type="number" value="12">
+        </div>
+        <div class="form-row">
+          <label class="form-label">Reason</label>
+          <select class="select input-full">
+            <option>Received from supplier</option>
+            <option>Damaged / write-off</option>
+            <option>Returned by department</option>
+            <option>Transferred between stores</option>
+          </select>
+        </div>
+        <button class="btn btn-primary" style="width:100%;justify-content:center;padding:13px;">Confirm Movement</button>
+      </div>
+    </section>
+
+    <!-- ============ 4. HOUSEKEEPING STORES ============ -->
+    <section class="page" id="page-housekeeping">
+      <div class="row-actions"><div class="section-label" style="margin:0;">Housekeeping Stores — 14 SKUs</div><button class="btn btn-ghost">Print Stock Sheet</button></div>
+      <div class="grid store-grid" id="housekeepingGrid"></div>
+    </section>
+
+    <!-- ============ 5. F&B STORES ============ -->
+    <section class="page" id="page-fnb">
+      <div class="row-actions"><div class="section-label" style="margin:0;">Food &amp; Beverage Stores — 18 SKUs</div><button class="btn btn-ghost">Print Stock Sheet</button></div>
+      <div class="grid store-grid" id="fnbGrid"></div>
+    </section>
+
+    <!-- ============ 6. SUPPLIERS ============ -->
+    <section class="page" id="page-suppliers">
+      <div class="row-actions"><div class="section-label" style="margin:0;">18 Active Suppliers</div><button class="btn btn-primary">+ Add Supplier</button></div>
+      <div class="grid supplier-grid" id="supplierGrid"></div>
+    </section>
+
+    <!-- ============ 7. PURCHASE ORDERS ============ -->
+    <section class="page" id="page-po">
+      <div class="po-toolbar">
+        <div class="filters">
+          <select class="select"><option>Status: All</option><option>Pending</option><option>Delivered</option><option>Cancelled</option></select>
+          <input class="input" placeholder="Date range" style="width:150px;">
+        </div>
+        <button class="btn btn-primary">+ Draft New Order</button>
+      </div>
+      <div class="card">
+        <table>
+          <thead><tr><th>Order ID</th><th>Supplier</th><th>Date</th><th>Items</th><th>Total Amount</th><th>Status</th><th></th></tr></thead>
+          <tbody id="poTbody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ============ 8. REORDER REQUESTS ============ -->
+    <section class="page" id="page-reorder">
+      <div class="section-label">Auto-drafted from 7 low-stock items</div>
+      <div class="card email-frame">
+        <div class="email-head">
+          <div class="email-field"><label>To</label><div class="val">Coastal Linen Supply Co. — orders@coastallinen.example</div></div>
+          <div class="email-field"><label>Subject</label><div class="val">Reorder Request — Harborline Hotel — 30 Jul 2026</div></div>
+        </div>
+        <div class="panel-body">
+          <table>
+            <thead><tr><th>Item</th><th>Current Stock</th><th>Threshold</th><th>Qty Requested</th></tr></thead>
+            <tbody id="reorderTbody"></tbody>
+          </table>
+          <div style="margin-top:18px;">
+            <button class="btn btn-primary" style="padding:12px 22px;">Send Request</button>
+            <button class="btn btn-ghost" style="padding:12px 18px;">Edit Draft</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 9. AUDIT LOGS ============ -->
+    <section class="page" id="page-audit">
+      <div class="row-actions">
+        <div class="filters">
+          <select class="select"><option>Date: Last 7 days</option><option>Last 30 days</option><option>Custom range</option></select>
+          <select class="select"><option>Staff: All</option></select>
+          <select class="select"><option>Action: All</option><option>Added</option><option>Removed</option><option>Adjusted</option></select>
+        </div>
+        <button class="btn btn-ghost">⭳ Export to CSV</button>
+      </div>
+      <div class="card">
+        <table>
+          <thead><tr><th>Timestamp</th><th>Action</th><th>Item</th><th>Qty Changed</th><th>Location</th><th>Staff</th></tr></thead>
+          <tbody id="auditTbody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ============ 10. ANALYTICS ============ -->
+    <section class="page" id="page-analytics">
+      <div class="grid two-col" style="margin-bottom:16px;">
+        <div class="card">
+          <div class="panel-head"><span class="t">Usage Trends by Category</span></div>
+          <div class="panel-body"><div class="placeholder-chart"><canvas id="usageBarChart"></canvas></div></div>
+        </div>
+        <div class="card">
+          <div class="panel-head"><span class="t">Valuation by Category</span></div>
+          <div class="panel-body"><div class="placeholder-chart" style="height:210px;"><canvas id="valuationPie"></canvas></div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="panel-head"><span class="t">Highest Waste Items</span></div>
+        <table>
+          <thead><tr><th>Item</th><th>Category</th><th>Units Wasted</th><th>Est. Value Lost</th></tr></thead>
+          <tbody id="wasteTbody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ============ 11. SETTINGS ============ -->
+    <section class="page" id="page-settings">
+      <div class="tabs" id="settingsTabs">
+        <div class="tab active" data-tab="general">General</div>
+        <div class="tab" data-tab="notifications">Notifications</div>
+        <div class="tab" data-tab="users">Users</div>
+      </div>
+
+      <div class="settings-tab-content" id="tab-general">
+        <div class="card form-card">
+          <div class="form-row"><label class="form-label">Hotel Name</label><input class="input input-full" value="Harborline Hotel &amp; Suites"></div>
+          <div class="form-row"><label class="form-label">Currency</label>
+            <select class="select input-full"><option>USD — US Dollar</option><option>JOD — Jordanian Dinar</option><option>EUR — Euro</option></select>
+          </div>
+          <div class="form-row"><label class="form-label">Default Reorder Threshold</label><input class="input input-full" value="20% of par stock"></div>
+          <button class="btn btn-primary">Save Changes</button>
+        </div>
+      </div>
+      <div class="settings-tab-content" id="tab-notifications" style="display:none;">
+        <div class="card form-card">
+          <div class="form-row"><label class="form-label">Low Stock Alerts</label><div class="form-hint">Email + in-app, sent when an item falls below threshold.</div></div>
+          <div class="form-row"><label class="form-label">Purchase Order Updates</label><div class="form-hint">Notify when a supplier confirms or delays an order.</div></div>
+          <div class="form-row"><label class="form-label">Weekly Digest</label><div class="form-hint">Sunday 8:00 AM summary of stock movement.</div></div>
+        </div>
+      </div>
+      <div class="settings-tab-content" id="tab-users" style="display:none;">
+        <div class="card">
+          <table>
+            <thead><tr><th>Name</th><th>Role</th><th>Store Access</th><th>Status</th></tr></thead>
+            <tbody id="usersTbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <div class="footer-note">Harborline Hotel Inventory OS — wireframe prototype, all data illustrative</div>
+  </div>
+</div>
+
+<script>
+/* ---------------- static config ---------------- */
+const PAGES = {
+  dashboard:{title:"Dashboard Summary", sub:"/ overview"},
+  inventory:{title:"Inventory Grid", sub:"/ inventory / all items"},
+  stockinout:{title:"Stock In / Out", sub:"/ inventory / movement"},
+  housekeeping:{title:"Housekeeping Stores", sub:"/ inventory / housekeeping"},
+  fnb:{title:"Food & Beverage Stores", sub:"/ inventory / f&b"},
+  suppliers:{title:"Suppliers & Vendors", sub:"/ procurement / directory"},
+  po:{title:"Purchase Orders", sub:"/ procurement / orders"},
+  reorder:{title:"Reorder Requests", sub:"/ procurement / auto-draft"},
+  audit:{title:"Audit Logs", sub:"/ oversight / history"},
+  analytics:{title:"Analytics & Reports", sub:"/ oversight / reports"},
+  settings:{title:"System Settings", sub:"/ system / general"},
+};
+
+/* ---------------- nav wiring ---------------- */
+document.querySelectorAll(".nav-item").forEach(item=>{
+  item.addEventListener("click", ()=> switchPage(item.dataset.page));
+});
+function switchPage(key){
+  document.querySelectorAll(".nav-item").forEach(n=>n.classList.toggle("active", n.dataset.page===key));
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  document.getElementById("page-"+key).classList.add("active");
+  document.getElementById("pageTitle").textContent = PAGES[key].title;
+  document.getElementById("pageSub").textContent = PAGES[key].sub;
+  document.getElementById("content").scrollTop = 0;
+}
+switchPage("dashboard");
+
+/* ---------------- barcode strip ---------------- */
+const strip = document.getElementById("barcodeStrip");
+for(let i=0;i<46;i++){
+  const bar=document.createElement("span");
+  const h = 14 + Math.round(Math.random()*26);
+  bar.style.height = h+"px";
+  bar.style.opacity = 0.55+Math.random()*0.45;
+  strip.appendChild(bar);
+}
+
+/* ---------------- movement radio toggle ---------------- */
+document.querySelectorAll("#movementGroup .radio-opt").forEach(opt=>{
+  opt.addEventListener("click", ()=>{
+    document.querySelectorAll("#movementGroup .radio-opt").forEach(o=>o.classList.remove("selected"));
+    opt.classList.add("selected");
+  });
+});
+
+/* ---------------- settings tabs ---------------- */
+document.querySelectorAll("#settingsTabs .tab").forEach(tab=>{
+  tab.addEventListener("click", ()=>{
+    document.querySelectorAll("#settingsTabs .tab").forEach(t=>t.classList.remove("active"));
+    tab.classList.add("active");
+    document.querySelectorAll(".settings-tab-content").forEach(c=>c.style.display="none");
+    document.getElementById("tab-"+tab.dataset.tab).style.display="block";
+  });
+});
+
+/* ---------------- activity feed ---------------- */
+const activities = [
+  ["<b>M. Alvarez</b> logged 24 units removed — Bath Towels","4 min ago"],
+  ["<b>Purchase Order #PO-1042</b> marked Delivered — Coastal Linen","22 min ago"],
+  ["<b>Low stock alert</b> triggered — Shampoo 30ml (F&amp;B)","1 hr ago"],
+  ["<b>R. Haddad</b> added 120 units — Toilet Paper, 2-ply","2 hr ago"],
+  ["<b>Reorder request</b> auto-drafted — 7 items below threshold","3 hr ago"],
+];
+document.getElementById("activityFeed").innerHTML = activities.map(a=>`
+  <div class="activity-item"><span class="activity-dot"></span>
+    <div><div class="activity-text">${a[0]}</div><div class="activity-time">${a[1]}</div></div>
+  </div>`).join("");
+
+/* ---------------- inventory table ---------------- */
+const inv = [
+  ["TWL-0113","Bath Towel, White","Linen",212,80,4.20,"ok"],
+  ["SHM-0087","Shampoo 30ml Bottle","Toiletries",18,50,0.65,"crit"],
+  ["LIN-0245","Queen Bedsheet, White","Linen",84,40,11.90,"ok"],
+  ["TP-0002","Toilet Paper, 2-ply","Paper Goods",340,150,0.55,"ok"],
+  ["SOP-0044","Bar Soap 20g","Toiletries",41,60,0.30,"warn"],
+  ["PIL-0301","Pillowcase, Standard","Linen",96,50,3.40,"ok"],
+  ["MINI-0019","Mini Bar Water 500ml","F&B",22,40,0.80,"warn"],
+];
+document.getElementById("inventoryTbody").innerHTML = inv.map(r=>{
+  const total=(r[3]*r[5]).toFixed(2);
+  const badge = r[6]==="ok"?["ok","In Stock"]:r[6]==="warn"?["warn","Low Stock"]:["crit","Critical"];
+  return `<tr>
+    <td><span class="row-check"></span></td>
+    <td class="mono">${r[0]}</td>
+    <td class="cell-strong">${r[1]}</td>
+    <td>${r[2]}</td>
+    <td class="mono">${r[3]}</td>
+    <td class="mono">${r[4]}</td>
+    <td class="mono">$${r[5].toFixed(2)}</td>
+    <td class="mono">$${total}</td>
+    <td><span class="badge ${badge[0]}"><span class="d"></span>${badge[1]}</span></td>
+    <td><span class="swatch" title="Supplier logo"></span></td>
+    <td><span class="link-action">View Log</span></td>
+  </tr>`;
+}).join("");
+
+/* ---------------- store grids ---------------- */
+function iconSvg(kind){
+  const icons = {
+    towel:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="4" y="4" width="16" height="16" rx="1"/><path d="M4 9h16M9 4v16"/></svg>',
+    sheet:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M4 8c4-3 12-3 16 0v8c-4 3-12 3-16 0z"/></svg>',
+    bottle:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M9 3h6v3l2 2v11a2 2 0 01-2 2H9a2 2 0 01-2-2V8l2-2z"/></svg>',
+    snack:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="5" y="4" width="14" height="16" rx="2"/><path d="M9 9h6M9 13h6"/></svg>',
+    glass:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M6 3h12l-2 13a4 4 0 01-8 0z"/><path d="M9 21h6"/></svg>',
+    box:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M3 7l9-4 9 4-9 4-9-4z"/><path d="M3 7v10l9 4 9-4V7M12 11v10"/></svg>',
+  };
+  return icons[kind]||icons.box;
+}
+const housekeeping = [
+  ["Bath Towels","towel",212,"pcs"],["Hand Towels","towel",188,"pcs"],
+  ["Bed Sheets, Queen","sheet",84,"pcs"],["Bed Sheets, King","sheet",52,"pcs"],
+  ["Pillowcases","sheet",96,"pcs"],["Shampoo 30ml","bottle",18,"pcs"],
+  ["Conditioner 30ml","bottle",26,"pcs"],["Bar Soap","box",41,"pcs"],
+];
+const fnb = [
+  ["Water Bottles 500ml","bottle",22,"pcs"],["Sparkling Water","bottle",34,"pcs"],
+  ["Mixed Nuts Snack","snack",58,"pcs"],["Chocolate Bar","snack",67,"pcs"],
+  ["Red Wine, Mini","glass",14,"btl"],["White Wine, Mini","glass",19,"btl"],
+  ["Whiskey Miniature","glass",9,"btl"],["Coffee Capsules","box",120,"pcs"],
+];
+function renderStoreGrid(elId, items){
+  document.getElementById(elId).innerHTML = items.map((it,i)=>`
+    <div class="card store-card">
+      <div class="store-icon">${iconSvg(it[1])}</div>
+      <div><div class="store-name">${it[0]}</div><div class="store-meta">Unit: ${it[3]}</div></div>
+      <div class="store-stock" id="${elId}-val-${i}">${it[2]}</div>
+      <div class="stepper">
+        <button onclick="stepStore('${elId}',${i},-1)">−</button>
+        <span class="val" id="${elId}-mid-${i}">on hand</span>
+        <button onclick="stepStore('${elId}',${i},1)">+</button>
+      </div>
+    </div>`).join("");
+}
+renderStoreGrid("housekeepingGrid", housekeeping);
+renderStoreGrid("fnbGrid", fnb);
+function stepStore(elId, i, dir){
+  const el = document.getElementById(`${elId}-val-${i}`);
+  let v = parseInt(el.textContent,10) + dir;
+  if(v<0) v=0;
+  el.textContent = v;
+}
+
+/* ---------------- suppliers ---------------- */
+const suppliers = [
+  ["Coastal Linen Supply Co.","orders@coastallinen.example","+1 (555) 014-2231"],
+  ["Amman Hospitality Goods","sales@ahg.example","+962 6 555 0142"],
+  ["Prime Paper & Packaging","hello@primepaper.example","+1 (555) 077-3390"],
+  ["Sunrise Beverage Distributors","team@sunrisebev.example","+1 (555) 902-1187"],
+];
+document.getElementById("supplierGrid").innerHTML = suppliers.map(s=>`
+  <div class="card supplier-card">
+    <div class="supplier-logo"></div>
+    <div>
+      <div class="supplier-name">${s[0]}</div>
+      <div class="supplier-line">${s[1]}</div>
+      <div class="supplier-line">${s[2]}</div>
+      <div style="margin-top:8px;"><span class="link-action">View Contracts</span></div>
+    </div>
+  </div>`).join("");
+
+/* ---------------- purchase orders ---------------- */
+const pos = [
+  ["PO-1042","Coastal Linen Supply Co.","24 Jul 2026","6 items","$1,240.00","ok","Delivered"],
+  ["PO-1043","Prime Paper & Packaging","26 Jul 2026","3 items","$412.50","warn","Pending"],
+  ["PO-1044","Sunrise Beverage Distributors","28 Jul 2026","9 items","$2,015.30","warn","Pending"],
+  ["PO-1045","Amman Hospitality Goods","29 Jul 2026","2 items","$188.00","crit","Cancelled"],
+];
+document.getElementById("poTbody").innerHTML = pos.map(p=>`
+  <tr>
+    <td class="mono cell-strong">${p[0]}</td><td>${p[1]}</td><td class="mono">${p[2]}</td>
+    <td>${p[3]}</td><td class="mono">${p[4]}</td>
+    <td><span class="badge ${p[5]}"><span class="d"></span>${p[6]}</span></td>
+    <td><span class="link-action">Open</span></td>
+  </tr>`).join("");
+
+/* ---------------- reorder ---------------- */
+const reorder = [
+  ["Shampoo 30ml Bottle",18,50,60],
+  ["Mini Bar Water 500ml",22,40,50],
+  ["Bar Soap 20g",41,60,40],
+  ["Conditioner 30ml",26,50,40],
+];
+document.getElementById("reorderTbody").innerHTML = reorder.map(r=>`
+  <tr><td class="cell-strong">${r[0]}</td><td class="mono">${r[1]}</td><td class="mono">${r[2]}</td><td class="mono">${r[3]}</td></tr>
+`).join("");
+
+/* ---------------- audit ---------------- */
+const audit = [
+  ["30 Jul 2026, 09:12","Removed","Bath Towel, White","-24","Housekeeping L2","M. Alvarez"],
+  ["30 Jul 2026, 08:40","Adjusted","Shampoo 30ml Bottle","-2 (damaged)","F&B Store","R. Haddad"],
+  ["29 Jul 2026, 17:05","Added","Toilet Paper, 2-ply","+120","Main Warehouse","M. Alvarez"],
+  ["29 Jul 2026, 15:22","Removed","Queen Bedsheet, White","-8","Housekeeping L1","S. Nasser"],
+  ["29 Jul 2026, 11:50","Added","Mixed Nuts Snack","+60","F&B Store","R. Haddad"],
+];
+document.getElementById("auditTbody").innerHTML = audit.map(a=>`
+  <tr><td class="mono">${a[0]}</td><td>${a[1]}</td><td class="cell-strong">${a[2]}</td>
+  <td class="mono">${a[3]}</td><td>${a[4]}</td><td>${a[5]}</td></tr>`).join("");
+
+/* ---------------- waste table ---------------- */
+const waste = [
+  ["Shampoo 30ml Bottle","Toiletries",34,"$22.10"],
+  ["Mini Bar Water 500ml","F&B",21,"$16.80"],
+  ["Bar Soap 20g","Toiletries",19,"$5.70"],
+];
+document.getElementById("wasteTbody").innerHTML = waste.map(w=>`
+  <tr><td class="cell-strong">${w[0]}</td><td>${w[1]}</td><td class="mono">${w[2]}</td><td class="mono">${w[3]}</td></tr>`).join("");
+
+/* ---------------- users ---------------- */
+const users = [
+  ["Maria Alvarez","Store Manager","Housekeeping + F&B","ok"],
+  ["Rami Haddad","Storekeeper","F&B only","ok"],
+  ["Sara Nasser","Storekeeper","Housekeeping only","ok"],
+  ["Faisal Deeb","Administrator","All Stores","ok"],
+];
+document.getElementById("usersTbody").innerHTML = users.map(u=>`
+  <tr><td class="cell-strong">${u[0]}</td><td>${u[1]}</td><td>${u[2]}</td>
+  <td><span class="badge ok"><span class="d"></span>Active</span></td></tr>`).join("");
+
+/* ---------------- charts ---------------- */
+Chart.defaults.color = "#6b7075";
+Chart.defaults.font.family = "'IBM Plex Sans', sans-serif";
+Chart.defaults.font.size = 11;
+
+new Chart(document.getElementById("usageTrendChart"), {
+  type:"line",
+  data:{
+    labels:Array.from({length:14},(_,i)=>`D${i+1}`),
+    datasets:[{
+      data:[40,44,38,52,49,60,58,55,62,57,66,70,64,72],
+      borderColor:"#26292c", backgroundColor:"rgba(38,41,44,0.06)",
+      fill:true, tension:.35, pointRadius:0, borderWidth:2
+    }]
+  },
+  options:{plugins:{legend:{display:false}}, scales:{x:{grid:{display:false}}, y:{grid:{color:"#e2e5e8"}}}}
+});
+
+new Chart(document.getElementById("usageBarChart"), {
+  type:"bar",
+  data:{
+    labels:["Linen","Toiletries","Paper","F&B","Cleaning","Misc"],
+    datasets:[{data:[320,410,180,260,150,90], backgroundColor:"#3a3d40", borderRadius:3, maxBarThickness:34}]
+  },
+  options:{plugins:{legend:{display:false}}, scales:{x:{grid:{display:false}}, y:{grid:{color:"#e2e5e8"}}}}
+});
+
+new Chart(document.getElementById("valuationPie"), {
+  type:"doughnut",
+  data:{
+    labels:["Linen","Toiletries","Paper Goods","F&B","Other"],
+    datasets:[{data:[38,22,14,18,8], backgroundColor:["#26292c","#4c5054","#6b7075","#9aa0a6","#c9cdd1"], borderColor:"#fff", borderWidth:2}]
+  },
+  options:{plugins:{legend:{position:"bottom", labels:{boxWidth:10, padding:12}}}}
+});
+</script>
+</body>
+</html>
