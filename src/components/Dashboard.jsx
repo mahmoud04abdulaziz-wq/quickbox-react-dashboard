@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import Sidebar from './Sidebar';
 import Topbar from './Topbar';
 import Filters from './Filters';
@@ -11,6 +12,8 @@ import Pagination from './Pagination';
  * assembling all the sub-components to build the complete view.
  */
 function Dashboard() {
+  const { t } = useTranslation(['inventory', 'common']);
+
   return (
     <div className="app-container">
       {/* Sidebar on the left */}
@@ -23,8 +26,8 @@ function Dashboard() {
         <div className="page-container">
           {/* Page Header */}
           <div className="page-header">
-            <h1>Reservations</h1>
-            <button className="btn-primary">Add Booking</button>
+            <h1>{t('reservations.title', { defaultValue: 'Reservations' })}</h1>
+            <button className="btn-primary">{t('reservations.btn_add_booking', { defaultValue: 'Add Booking' })}</button>
           </div>
 
           <Filters />

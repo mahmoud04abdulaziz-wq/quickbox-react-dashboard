@@ -1,5 +1,6 @@
 import React from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useInventory } from '../context/InventoryContext';
 import {
   SlidersHorizontal,
@@ -30,6 +31,7 @@ import {
 } from '@phosphor-icons/react';
 
 function Sidebar() {
+  const { t } = useTranslation('common');
   const { inventory } = useInventory();
   const location = useLocation();
   const alertCount = inventory ? inventory.filter(i => i.status !== 'In Stock').length : 0;
@@ -51,34 +53,34 @@ function Sidebar() {
 
       <NavLink to="/" className={({ isActive }) => (isActive ? 'nav-item-top active' : 'nav-item-top')} end>
         <House />
-        <span>Home</span>
+        <span>{t('nav.home')}</span>
       </NavLink>
 
       {/* Navigation Links */}
       <nav className="sidebar-nav">
         {/* Inventory Control Section */}
         <div className="nav-section">
-          <span className="section-title">Inventory Control</span>
+          <span className="section-title">{t('nav.inventory_control')}</span>
           <NavLink to="/dashboard" className={getNavClass("/dashboard")}>
             <ChartLineUp />
-            <span>Dashboard</span>
+            <span>{t('nav.dashboard')}</span>
           </NavLink>
           <NavLink to="/inventory" className={getNavClass("/inventory")}>
             <Package />
-            <span>Inventory Master</span>
+            <span>{t('nav.inventory_master')}</span>
           </NavLink>
           <NavLink to="/stock" className={getNavClass("/stock")}>
             <ArrowsLeftRight />
-            <span>Stock Operations</span>
+            <span>{t('nav.stock_operations')}</span>
           </NavLink>
           
           <NavLink to="/audit" className={getNavClass("/audit")}>
             <ClipboardText />
-            <span>Audit Logs</span>
+            <span>{t('nav.audit_logs')}</span>
           </NavLink>
           <NavLink to="/alerts" className={getNavClass("/alerts")}>
             <BellRinging />
-            <span style={{ flex: 1 }}>ROP Alerts</span>
+            <span style={{ flex: 1 }}>{t('nav.rop_alerts')}</span>
             {alertCount > 0 && (
               <span style={{
                 backgroundColor: '#ef4444',
@@ -95,67 +97,67 @@ function Sidebar() {
           </NavLink>
           <NavLink to="/reports" className={( {isActive} ) => isActive ? 'nav-item active' : 'nav-item'}>
             <ChartBar />
-            <span>Reports</span>
+            <span>{t('nav.reports')}</span>
           </NavLink>
         </div>
 
         {/* Financial Management Section */}
         <div className="nav-section">
-          <span className="section-title sidebar-section-header">Financial Management</span>
+          <span className="section-title sidebar-section-header">{t('nav.financial_management')}</span>
           
           <NavLink to="/finance/budgeting" className={getNavClass('/finance/budgeting')}>
             <TrendUp />
-            <span>Business Plan</span>
+            <span>{t('nav.business_plan')}</span>
           </NavLink>
           
           <NavLink to="/finance/reconciliation" className={getNavClass('/finance/reconciliation')}>
             <ArrowsClockwise />
-            <span>Account Reconcile</span>
+            <span>{t('nav.account_reconcile')}</span>
           </NavLink>
           
           <NavLink to="/finance/general-ledger" className={getNavClass('/finance/general-ledger')}>
             <BookOpen />
-            <span>Account Mgmt</span>
+            <span>{t('nav.account_mgmt')}</span>
           </NavLink>
           
           <NavLink to="/finance/internal-controls" className={getNavClass('/finance/internal-controls')}>
             <ShieldCheck />
-            <span>Internal Controls</span>
+            <span>{t('nav.internal_controls')}</span>
           </NavLink>
           
           <NavLink to="/finance/tenders" className={getNavClass('/finance/tenders')}>
             <Gavel />
-            <span>Tender Auditing</span>
+            <span>{t('nav.tender_auditing')}</span>
           </NavLink>
           
           <NavLink to="/finance/cash-flow" className={getNavClass('/finance/cash-flow')}>
             <Wallet />
-            <span>Cash Flow</span>
+            <span>{t('nav.cash_flow')}</span>
           </NavLink>
           
           <NavLink to="/finance/payroll-vat" className={getNavClass('/finance/payroll-vat')}>
             <Money />
-            <span>Payroll &amp; Taxes</span>
+            <span>{t('nav.payroll_taxes')}</span>
           </NavLink>
           
           <NavLink to="/finance/fixed-assets" className={getNavClass('/finance/fixed-assets')}>
             <Vault />
-            <span>Fixed Assets</span>
+            <span>{t('nav.fixed_assets')}</span>
           </NavLink>
           
           <NavLink to="/finance/accounts-payable" className={getNavClass('/finance/accounts-payable')}>
             <FileText />
-            <span>Accounts Payable</span>
+            <span>{t('nav.accounts_payable')}</span>
           </NavLink>
           
           <NavLink to="/finance/financial-statements" className={getNavClass('/finance/financial-statements')}>
             <PresentationChart />
-            <span>Reporting Concepts</span>
+            <span>{t('nav.reporting_concepts')}</span>
           </NavLink>
           
           <NavLink to="/finance/policies" className={getNavClass('/finance/policies')}>
             <Scroll />
-            <span>Corporate Policies</span>
+            <span>{t('nav.corporate_policies')}</span>
           </NavLink>
         </div>
       </nav>
@@ -163,7 +165,7 @@ function Sidebar() {
       <div className="sidebar-footer">
         <NavLink to="/settings" className={( {isActive} ) => isActive ? 'nav-item active' : 'nav-item'}>
           <Gear />
-          <span>Settings</span>
+          <span>{t('nav.settings')}</span>
         </NavLink>
       </div>
     </aside>

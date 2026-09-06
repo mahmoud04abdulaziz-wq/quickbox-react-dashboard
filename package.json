@@ -11,8 +11,11 @@
   },
   "dependencies": {
     "@phosphor-icons/react": "^2.1.10",
+    "i18next": "^26.4.2",
+    "i18next-resources-to-backend": "^1.2.3",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
+    "react-i18next": "^17.0.13",
     "react-router-dom": "^7.18.2"
   },
   "devDependencies": {

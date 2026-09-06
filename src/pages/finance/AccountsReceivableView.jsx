@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useFinance } from '../../context/FinanceContext';
 import {
   Receipt,
@@ -12,6 +13,7 @@ import {
 } from '@phosphor-icons/react';
 
 function AccountsReceivableView() {
+  const { t } = useTranslation(['finance', 'common']);
   const { invoices, createInvoice, receivePayment, bankAccounts, parties, metrics } = useFinance();
 
   const [selectedFilter, setSelectedFilter] = useState('ALL');
@@ -97,17 +99,17 @@ function AccountsReceivableView() {
       {/* Title Header */}
       <div className="page-header" style={{ marginBottom: '18px' }}>
         <div>
-          <h1 style={{ fontSize: '18px', fontWeight: 700, margin: 0 }}>Accounts Receivable (AR)</h1>
-          <div style={{ fontSize: '11.5px', color: 'var(--text-muted)', fontFamily: 'monospace', marginTop: '2px' }}>
-            / finance / sales invoicing & collections
+          <h1 style={{ fontSize: '18px', fontWeight: 700, margin: 0 }}>{t('finance:accounts_receivable.title', 'Accounts Receivable (AR)')}</h1>
+          <div style={{ fontSize: '11.5px', color: 'var(--text-muted)', fontFamily: 'monospace', marginTop: '2px' }} dir="ltr">
+            {t('finance:accounts_receivable.breadcrumb', '/ finance / sales invoicing & collections')}
           </div>
         </div>
         <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
           <span className="badge ok">
-            <span className="d"></span> Sales Order Linked
+            <span className="d"></span> {t('finance:accounts_receivable.badge_so_linked', 'Sales Order Linked')}
           </span>
           <span className="badge ok">
-            <span className="d"></span> 5% Statutory VAT Auto-Calculated
+            <span className="d"></span> {t('finance:accounts_receivable.badge_vat_calc', '5% Statutory VAT Auto-Calculated')}
           </span>
         </div>
       </div>
@@ -116,48 +118,48 @@ function AccountsReceivableView() {
       <div className="metrics-4">
         <div className="card metric-card">
           <div className="metric-top">
-            <span className="metric-label">Outstanding AR</span>
+            <span className="metric-label">{t('finance:accounts_receivable.kpi_outstanding_ar', 'Outstanding AR')}</span>
             <div className="metric-icon" style={{ background: '#fef9c3', color: '#a16207' }}>
               <Receipt size={16} weight="bold" />
             </div>
           </div>
-          <div className="metric-value">
+          <div className="metric-value" dir="ltr">
             ${(metrics?.totalAR || 84120).toLocaleString('en-US', { minimumFractionDigits: 0 })}
           </div>
-          <div className="metric-delta">{(invoices || []).filter(i => i.status !== 'PAID').length || 18} unpaid invoices</div>
+          <div className="metric-delta">{t('finance:accounts_receivable.kpi_outstanding_ar_delta', { count: (invoices || []).filter(i => i.status !== 'PAID').length || 18, defaultValue: `${(invoices || []).filter(i => i.status !== 'PAID').length || 18} unpaid invoices` })}</div>
         </div>
 
         <div className="card metric-card">
           <div className="metric-top">
-            <span className="metric-label">Collected (MTD)</span>
+            <span className="metric-label">{t('finance:accounts_receivable.kpi_collected', 'Collected (MTD)')}</span>
             <div className="metric-icon" style={{ background: '#f0fdf4', color: '#15803d' }}>
               <CheckCircle size={16} weight="bold" />
             </div>
           </div>
-          <div className="metric-value">$112,450</div>
-          <div className="metric-delta up" style={{ color: '#15803d', fontWeight: 600 }}>+14.8% MoM</div>
+          <div className="metric-value" dir="ltr">$112,450</div>
+          <div className="metric-delta up" style={{ color: '#15803d', fontWeight: 600 }}>{t('finance:accounts_receivable.kpi_collected_delta', '+14.8% MoM')}</div>
         </div>
 
         <div className="card metric-card">
           <div className="metric-top">
-            <span className="metric-label">Overdue</span>
+            <span className="metric-label">{t('finance:accounts_receivable.kpi_overdue', 'Overdue')}</span>
             <div className="metric-icon" style={{ background: '#fef2f2', color: '#b91c1c' }}>
               <WarningCircle size={16} weight="bold" />
             </div>
           </div>
-          <div className="metric-value">$12,400</div>
-          <div className="metric-delta" style={{ color: '#dc2626', fontWeight: 600 }}>4 invoices &gt; 30 days</div>
+          <div className="metric-value" dir="ltr">$12,400</div>
+          <div className="metric-delta" style={{ color: '#dc2626', fontWeight: 600 }}>{t('finance:accounts_receivable.kpi_overdue_delta', '4 invoices > 30 days')}</div>
         </div>
 
         <div className="card metric-card">
           <div className="metric-top">
-            <span className="metric-label">Uninvoiced Orders</span>
+            <span className="metric-label">{t('finance:accounts_receivable.kpi_dso', 'Avg Collection Period (DSO)')}</span>
             <div className="metric-icon" style={{ background: '#eff6ff', color: '#2563eb' }}>
               <Clock size={16} weight="bold" />
             </div>
           </div>
-          <div className="metric-value">$24,800</div>
-          <div className="metric-delta">6 dispatched SOs</div>
+          <div className="metric-value" dir="ltr">28d</div>
+          <div className="metric-delta">{t('finance:accounts_receivable.kpi_dso_delta', 'Target < 35 days')}</div>
         </div>
       </div>
 
@@ -169,12 +171,12 @@ function AccountsReceivableView() {
             value={selectedFilter}
             onChange={(e) => setSelectedFilter(e.target.value)}
           >
-            <option value="ALL">All Invoices ({(invoices || []).length})</option>
-            <option value="READY">Ready from SO</option>
-            <option value="DRAFT">Draft</option>
-            <option value="PENDING">Sent / Pending</option>
-            <option value="PAID">Paid</option>
-            <option value="OVERDUE">Overdue</option>
+            <option value="ALL">{t('finance:accounts_receivable.filter_all', { count: (invoices || []).length, defaultValue: `All Invoices (${(invoices || []).length})` })}</option>
+            <option value="READY">{t('finance:accounts_receivable.filter_ready', 'Ready from SO')}</option>
+            <option value="DRAFT">{t('finance:accounts_receivable.filter_drafts', 'Drafts')}</option>
+            <option value="PENDING">{t('finance:accounts_receivable.filter_pending', 'Pending Payment')}</option>
+            <option value="PAID">{t('finance:accounts_receivable.filter_paid', 'Paid Invoices')}</option>
+            <option value="OVERDUE">{t('finance:accounts_receivable.filter_overdue', 'Overdue Invoices')}</option>
           </select>
         </div>
 
@@ -185,7 +187,7 @@ function AccountsReceivableView() {
             style={{ display: 'flex', alignItems: 'center', gap: '6px' }}
           >
             <FileText size={14} weight="bold" />
-            <span>Generate from Delivered Orders</span>
+            <span>{t('finance:accounts_receivable.btn_generate_so_invoices', 'Generate Invoices from Delivered Orders')}</span>
           </button>
           <button
             className="btn btn-primary"
@@ -193,7 +195,7 @@ function AccountsReceivableView() {
             style={{ display: 'flex', alignItems: 'center', gap: '6px' }}
           >
             <Plus size={14} weight="bold" />
-            <span>+ Create Invoice</span>
+            <span>{t('finance:accounts_receivable.btn_new_invoice', '+ New Tax Invoice')}</span>
           </button>
         </div>
       </div>
@@ -210,14 +212,14 @@ function AccountsReceivableView() {
                   onChange={() => setSelectedInvoices(selectedInvoices.length === filteredInvoices.length ? [] : filteredInvoices.map(i => i.invoice_id || i.id))}
                 />
               </th>
-              <th>Invoice #</th>
-              <th>SO / Booking Ref</th>
-              <th>Customer</th>
-              <th>Due Date</th>
-              <th>Total Amount</th>
-              <th>Balance Due</th>
-              <th>Status</th>
-              <th>Action</th>
+              <th>{t('finance:accounts_receivable.th_invoice_number', 'Invoice #')}</th>
+              <th>{t('finance:accounts_receivable.th_so_ref', 'SO / Booking Ref')}</th>
+              <th>{t('finance:accounts_receivable.th_customer', 'Customer')}</th>
+              <th>{t('finance:accounts_receivable.th_due_date', 'Due Date')}</th>
+              <th>{t('finance:accounts_receivable.th_total_amount', 'Total Amount')}</th>
+              <th>{t('finance:accounts_receivable.th_balance_due', 'Balance Due')}</th>
+              <th>{t('finance:accounts_receivable.th_status', 'Status')}</th>
+              <th>{t('common:actions.action', 'Action')}</th>
             </tr>
           </thead>
           <tbody>
@@ -238,14 +240,14 @@ function AccountsReceivableView() {
                       onChange={() => toggleSelect(inv.invoice_id || inv.id)}
                     />
                   </td>
-                  <td className="mono cell-strong">{inv.invoice_number || inv.invoice_id}</td>
-                  <td className="mono">{inv.so_reference || 'Booking #2319'}</td>
+                  <td className="mono cell-strong" dir="ltr">{inv.invoice_number || inv.invoice_id}</td>
+                  <td className="mono" dir="ltr">{inv.so_reference || 'Booking #2319'}</td>
                   <td>{inv.customer_name}</td>
-                  <td className="mono">{inv.due_date}</td>
-                  <td className="mono cell-strong">
+                  <td className="mono" dir="ltr">{inv.due_date}</td>
+                  <td className="mono cell-strong" dir="ltr">
                     ${(inv.total_amount || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}
                   </td>
-                  <td className="mono" style={{ color: isPaid ? 'var(--text-muted)' : '#b91c1c', fontWeight: 600 }}>
+                  <td className="mono" dir="ltr" style={{ color: isPaid ? 'var(--text-muted)' : '#b91c1c', fontWeight: 600 }}>
                     ${(inv.balance_due !== undefined ? inv.balance_due : inv.total_amount).toLocaleString('en-US', { minimumFractionDigits: 2 })}
                   </td>
                   <td>
@@ -260,10 +262,10 @@ function AccountsReceivableView() {
                         className="link-action"
                         onClick={() => handleOpenReceivePayment(inv)}
                       >
-                        Receive Pay
+                        {t('finance:accounts_receivable.btn_record_payment', 'Record Payment')}
                       </span>
                     ) : (
-                      <span style={{ fontSize: '11px', color: '#15803d', fontWeight: 600 }}>Collected</span>
+                      <span style={{ fontSize: '11px', color: '#15803d', fontWeight: 600 }}>{t('finance:accounts_receivable.kpi_collected', 'Collected')}</span>
                     )}
                   </td>
                 </tr>
@@ -278,7 +280,7 @@ function AccountsReceivableView() {
         <div className="modal-overlay" onClick={() => setIsRecordPayModalOpen(false)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '480px' }}>
             <div className="modal-header">
-              <div className="modal-title">Record AR Customer Collection</div>
+              <div className="modal-title">{t('finance:accounts_receivable.modal_record_payment_title', 'Record Customer Payment Receipt')}</div>
               <button className="modal-close-btn" onClick={() => setIsRecordPayModalOpen(false)}>
                 <X size={16} />
               </button>
@@ -286,21 +288,22 @@ function AccountsReceivableView() {
 
             <form onSubmit={handleRecordPayment}>
               <div style={{ marginBottom: '12px', background: '#f8fafc', padding: '12px 14px', borderRadius: '6px', border: '1px solid var(--border-color)' }}>
-                <div style={{ fontSize: '12px' }}>Customer: <b>{activeInvoice.customer_name}</b></div>
-                <div style={{ fontSize: '12px' }}>Invoice Ref: <b className="mono">{activeInvoice.invoice_number || activeInvoice.invoice_id}</b></div>
+                <div style={{ fontSize: '12px' }}>{t('finance:accounts_receivable.th_customer', 'Customer')}: <b>{activeInvoice.customer_name}</b></div>
+                <div style={{ fontSize: '12px' }}>{t('finance:accounts_receivable.th_invoice_number', 'Invoice Ref')}: <b className="mono" dir="ltr">{activeInvoice.invoice_number || activeInvoice.invoice_id}</b></div>
                 <div style={{ fontSize: '12px', color: '#b91c1c', fontWeight: 600, marginTop: '4px' }}>
-                  Balance Due: ${(activeInvoice.balance_due || activeInvoice.total_amount).toFixed(2)}
+                  {t('finance:accounts_receivable.th_balance_due', 'Balance Due')}: <span dir="ltr">${(activeInvoice.balance_due || activeInvoice.total_amount).toFixed(2)}</span>
                 </div>
               </div>
 
               <div style={{ marginBottom: '14px' }}>
-                <label className="form-label">Receipt Amount ($)</label>
+                <label className="form-label">{t('finance:accounts_receivable.form_receipt_amount', 'Receipt Amount ($)')}</label>
                 <input
                   type="number"
                   step="0.01"
                   min="0.01"
                   max={activeInvoice.balance_due || activeInvoice.total_amount}
                   className="input input-full mono"
+                  dir="ltr"
                   value={receiptAmount}
                   onChange={(e) => setReceiptAmount(e.target.value)}
                   required
@@ -308,7 +311,7 @@ function AccountsReceivableView() {
               </div>
 
               <div style={{ marginBottom: '14px' }}>
-                <label className="form-label">Deposit To Bank Account</label>
+                <label className="form-label">{t('finance:accounts_receivable.form_deposit_to', 'Deposit To Bank Account')}</label>
                 <select
                   className="select"
                   style={{ width: '100%' }}
@@ -325,10 +328,10 @@ function AccountsReceivableView() {
 
               <div className="modal-footer">
                 <button type="button" className="btn btn-ghost" onClick={() => setIsRecordPayModalOpen(false)}>
-                  Cancel
+                  {t('common:actions.cancel', 'Cancel')}
                 </button>
                 <button type="submit" className="btn btn-primary">
-                  Record Receipt &amp; Post to Cash GL
+                  {t('finance:accounts_receivable.btn_record_payment', 'Record Receipt & Post to Cash GL')}
                 </button>
               </div>
             </form>
@@ -341,7 +344,7 @@ function AccountsReceivableView() {
         <div className="modal-overlay" onClick={() => setIsCreateModalOpen(false)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '580px' }}>
             <div className="modal-header">
-              <div className="modal-title">Generate Customer Sales Invoice</div>
+              <div className="modal-title">{t('finance:accounts_receivable.modal_new_invoice_title', 'Create New Tax Invoice')}</div>
               <button className="modal-close-btn" onClick={() => setIsCreateModalOpen(false)}>
                 <X size={16} />
               </button>
@@ -350,7 +353,7 @@ function AccountsReceivableView() {
             <form onSubmit={handleCreateInvoice}>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '14px' }}>
                 <div>
-                  <label className="form-label">Customer</label>
+                  <label className="form-label">{t('finance:accounts_receivable.form_customer', 'Customer Name')}</label>
                   <select
                     className="select"
                     style={{ width: '100%' }}
@@ -363,7 +366,7 @@ function AccountsReceivableView() {
                   </select>
                 </div>
                 <div>
-                  <label className="form-label">Payment Terms</label>
+                  <label className="form-label">{t('finance:accounts_payable.form_terms', 'Payment Terms')}</label>
                   <select
                     className="select"
                     style={{ width: '100%' }}
@@ -379,9 +382,10 @@ function AccountsReceivableView() {
               </div>
 
               <div style={{ marginBottom: '14px' }}>
-                <label className="form-label">Sales Order / Room Booking Ref</label>
+                <label className="form-label">{t('finance:accounts_receivable.form_so_ref', 'Sales Order Ref')}</label>
                 <input
                   className="input input-full"
+                  dir="ltr"
                   value={newSoRef}
                   onChange={(e) => setNewSoRef(e.target.value)}
                   required
@@ -390,11 +394,12 @@ function AccountsReceivableView() {
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '16px' }}>
                 <div>
-                  <label className="form-label">Taxable Subtotal ($)</label>
+                  <label className="form-label">{t('finance:accounts_payable.form_subtotal', 'Taxable Subtotal ($)')}</label>
                   <input
                     type="number"
                     step="0.01"
                     className="input input-full mono"
+                    dir="ltr"
                     value={newSubtotal}
                     onChange={(e) => {
                       const sub = parseFloat(e.target.value) || 0;
@@ -405,11 +410,12 @@ function AccountsReceivableView() {
                   />
                 </div>
                 <div>
-                  <label className="form-label">Output 5% VAT ($)</label>
+                  <label className="form-label">{t('finance:accounts_payable.form_tax', 'Output 5% VAT ($)')}</label>
                   <input
                     type="number"
                     step="0.01"
                     className="input input-full mono"
+                    dir="ltr"
                     value={newTax}
                     onChange={(e) => setNewTax(parseFloat(e.target.value) || 0)}
                     required
@@ -418,16 +424,16 @@ function AccountsReceivableView() {
               </div>
 
               <div style={{ background: '#f8fafc', padding: '12px 14px', borderRadius: '6px', border: '1px solid var(--border-color)', marginBottom: '16px', display: 'flex', justifyContent: 'space-between', fontWeight: 700, fontSize: '13px' }}>
-                <span>Invoice Gross Total:</span>
-                <span className="mono">${((parseFloat(newSubtotal) || 0) + (parseFloat(newTax) || 0)).toFixed(2)}</span>
+                <span>{t('finance:accounts_payable.th_total_amount', 'Invoice Gross Total')}:</span>
+                <span className="mono" dir="ltr">${((parseFloat(newSubtotal) || 0) + (parseFloat(newTax) || 0)).toFixed(2)}</span>
               </div>
 
               <div className="modal-footer">
                 <button type="button" className="btn btn-ghost" onClick={() => setIsCreateModalOpen(false)}>
-                  Cancel
+                  {t('common:actions.cancel', 'Cancel')}
                 </button>
                 <button type="submit" className="btn btn-primary">
-                  Post Sales Invoice &amp; Recognize Revenue
+                  {t('finance:accounts_receivable.btn_new_invoice', '+ New Tax Invoice')}
                 </button>
               </div>
             </form>

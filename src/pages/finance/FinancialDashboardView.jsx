@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useFinance } from '../../context/FinanceContext';
 import { useInventory } from '../../context/InventoryContext';
 import {
@@ -17,6 +18,7 @@ import {
 } from '@phosphor-icons/react';
 
 function FinancialDashboardView() {
+  const { t } = useTranslation(['finance', 'common']);
   const { metrics, journalEntries, accounts, auditLog } = useFinance();
   const { inventory } = useInventory();
   const [selectedMonth, setSelectedMonth] = useState('Aug 2026');
@@ -136,17 +138,17 @@ function FinancialDashboardView() {
       {/* Top Header */}
       <div className="page-header" style={{ marginBottom: '18px' }}>
         <div>
-          <h1 style={{ fontSize: '18px', fontWeight: 700, margin: 0 }}>Financial Dashboard</h1>
-          <div style={{ fontSize: '11.5px', color: 'var(--text-muted)', fontFamily: 'monospace', marginTop: '2px' }}>
-            / finance / overview
+          <h1 style={{ fontSize: '18px', fontWeight: 700, margin: 0 }}>{t('finance:dashboard.title', 'Financial Dashboard')}</h1>
+          <div style={{ fontSize: '11.5px', color: 'var(--text-muted)', fontFamily: 'monospace', marginTop: '2px' }} dir="ltr">
+            {t('finance:dashboard.breadcrumb', '/ finance / overview')}
           </div>
         </div>
         <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
           <span className="badge ok">
-            <span className="d"></span> GL Balanced Δ $0.00
+            <span className="d"></span> {t('finance:dashboard.badge_gl_balanced', 'GL Balanced Δ $0.00')}
           </span>
           <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
-            Real-Time Auto-Posting Active
+            {t('finance:dashboard.badge_realtime_autopost', 'Real-Time Auto-Posting Active')}
           </span>
         </div>
       </div>
@@ -155,76 +157,76 @@ function FinancialDashboardView() {
       <div className="metrics-5">
         <div className="card metric-card">
           <div className="metric-top">
-            <span className="metric-label">Liquid Cash</span>
+            <span className="metric-label">{t('finance:dashboard.kpi_liquid_cash', 'Liquid Cash')}</span>
             <div className="metric-icon" style={{ background: '#f0fdf4', color: '#15803d' }}>
               <Wallet size={16} weight="bold" />
             </div>
           </div>
-          <div className="metric-value">
+          <div className="metric-value" dir="ltr">
             ${(metrics?.liquidCash || 428950).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
           </div>
           <div className="metric-delta up" style={{ color: '#15803d', fontWeight: 600 }}>
-            +4.2% MoM · 3 accounts
+            {t('finance:dashboard.kpi_liquid_cash_delta', '+4.2% MoM · 3 accounts')}
           </div>
         </div>
 
         <div className="card metric-card">
           <div className="metric-top">
-            <span className="metric-label">Inventory Asset</span>
+            <span className="metric-label">{t('finance:dashboard.kpi_inventory_asset', 'Inventory Asset')}</span>
             <div className="metric-icon" style={{ background: '#f8fafc', color: '#475569' }}>
               <Package size={16} weight="bold" />
             </div>
           </div>
-          <div className="metric-value">
+          <div className="metric-value" dir="ltr">
             ${(metrics?.inventoryValuation || 186420).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
           </div>
           <div className="metric-delta" style={{ color: 'var(--text-muted)' }}>
-            {(inventory || []).length || 6850} SKUs · {categoryBreakdown.length} categories
+            {t('finance:dashboard.kpi_inventory_asset_delta', { count: (inventory || []).length || 6850, catCount: categoryBreakdown.length, defaultValue: '{{count}} SKUs · {{catCount}} categories' })}
           </div>
         </div>
 
         <div className="card metric-card">
           <div className="metric-top">
-            <span className="metric-label">Receivables (AR)</span>
+            <span className="metric-label">{t('finance:dashboard.kpi_receivables', 'Receivables (AR)')}</span>
             <div className="metric-icon" style={{ background: '#fef9c3', color: '#a16207' }}>
               <Receipt size={16} weight="bold" />
             </div>
           </div>
-          <div className="metric-value">
+          <div className="metric-value" dir="ltr">
             ${(metrics?.totalAR || 84120).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
           </div>
           <div className="metric-delta" style={{ color: '#ca8a04', fontWeight: 600 }}>
-            $12,400 overdue · 4 clients
+            {t('finance:dashboard.kpi_receivables_delta', '$12,400 overdue · 4 clients')}
           </div>
         </div>
 
         <div className="card metric-card">
           <div className="metric-top">
-            <span className="metric-label">Payables + GR/IR</span>
+            <span className="metric-label">{t('finance:dashboard.kpi_payables', 'Payables + GR/IR')}</span>
             <div className="metric-icon" style={{ background: '#eff6ff', color: '#2563eb' }}>
               <CreditCard size={16} weight="bold" />
             </div>
           </div>
-          <div className="metric-value">
+          <div className="metric-value" dir="ltr">
             ${(metrics?.totalPayables || 54890).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
           </div>
           <div className="metric-delta" style={{ color: 'var(--text-muted)' }}>
-            ${((metrics?.totalAP || 36890) / 1000).toFixed(1)}k AP + ${((metrics?.grirBalance || 18000) / 1000).toFixed(1)}k accrual
+            {t('finance:dashboard.kpi_payables_delta', { ap: ((metrics?.totalAP || 36890) / 1000).toFixed(1), grir: ((metrics?.grirBalance || 18000) / 1000).toFixed(1), defaultValue: '${{ap}}k AP + ${{grir}}k accrual' })}
           </div>
         </div>
 
         <div className="card metric-card">
           <div className="metric-top">
-            <span className="metric-label">Net Profit YTD</span>
+            <span className="metric-label">{t('finance:dashboard.kpi_net_profit', 'Net Profit YTD')}</span>
             <div className="metric-icon" style={{ background: '#f0fdf4', color: '#15803d' }}>
               <TrendUp size={16} weight="bold" />
             </div>
           </div>
-          <div className="metric-value">
+          <div className="metric-value" dir="ltr">
             {metrics?.operatingMargin || 23.5}%
           </div>
           <div className="metric-delta up" style={{ color: '#15803d', fontWeight: 600 }}>
-            ${(metrics?.netIncome || 142300).toLocaleString('en-US', { minimumFractionDigits: 0 })} · GM {metrics?.grossMargin || 68.2}%
+            ${(metrics?.netIncome || 142300).toLocaleString('en-US', { minimumFractionDigits: 0 })} · {t('finance:dashboard.kpi_net_profit_delta', { gm: metrics?.grossMargin || 68.2, defaultValue: 'GM {{gm}}%' })}
           </div>
         </div>
       </div>
@@ -234,7 +236,7 @@ function FinancialDashboardView() {
         {/* Cash Flow vs Movement Chart */}
         <div className="card">
           <div className="panel-head">
-            <span className="t">Cash Flow vs. Inventory Movement — 30 Days</span>
+            <span className="t">{t('finance:dashboard.chart_cashflow_title', 'Cash Flow vs. Inventory Movement — 30 Days')}</span>
             <select
               className="select"
               style={{ fontSize: '11px', padding: '3px 8px', borderRadius: '14px' }}
@@ -285,11 +287,11 @@ function FinancialDashboardView() {
             <div style={{ display: 'flex', justifyContent: 'center', gap: '24px', marginTop: '8px', fontSize: '11px', color: 'var(--text-muted)' }}>
               <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                 <span style={{ width: '12px', height: '3px', background: '#5eb160', display: 'inline-block', borderRadius: '2px' }}></span>
-                Cash Inflow (Daily Collections)
+                {t('finance:dashboard.legend_cash_inflow', 'Cash Inflow (Daily Collections)')}
               </span>
               <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                 <span style={{ width: '12px', height: '2px', background: '#94a3b8', borderTop: '2px dashed #94a3b8', display: 'inline-block' }}></span>
-                Cash Outflow (Disbursements & Opex)
+                {t('finance:dashboard.legend_cash_outflow', 'Cash Outflow (Disbursements & Opex)')}
               </span>
             </div>
           </div>
@@ -298,8 +300,8 @@ function FinancialDashboardView() {
         {/* Cross-Domain Real-Time Activity Stream */}
         <div className="card">
           <div className="panel-head">
-            <span className="t">Cross-Domain Real-Time Activity</span>
-            <span className="tag-pill solid" style={{ fontSize: '9px' }}>Live Sync</span>
+            <span className="t">{t('finance:dashboard.activity_title', 'Cross-Domain Real-Time Activity')}</span>
+            <span className="tag-pill solid" style={{ fontSize: '9px' }}>{t('finance:dashboard.tag_live_sync', 'Live Sync')}</span>
           </div>
           <div className="panel-body" style={{ maxHeight: '220px', overflowY: 'auto', padding: '12px 18px' }}>
             {activities.map((act) => (
@@ -307,7 +309,7 @@ function FinancialDashboardView() {
                 <span className="activity-dot" style={{ backgroundColor: act.type === 'AR' ? '#15803d' : act.type === 'AP' ? '#2563eb' : '#5eb160' }}></span>
                 <div style={{ flex: 1 }}>
                   <div className="activity-text">{act.text}</div>
-                  <div className="activity-time">{act.time}</div>
+                  <div className="activity-time" dir="ltr">{act.time}</div>
                 </div>
               </div>
             ))}
@@ -320,42 +322,42 @@ function FinancialDashboardView() {
         {/* AR vs AP Aging Matrix */}
         <div className="card">
           <div className="panel-head">
-            <span className="t">AR vs. AP Aging Matrix</span>
-            <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontFamily: 'monospace' }}>
-              Exposure: ${(metrics?.totalAR || 84120).toLocaleString()} vs. ${(metrics?.totalAP || 36890).toLocaleString()}
+            <span className="t">{t('finance:dashboard.aging_title', 'AR vs. AP Aging Matrix')}</span>
+            <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontFamily: 'monospace' }} dir="ltr">
+              {t('finance:dashboard.exposure', { ar: (metrics?.totalAR || 84120).toLocaleString(), ap: (metrics?.totalAP || 36890).toLocaleString(), defaultValue: `Exposure: $${(metrics?.totalAR || 84120).toLocaleString()} vs. $${(metrics?.totalAP || 36890).toLocaleString()}` })}
             </span>
           </div>
           <div className="panel-body">
             {/* Receivables Aging Bar */}
             <div className="section-label" style={{ marginBottom: '6px', display: 'flex', justifyContent: 'space-between' }}>
-              <span>Receivables (AR)</span>
-              <span style={{ fontFamily: 'monospace' }}>${(metrics?.totalAR || 84120).toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
+              <span>{t('finance:dashboard.kpi_receivables', 'Receivables (AR)')}</span>
+              <span style={{ fontFamily: 'monospace' }} dir="ltr">${(metrics?.totalAR || 84120).toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
             </div>
             <div className="aging-bar">
-              <div className="aging-seg" style={{ flex: 6.2, background: '#64748b' }}>62%</div>
-              <div className="aging-seg" style={{ flex: 1.8, background: '#475569' }}>18%</div>
-              <div className="aging-seg" style={{ flex: 1.1, background: '#334155' }}>11%</div>
-              <div className="aging-seg" style={{ flex: 0.9, background: '#0f172a' }}>9%</div>
+              <div className="aging-seg" style={{ flex: 6.2, background: '#64748b' }} dir="ltr">62%</div>
+              <div className="aging-seg" style={{ flex: 1.8, background: '#475569' }} dir="ltr">18%</div>
+              <div className="aging-seg" style={{ flex: 1.1, background: '#334155' }} dir="ltr">11%</div>
+              <div className="aging-seg" style={{ flex: 0.9, background: '#0f172a' }} dir="ltr">9%</div>
             </div>
 
             {/* Payables Aging Bar */}
             <div className="section-label" style={{ margin: '16px 0 6px', display: 'flex', justifyContent: 'space-between' }}>
-              <span>Payables (AP)</span>
-              <span style={{ fontFamily: 'monospace' }}>${(metrics?.totalAP || 36890).toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
+              <span>{t('finance:dashboard.kpi_payables', 'Payables + GR/IR')}</span>
+              <span style={{ fontFamily: 'monospace' }} dir="ltr">${(metrics?.totalAP || 36890).toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
             </div>
             <div className="aging-bar">
-              <div className="aging-seg" style={{ flex: 7.0, background: '#64748b' }}>70%</div>
-              <div className="aging-seg" style={{ flex: 1.5, background: '#475569' }}>15%</div>
-              <div className="aging-seg" style={{ flex: 0.9, background: '#334155' }}>9%</div>
-              <div className="aging-seg" style={{ flex: 0.6, background: '#0f172a' }}>6%</div>
+              <div className="aging-seg" style={{ flex: 7.0, background: '#64748b' }} dir="ltr">70%</div>
+              <div className="aging-seg" style={{ flex: 1.5, background: '#475569' }} dir="ltr">15%</div>
+              <div className="aging-seg" style={{ flex: 0.9, background: '#334155' }} dir="ltr">9%</div>
+              <div className="aging-seg" style={{ flex: 0.6, background: '#0f172a' }} dir="ltr">6%</div>
             </div>
 
             {/* Legend */}
             <div className="aging-legend">
-              <span><i style={{ background: '#64748b' }}></i>Current (0–30d)</span>
-              <span><i style={{ background: '#475569' }}></i>31–60d</span>
-              <span><i style={{ background: '#334155' }}></i>61–90d</span>
-              <span><i style={{ background: '#0f172a' }}></i>90+d Overdue</span>
+              <span><i style={{ background: '#64748b' }}></i>{t('finance:dashboard.aging_current', 'Current (0–30d)')}</span>
+              <span><i style={{ background: '#475569' }}></i>{t('finance:dashboard.aging_30_60', '31–60d')}</span>
+              <span><i style={{ background: '#334155' }}></i>{t('finance:dashboard.aging_61_90', '61–90d')}</span>
+              <span><i style={{ background: '#0f172a' }}></i>{t('finance:dashboard.aging_overdue', '90+d Overdue')}</span>
             </div>
           </div>
         </div>
@@ -363,8 +365,8 @@ function FinancialDashboardView() {
         {/* Inventory Valuation Breakdown by Category Donut */}
         <div className="card">
           <div className="panel-head">
-            <span className="t">Inventory Valuation by Category</span>
-            <span style={{ fontSize: '11px', fontFamily: 'monospace', fontWeight: 600 }}>
+            <span className="t">{t('finance:dashboard.donut_title', 'Inventory Valuation by Category')}</span>
+            <span style={{ fontSize: '11px', fontFamily: 'monospace', fontWeight: 600 }} dir="ltr">
               ${(metrics?.inventoryValuation || 186420).toLocaleString('en-US', { minimumFractionDigits: 2 })}
             </span>
           </div>

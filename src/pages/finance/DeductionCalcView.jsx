@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useFinance } from '../../context/FinanceContext';
 import {
   UsersThree,
@@ -13,6 +14,7 @@ import {
 } from '@phosphor-icons/react';
 
 function DeductionCalcView() {
+  const { t } = useTranslation(["finance", "common"]);
   const {
     payrollRecords,
     processPayroll,
@@ -71,17 +73,17 @@ function DeductionCalcView() {
       {/* Page Title Header */}
       <div className="page-header" style={{ marginBottom: '18px' }}>
         <div>
-          <h1 style={{ fontSize: '18px', fontWeight: 700, margin: 0 }}>Workforce Payroll &amp; Statutory VAT Filing</h1>
+          <h1 style={{ fontSize: '18px', fontWeight: 700, margin: 0 }}>{t("finance:payroll_vat.title", "Workforce Payroll & Statutory VAT Filing")}</h1>
           <div style={{ fontSize: '11.5px', color: 'var(--text-muted)', fontFamily: 'monospace', marginTop: '2px' }}>
-            / finance / payroll &amp; tax compliance
+            {t("finance:payroll_vat.breadcrumb", "/ finance / payroll & tax compliance")}
           </div>
         </div>
         <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
           <span className="badge ok">
-            <span className="d"></span> WPS SIF v3.0 Compliant
+            <span className="d"></span> {t("finance:payroll_vat.badge_wps_compliant", "WPS SIF v3.0 Compliant")}
           </span>
           <span className="badge ok">
-            <span className="d"></span> 5% Statutory Tax Return
+            <span className="d"></span> {t("finance:payroll_vat.badge_tax_return", "5% Statutory Tax Return")}
           </span>
         </div>
       </div>
@@ -90,46 +92,46 @@ function DeductionCalcView() {
       <div className="metrics-4">
         <div className="card metric-card">
           <div className="metric-top">
-            <span className="metric-label">Monthly Payroll</span>
+            <span className="metric-label">{t("finance:payroll_vat.kpi_monthly_payroll", "Monthly Payroll")}</span>
             <div className="metric-icon" style={{ background: '#f8fafc', color: '#475569' }}>
               <UsersThree size={16} weight="bold" />
             </div>
           </div>
           <div className="metric-value">$148,500</div>
-          <div className="metric-delta">42 staff · Aug 2026</div>
+          <div className="metric-delta">{t("finance:payroll_vat.kpi_monthly_payroll_delta", "42 staff · Aug 2026")}</div>
         </div>
 
         <div className="card metric-card">
           <div className="metric-top">
-            <span className="metric-label">Net Disbursement</span>
+            <span className="metric-label">{t("finance:payroll_vat.kpi_net_disbursement", "Net Disbursement")}</span>
             <div className="metric-icon" style={{ background: '#f0fdf4', color: '#15803d' }}>
               <Wallet size={16} weight="bold" />
             </div>
           </div>
           <div className="metric-value">$124,200</div>
-          <div className="metric-delta up" style={{ color: '#15803d', fontWeight: 600 }}>100% WPS compliant</div>
+          <div className="metric-delta up" style={{ color: '#15803d', fontWeight: 600 }}>{t("finance:payroll_vat.kpi_net_disbursement_delta", "100% WPS compliant")}</div>
         </div>
 
         <div className="card metric-card">
           <div className="metric-top">
-            <span className="metric-label">Net VAT Due</span>
+            <span className="metric-label">{t("finance:payroll_vat.kpi_net_vat", "Net VAT Due")}</span>
             <div className="metric-icon" style={{ background: '#fef9c3', color: '#a16207' }}>
               <Receipt size={16} weight="bold" />
             </div>
           </div>
           <div className="metric-value">$18,450</div>
-          <div className="metric-delta" style={{ color: '#ca8a04', fontWeight: 600 }}>Due in 14 days</div>
+          <div className="metric-delta" style={{ color: '#ca8a04', fontWeight: 600 }}>{t("finance:payroll_vat.kpi_net_vat_delta", "Due in 14 days")}</div>
         </div>
 
         <div className="card metric-card">
           <div className="metric-top">
-            <span className="metric-label">Total Remittances</span>
+            <span className="metric-label">{t("finance:payroll_vat.kpi_remittances", "Total Remittances")}</span>
             <div className="metric-icon" style={{ background: '#eff6ff', color: '#2563eb' }}>
               <CheckCircle size={16} weight="bold" />
             </div>
           </div>
           <div className="metric-value">$42,750</div>
-          <div className="metric-delta">0 compliance penalties</div>
+          <div className="metric-delta">{t("finance:payroll_vat.kpi_remittances_delta", "0 compliance penalties")}</div>
         </div>
       </div>
 
@@ -139,13 +141,13 @@ function DeductionCalcView() {
           className={`tab-btn ${activeTab === 'wps' ? 'active' : ''}`}
           onClick={() => setActiveTab('wps')}
         >
-          Workforce Payroll &amp; WPS SIF
+          {t("finance:payroll_vat.tab_wps", "Workforce Payroll (WPS)")}
         </button>
         <button
           className={`tab-btn ${activeTab === 'vat' ? 'active' : ''}`}
           onClick={() => setActiveTab('vat')}
         >
-          VAT Filing &amp; 5% Tax Audit
+          {t("finance:payroll_vat.tab_vat", "Statutory VAT Return (Box 1–12)")}
         </button>
       </div>
 
@@ -156,12 +158,12 @@ function DeductionCalcView() {
             <div>
               {wpsExportSuccess && (
                 <span style={{ fontSize: '12px', color: '#15803d', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}>
-                  <CheckCircle size={14} weight="bold" /> WPS SIF file exported successfully!
+                  <CheckCircle size={14} weight="bold" /> {t("finance:payroll_vat.msg_wps_success", "WPS SIF file exported successfully!")}
                 </span>
               )}
               {payrollSuccess && (
                 <span style={{ fontSize: '12px', color: '#15803d', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}>
-                  <CheckCircle size={14} weight="bold" /> Payroll executed &amp; GL Voucher posted!
+                  <CheckCircle size={14} weight="bold" /> {t("finance:payroll_vat.msg_payroll_success", "Payroll executed & GL Voucher posted!")}
                 </span>
               )}
             </div>
@@ -173,7 +175,7 @@ function DeductionCalcView() {
                 style={{ display: 'flex', alignItems: 'center', gap: '6px' }}
               >
                 <DownloadSimple size={14} weight="bold" />
-                <span>Export WPS SIF File</span>
+                <span>{t("finance:payroll_vat.btn_export_wps", "Export WPS SIF File")}</span>
               </button>
               <button
                 className="btn btn-primary"
@@ -181,7 +183,7 @@ function DeductionCalcView() {
                 style={{ display: 'flex', alignItems: 'center', gap: '6px' }}
               >
                 <Play size={14} weight="fill" />
-                <span>Execute Payroll Run</span>
+                <span>{t("finance:payroll_vat.btn_execute_payroll", "Execute Month-End Payroll Run")}</span>
               </button>
             </div>
           </div>
@@ -190,20 +192,20 @@ function DeductionCalcView() {
             <table>
               <thead>
                 <tr>
-                  <th>Emp ID</th>
-                  <th>Name &amp; Role</th>
-                  <th>Department</th>
-                  <th>Gross Salary</th>
-                  <th>Deductions</th>
-                  <th>Net Payout</th>
-                  <th>WPS Status</th>
-                  <th>Action</th>
+                  <th>{t("finance:payroll_vat.th_emp_id", "Emp ID")}</th>
+                  <th>{t("finance:payroll_vat.th_employee_name", "Employee Name")}</th>
+                  <th>{t("finance:payroll_vat.th_department", "Department")}</th>
+                  <th>{t("finance:payroll_vat.th_gross", "Gross")}</th>
+                  <th>{t("finance:payroll_vat.th_deductions", "Deductions")}</th>
+                  <th>{t("finance:payroll_vat.th_net_pay", "Net Pay")}</th>
+                  <th>{t("finance:payroll_vat.th_wps_status", "WPS Status")}</th>
+                  <th>{t("common:actions.action", "Action")}</th>
                 </tr>
               </thead>
               <tbody>
                 {workforceRows.map((emp) => (
                   <tr key={emp.empId}>
-                    <td className="mono">{emp.empId}</td>
+                    <td className="mono bidi-ltr" dir="ltr">{emp.empId}</td>
                     <td>
                       <div className="cell-strong">{emp.name}</div>
                       <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{emp.role}</div>
@@ -211,11 +213,11 @@ function DeductionCalcView() {
                     <td>
                       <span className="tag-pill solid">{emp.dept}</span>
                     </td>
-                    <td className="mono">${emp.gross.toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
-                    <td className="mono" style={{ color: '#b91c1c' }}>
+                    <td className="mono bidi-ltr" dir="ltr">${emp.gross.toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
+                    <td className="mono bidi-ltr" dir="ltr" style={{ color: '#b91c1c' }}>
                       -${emp.deductions.toLocaleString('en-US', { minimumFractionDigits: 2 })}
                     </td>
-                    <td className="mono cell-strong" style={{ color: '#15803d' }}>
+                    <td className="mono cell-strong bidi-ltr" dir="ltr" style={{ color: '#15803d' }}>
                       ${emp.net.toLocaleString('en-US', { minimumFractionDigits: 2 })}
                     </td>
                     <td>
@@ -246,23 +248,23 @@ function DeductionCalcView() {
           {/* Statutory VAT Box Summary */}
           <div className="vat-box">
             <div className="vat-row">
-              <span className="l">Taxable Gross Sales Revenue</span>
+              <span className="l">{t("finance:payroll_vat.vat_box1", "Box 1: Standard Rated Supplies (5%)")}</span>
               <span className="v">$642,000.00</span>
             </div>
             <div className="vat-row">
-              <span className="l">Output VAT Collected (5%)</span>
+              <span className="l">{t("finance:payroll_vat.vat_box6", "Box 6: Total Output Tax")}</span>
               <span className="v" style={{ color: '#15803d' }}>+$32,100.00</span>
             </div>
             <div className="vat-row">
-              <span className="l">Taxable Inbound Purchases &amp; Expenses</span>
+              <span className="l">{t("finance:payroll_vat.vat_box7", "Box 7: Standard Rated Expenses (5%)")}</span>
               <span className="v">$273,000.00</span>
             </div>
             <div className="vat-row">
-              <span className="l">Input VAT Recoverable (5%)</span>
+              <span className="l">{t("finance:payroll_vat.vat_box11", "Box 11: Total Recoverable Input Tax")}</span>
               <span className="v" style={{ color: '#b91c1c' }}>-$13,650.00</span>
             </div>
             <div className="vat-row">
-              <span className="l">Net VAT Tax Liability Due</span>
+              <span className="l">{t("finance:payroll_vat.vat_box12", "Box 12: Net Tax Payable / (Refundable)")}</span>
               <span className="v" style={{ fontSize: '16px', color: '#111827' }}>$18,450.00</span>
             </div>
           </div>
@@ -274,46 +276,46 @@ function DeductionCalcView() {
               style={{ display: 'flex', alignItems: 'center', gap: '6px' }}
             >
               <CheckCircle size={14} weight="bold" />
-              <span>Submit VAT Return &amp; Post Settlement</span>
+              <span>{t("finance:payroll_vat.btn_submit_vat", "Submit VAT Return")}</span>
             </button>
 
             {vatSuccess && (
               <span style={{ fontSize: '12px', color: '#15803d', fontWeight: 600 }}>
-                ✓ Q3 VAT Return submitted and posted to General Ledger!
+                {t("finance:payroll_vat.msg_vat_success", "✓ Q3 VAT Return submitted and posted to General Ledger!")}
               </span>
             )}
           </div>
 
           {/* Tax Audit Breakdown Table */}
           <div className="section-label" style={{ marginBottom: '8px' }}>
-            Detailed VAT Transaction Audit Log
+            {t("finance:payroll_vat.audit_log_title", "Detailed VAT Transaction Audit Log")}
           </div>
 
           <div className="card" style={{ borderRadius: '12px', overflow: 'hidden' }}>
             <table>
               <thead>
                 <tr>
-                  <th>Date</th>
-                  <th>Doc Ref</th>
-                  <th>Counter-Party</th>
-                  <th>Tax Type</th>
-                  <th>Taxable Base</th>
-                  <th>Tax Amount</th>
+                  <th>{t("finance:general_ledger.th_date", "Date")}</th>
+                  <th>{t("finance:general_ledger.th_doc_ref", "Doc Ref")}</th>
+                  <th>{t("finance:party_directory.title", "Counter-Party")}</th>
+                  <th>{t("finance:payroll_vat.th_tax_type", "Tax Type")}</th>
+                  <th>{t("finance:payroll_vat.th_tax_base", "Taxable Base")}</th>
+                  <th>{t("finance:payroll_vat.th_tax_amount", "Tax Amount")}</th>
                 </tr>
               </thead>
               <tbody>
                 {vatAuditLog.map((row, idx) => (
                   <tr key={idx}>
-                    <td className="mono">{row.date}</td>
-                    <td className="mono cell-strong">{row.docRef}</td>
+                    <td className="mono bidi-ltr" dir="ltr">{row.date}</td>
+                    <td className="mono cell-strong bidi-ltr" dir="ltr">{row.docRef}</td>
                     <td>{row.party}</td>
                     <td>
                       <span className={`tag-pill ${row.amount > 0 ? 'solid' : ''}`}>
                         {row.taxType}
                       </span>
                     </td>
-                    <td className="mono">${row.base.toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
-                    <td className="mono cell-strong" style={{ color: row.amount > 0 ? '#15803d' : '#b91c1c' }}>
+                    <td className="mono bidi-ltr" dir="ltr">${row.base.toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
+                    <td className="mono cell-strong bidi-ltr" dir="ltr" style={{ color: row.amount > 0 ? '#15803d' : '#b91c1c' }}>
                       {row.amount > 0 ? `+$${row.amount.toFixed(2)}` : `-$${Math.abs(row.amount).toFixed(2)}`}
                     </td>
                   </tr>
@@ -331,7 +333,7 @@ function DeductionCalcView() {
             <div className="modal-header">
               <div className="modal-title" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <IdentificationCard size={18} weight="bold" />
-                <span>Employee Payslip — {selectedPayslip.name}</span>
+                <span>{t("finance:payroll_vat.modal_payslip_title", "Employee Payslip — {{name}}", { name: selectedPayslip.name })}</span>
               </div>
               <button className="modal-close-btn" onClick={() => setSelectedPayslip(null)}>
                 <X size={16} />
@@ -341,48 +343,48 @@ function DeductionCalcView() {
             <div>
               <div style={{ background: '#f8fafc', padding: '14px', borderRadius: '8px', border: '1px solid var(--border-color)', marginBottom: '14px', fontSize: '12px' }}>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px' }}>
-                  <div>Emp ID: <b className="mono">{selectedPayslip.empId}</b></div>
-                  <div>Department: <b>{selectedPayslip.dept}</b></div>
-                  <div>Designation: <b>{selectedPayslip.role}</b></div>
-                  <div>Period: <b>August 2026</b></div>
+                  <div>{t("finance:payroll_vat.th_emp_id", "Emp ID")}: <b className="mono bidi-ltr" dir="ltr">{selectedPayslip.empId}</b></div>
+                  <div>{t("finance:payroll_vat.th_department", "Department")}: <b>{selectedPayslip.dept}</b></div>
+                  <div>{t("finance:payroll_vat.th_role", "Role")}: <b>{selectedPayslip.role}</b></div>
+                  <div>{t("finance:payroll_vat.th_period", "Period")}: <b>August 2026</b></div>
                 </div>
               </div>
 
-              <div className="section-label" style={{ marginBottom: '6px' }}>Earnings &amp; Allowances</div>
+              <div className="section-label" style={{ marginBottom: '6px' }}>{t("finance:payroll_vat.section_earnings", "Earnings & Allowances")}</div>
               <div style={{ border: '1px solid var(--border-color)', borderRadius: '6px', padding: '10px 14px', marginBottom: '12px', fontSize: '12px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', padding: '3px 0' }}>
-                  <span>Basic Wage:</span>
-                  <span className="mono">${selectedPayslip.basic.toFixed(2)}</span>
+                  <span>{t("finance:payroll_vat.th_basic_salary", "Basic Salary")}:</span>
+                  <span className="mono bidi-ltr" dir="ltr">${selectedPayslip.basic.toFixed(2)}</span>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', padding: '3px 0' }}>
-                  <span>Housing &amp; Transport Allowance:</span>
-                  <span className="mono">${selectedPayslip.allowances.toFixed(2)}</span>
+                  <span>{t("finance:payroll_vat.th_allowances", "Allowances")}:</span>
+                  <span className="mono bidi-ltr" dir="ltr">${selectedPayslip.allowances.toFixed(2)}</span>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0 0', borderTop: '1px solid #f3f4f6', fontWeight: 700 }}>
-                  <span>Gross Earnings:</span>
-                  <span className="mono">${selectedPayslip.gross.toFixed(2)}</span>
+                  <span>{t("finance:payroll_vat.th_gross", "Gross")}:</span>
+                  <span className="mono bidi-ltr" dir="ltr">${selectedPayslip.gross.toFixed(2)}</span>
                 </div>
               </div>
 
-              <div className="section-label" style={{ marginBottom: '6px' }}>Statutory Withholdings &amp; Deductions</div>
+              <div className="section-label" style={{ marginBottom: '6px' }}>{t("finance:payroll_vat.section_deductions", "Statutory Withholdings & Deductions")}</div>
               <div style={{ border: '1px solid var(--border-color)', borderRadius: '6px', padding: '10px 14px', marginBottom: '14px', fontSize: '12px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', padding: '3px 0' }}>
-                  <span>Statutory Social Security / Pension:</span>
-                  <span className="mono" style={{ color: '#b91c1c' }}>-${(selectedPayslip.deductions * 0.6).toFixed(2)}</span>
+                  <span>{t("finance:payroll_vat.deduction_social", "Statutory Social Security / Pension")}:</span>
+                  <span className="mono bidi-ltr" dir="ltr" style={{ color: '#b91c1c' }}>-${(selectedPayslip.deductions * 0.6).toFixed(2)}</span>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', padding: '3px 0' }}>
-                  <span>Health Insurance &amp; Taxes:</span>
-                  <span className="mono" style={{ color: '#b91c1c' }}>-${(selectedPayslip.deductions * 0.4).toFixed(2)}</span>
+                  <span>{t("finance:payroll_vat.deduction_health", "Health Insurance & Taxes")}:</span>
+                  <span className="mono bidi-ltr" dir="ltr" style={{ color: '#b91c1c' }}>-${(selectedPayslip.deductions * 0.4).toFixed(2)}</span>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0 0', borderTop: '1px solid #f3f4f6', fontWeight: 700 }}>
-                  <span>Total Deductions:</span>
-                  <span className="mono" style={{ color: '#b91c1c' }}>-${selectedPayslip.deductions.toFixed(2)}</span>
+                  <span>{t("finance:payroll_vat.th_deductions", "Deductions")}:</span>
+                  <span className="mono bidi-ltr" dir="ltr" style={{ color: '#b91c1c' }}>-${selectedPayslip.deductions.toFixed(2)}</span>
                 </div>
               </div>
 
               <div style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 14px', background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '6px', fontWeight: 800, fontSize: '14px', color: '#15803d' }}>
-                <span>Net Payout (WPS Transfer):</span>
-                <span className="mono">${selectedPayslip.net.toFixed(2)}</span>
+                <span>{t("finance:payroll_vat.th_net_pay", "Net Pay")}:</span>
+                <span className="mono bidi-ltr" dir="ltr">${selectedPayslip.net.toFixed(2)}</span>
               </div>
             </div>
 

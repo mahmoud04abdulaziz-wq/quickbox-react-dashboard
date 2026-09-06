@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useFinance } from '../../context/FinanceContext';
 import {
   ChartBar,
@@ -12,6 +13,7 @@ import {
 } from '@phosphor-icons/react';
 
 function FinancialStatementsView() {
+  const { t } = useTranslation('finance');
   const {
     getBalanceSheet,
     getIncomeStatement,

@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { MagnifyingGlass } from '@phosphor-icons/react';
 
 /**
@@ -19,6 +20,8 @@ function Filters({
   categoriesList = ['Linens', 'Toiletries', 'Paper Goods', 'Cleaning', 'F&B', 'Maintenance', 'Equipment'],
   suppliersList = ['Coastal Linen Supply Co.', 'Amman Hospitality Goods', 'Prime Paper & Packaging', 'Sunrise Beverage Distributors', 'Amman Hardware', 'Ecolab Hospitality']
 }) {
+  const { t } = useTranslation('common');
+
   return (
     <div className="filters-container">
       {/* Item Search / Filter by SKU */}
@@ -26,7 +29,7 @@ function Filters({
         <MagnifyingGlass />
         <input 
           type="text" 
-          placeholder="Filter by SKU or item..." 
+          placeholder={t('filters.search_placeholder')} 
           value={searchQuery}
           onChange={(e) => setSearchQuery && setSearchQuery(e.target.value)}
         />
@@ -41,7 +44,7 @@ function Filters({
           onChange={(e) => setCategoryFilter && setCategoryFilter(e.target.value)}
           style={{ cursor: 'pointer', outline: 'none' }}
         >
-          <option value="All">Category: All</option>
+          <option value="All">{t('filters.category_all')}</option>
           {categoriesList.map(cat => (
             <option key={cat} value={cat}>{cat}</option>
           ))}
@@ -54,10 +57,10 @@ function Filters({
           onChange={(e) => setStatusFilter && setStatusFilter(e.target.value)}
           style={{ cursor: 'pointer', outline: 'none' }}
         >
-          <option value="All">Status: All</option>
-          <option value="In Stock">In Stock</option>
-          <option value="Low Stock">Low Stock</option>
-          <option value="Out of Stock">Out of Stock</option>
+          <option value="All">{t('filters.status_all')}</option>
+          <option value="In Stock">{t('status.in_stock')}</option>
+          <option value="Low Stock">{t('status.low_stock')}</option>
+          <option value="Out of Stock">{t('status.out_of_stock')}</option>
         </select>
 
         {/* Supplier dropdown */}
@@ -67,7 +70,7 @@ function Filters({
           onChange={(e) => setSupplierFilter && setSupplierFilter(e.target.value)}
           style={{ cursor: 'pointer', outline: 'none' }}
         >
-          <option value="All">Supplier: All</option>
+          <option value="All">{t('filters.supplier_all')}</option>
           {suppliersList.map(sup => (
             <option key={sup} value={sup}>{sup}</option>
           ))}

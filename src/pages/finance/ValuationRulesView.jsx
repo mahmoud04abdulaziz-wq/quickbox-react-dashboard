@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useFinance } from '../../context/FinanceContext';
 import {
   Package,
@@ -11,6 +12,7 @@ import {
 } from '@phosphor-icons/react';
 
 function ValuationRulesView() {
+  const { t } = useTranslation(['finance', 'common']);
   const { valuationRules, updateValuationRule, accounts } = useFinance();
 
   const [landedCostBasis, setLandedCostBasis] = useState('Value');
@@ -63,14 +65,16 @@ function ValuationRulesView() {
       {/* Title Header */}
       <div className="page-header" style={{ marginBottom: '18px' }}>
         <div>
-          <h1 style={{ fontSize: '18px', fontWeight: 700, margin: 0 }}>Inventory Valuation &amp; GL Mapping Rules</h1>
-          <div style={{ fontSize: '11.5px', color: 'var(--text-muted)', fontFamily: 'monospace', marginTop: '2px' }}>
-            / finance / inventory costing rules &amp; policies
+          <h1 style={{ fontSize: '18px', fontWeight: 700, margin: 0 }}>
+            {t('finance:valuation_rules.title', 'Inventory Valuation & GL Mapping Rules')}
+          </h1>
+          <div style={{ fontSize: '11.5px', color: 'var(--text-muted)', fontFamily: 'monospace', marginTop: '2px' }} dir="ltr">
+            {t('finance:valuation_rules.breadcrumb', '/ finance / inventory costing rules & policies')}
           </div>
         </div>
         <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
           <span className="badge ok">
-            <span className="d"></span> Sub-Ledger ≡ General Ledger Linked
+            <span className="d"></span> {t('finance:valuation_rules.badge_subledger_gl', 'Sub-Ledger ≡ General Ledger Linked')}
           </span>
         </div>
       </div>
@@ -79,53 +83,61 @@ function ValuationRulesView() {
       <div className="metrics-4">
         <div className="card metric-card">
           <div className="metric-top">
-            <span className="metric-label">SKU Categories</span>
+            <span className="metric-label">{t('finance:valuation_rules.kpi_sku_categories', 'SKU Categories')}</span>
             <div className="metric-icon" style={{ background: '#f8fafc', color: '#475569' }}>
               <Package size={16} weight="bold" />
             </div>
           </div>
-          <div className="metric-value">{(valuationRules || []).length || 6}</div>
-          <div className="metric-delta up" style={{ color: '#15803d', fontWeight: 600 }}>100% GL mapped</div>
+          <div className="metric-value" dir="ltr">{(valuationRules || []).length || 6}</div>
+          <div className="metric-delta up" style={{ color: '#15803d', fontWeight: 600 }}>
+            {t('finance:valuation_rules.kpi_sku_categories_delta', '100% GL mapped')}
+          </div>
         </div>
 
         <div className="card metric-card">
           <div className="metric-top">
-            <span className="metric-label">Valuation Policy</span>
+            <span className="metric-label">{t('finance:valuation_rules.kpi_valuation_policy', 'Valuation Policy')}</span>
             <div className="metric-icon" style={{ background: '#eff6ff', color: '#2563eb' }}>
               <SlidersHorizontal size={16} weight="bold" />
             </div>
           </div>
           <div className="metric-value">FIFO / AVCO</div>
-          <div className="metric-delta">Per-category enforcement</div>
+          <div className="metric-delta">
+            {t('finance:valuation_rules.kpi_valuation_policy_delta', 'Per-category enforcement')}
+          </div>
         </div>
 
         <div className="card metric-card">
           <div className="metric-top">
-            <span className="metric-label">Auto-Posting Engine</span>
+            <span className="metric-label">{t('finance:valuation_rules.kpi_autopost_engine', 'Auto-Posting Engine')}</span>
             <div className="metric-icon" style={{ background: '#f0fdf4', color: '#15803d' }}>
               <CheckCircle size={16} weight="bold" />
             </div>
           </div>
-          <div className="metric-value">Active</div>
-          <div className="metric-delta up" style={{ color: '#15803d', fontWeight: 600 }}>Idempotency protected</div>
+          <div className="metric-value">{t('common:status.active', 'Active')}</div>
+          <div className="metric-delta up" style={{ color: '#15803d', fontWeight: 600 }}>
+            {t('finance:valuation_rules.kpi_autopost_engine_delta', 'Idempotency protected')}
+          </div>
         </div>
 
         <div className="card metric-card">
           <div className="metric-top">
-            <span className="metric-label">Reconciliation Δ</span>
+            <span className="metric-label">{t('finance:valuation_rules.kpi_recon_delta', 'Reconciliation Δ')}</span>
             <div className="metric-icon" style={{ background: '#f0fdf4', color: '#15803d' }}>
               <Scales size={16} weight="bold" />
             </div>
           </div>
-          <div className="metric-value">0.00%</div>
-          <div className="metric-delta">Sub-ledger == GL</div>
+          <div className="metric-value" dir="ltr">0.00%</div>
+          <div className="metric-delta">
+            {t('finance:valuation_rules.kpi_recon_delta_delta', 'Sub-ledger == GL')}
+          </div>
         </div>
       </div>
 
       {/* Section 1: Category -> GL Mapping Table */}
       <div className="row-actions">
         <div className="section-label" style={{ margin: 0, fontSize: '13px', color: 'var(--text-main)' }}>
-          Category → General Ledger Account Mappings
+          {t('finance:valuation_rules.section_category_mappings', 'Category → General Ledger Account Mappings')}
         </div>
         <button
           className="btn btn-ghost"
@@ -133,7 +145,7 @@ function ValuationRulesView() {
           style={{ display: 'flex', alignItems: 'center', gap: '6px' }}
         >
           <Plus size={14} weight="bold" />
-          <span>+ Add Mapping</span>
+          <span>{t('finance:valuation_rules.btn_add_mapping', '+ Add Mapping')}</span>
         </button>
       </div>
 
@@ -141,13 +153,13 @@ function ValuationRulesView() {
         <table>
           <thead>
             <tr>
-              <th>Category</th>
-              <th>SKUs Count</th>
-              <th>Costing Policy</th>
-              <th>Asset GL Account</th>
-              <th>COGS GL Account</th>
-              <th>Variance / Shrinkage GL</th>
-              <th>Action</th>
+              <th>{t('finance:valuation_rules.th_category', 'Category')}</th>
+              <th>{t('common:table.count', 'SKUs Count')}</th>
+              <th>{t('finance:valuation_rules.th_policy', 'Costing Policy')}</th>
+              <th>{t('finance:valuation_rules.th_asset_account', 'Asset GL Account')}</th>
+              <th>{t('finance:valuation_rules.th_cogs_account', 'COGS GL Account')}</th>
+              <th>{t('finance:valuation_rules.th_variance_account', 'Variance / Shrinkage GL')}</th>
+              <th>{t('common:table.actions', 'Action')}</th>
             </tr>
           </thead>
           <tbody>

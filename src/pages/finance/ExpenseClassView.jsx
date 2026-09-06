@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useFinance } from '../../context/FinanceContext';
 import {
   CreditCard,
@@ -14,6 +15,7 @@ import {
 } from '@phosphor-icons/react';
 
 function ExpenseClassView() {
+  const { t } = useTranslation(['finance', 'common']);
   const { bills, createBill, payBill, executePaymentRun, bankAccounts, parties, metrics } = useFinance();
 
   const [selectedFilter, setSelectedFilter] = useState('ALL');
@@ -116,14 +118,14 @@ function ExpenseClassView() {
       {/* Title Header */}
       <div className="page-header" style={{ marginBottom: '18px' }}>
         <div>
-          <h1 style={{ fontSize: '18px', fontWeight: 700, margin: 0 }}>Accounts Payable (AP)</h1>
-          <div style={{ fontSize: '11.5px', color: 'var(--text-muted)', fontFamily: 'monospace', marginTop: '2px' }}>
-            / finance / vendor liabilities & disbursements
+          <h1 style={{ fontSize: '18px', fontWeight: 700, margin: 0 }}>{t('finance:accounts_payable.title', 'Accounts Payable (AP)')}</h1>
+          <div style={{ fontSize: '11.5px', color: 'var(--text-muted)', fontFamily: 'monospace', marginTop: '2px' }} dir="ltr">
+            {t('finance:accounts_payable.breadcrumb', '/ finance / vendor liabilities & disbursements')}
           </div>
         </div>
         <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
           <span className="badge ok">
-            <span className="d"></span> Automated 3-Way Match Check
+            <span className="d"></span> {t('finance:accounts_payable.badge_match_check', 'Automated 3-Way Match Check')}
           </span>
         </div>
       </div>
@@ -132,48 +134,48 @@ function ExpenseClassView() {
       <div className="metrics-4">
         <div className="card metric-card">
           <div className="metric-top">
-            <span className="metric-label">Total Payable</span>
+            <span className="metric-label">{t('finance:accounts_payable.kpi_total_payable', 'Total Payable')}</span>
             <div className="metric-icon" style={{ background: '#eff6ff', color: '#2563eb' }}>
               <CreditCard size={16} weight="bold" />
             </div>
           </div>
-          <div className="metric-value">
+          <div className="metric-value" dir="ltr">
             ${(metrics?.totalAP || 36890).toLocaleString('en-US', { minimumFractionDigits: 0 })}
           </div>
-          <div className="metric-delta">{(bills || []).filter(b => b.payment_status !== 'PAID').length || 12} open bills</div>
+          <div className="metric-delta">{t('finance:accounts_payable.kpi_total_payable_delta', { count: (bills || []).filter(b => b.payment_status !== 'PAID').length || 12, defaultValue: `${(bills || []).filter(b => b.payment_status !== 'PAID').length || 12} open bills` })}</div>
         </div>
 
         <div className="card metric-card">
           <div className="metric-top">
-            <span className="metric-label">Due This Week</span>
+            <span className="metric-label">{t('finance:accounts_payable.kpi_due_week', 'Due This Week')}</span>
             <div className="metric-icon" style={{ background: '#fef9c3', color: '#a16207' }}>
               <CalendarBlank size={16} weight="bold" />
             </div>
           </div>
-          <div className="metric-value">$14,200</div>
-          <div className="metric-delta" style={{ color: '#ca8a04', fontWeight: 600 }}>6 disbursements</div>
+          <div className="metric-value" dir="ltr">$14,200</div>
+          <div className="metric-delta" style={{ color: '#ca8a04', fontWeight: 600 }}>{t('finance:accounts_payable.kpi_due_week_delta', '6 disbursements')}</div>
         </div>
 
         <div className="card metric-card">
           <div className="metric-top">
-            <span className="metric-label">Landed Costs (MTD)</span>
+            <span className="metric-label">{t('finance:accounts_payable.kpi_landed_costs', 'Landed Costs (MTD)')}</span>
             <div className="metric-icon" style={{ background: '#f8fafc', color: '#475569' }}>
               <Truck size={16} weight="bold" />
             </div>
           </div>
-          <div className="metric-value">$4,350</div>
-          <div className="metric-delta">Freight &amp; customs</div>
+          <div className="metric-value" dir="ltr">$4,350</div>
+          <div className="metric-delta">{t('finance:accounts_payable.kpi_landed_costs_delta', 'Freight & customs')}</div>
         </div>
 
         <div className="card metric-card">
           <div className="metric-top">
-            <span className="metric-label">Settled (MTD)</span>
+            <span className="metric-label">{t('finance:accounts_payable.kpi_settled', 'Settled (MTD)')}</span>
             <div className="metric-icon" style={{ background: '#f0fdf4', color: '#15803d' }}>
               <CheckCircle size={16} weight="bold" />
             </div>
           </div>
-          <div className="metric-value">$92,100</div>
-          <div className="metric-delta up" style={{ color: '#15803d', fontWeight: 600 }}>18 payments · 0 late fees</div>
+          <div className="metric-value" dir="ltr">$92,100</div>
+          <div className="metric-delta up" style={{ color: '#15803d', fontWeight: 600 }}>{t('finance:accounts_payable.kpi_settled_delta', '18 payments · 0 late fees')}</div>
         </div>
       </div>
 
@@ -185,16 +187,16 @@ function ExpenseClassView() {
             value={selectedFilter}
             onChange={(e) => setSelectedFilter(e.target.value)}
           >
-            <option value="ALL">All Payables ({(bills || []).length})</option>
-            <option value="PO">PO-Backed Bills</option>
-            <option value="OPEX">Direct Opex</option>
-            <option value="LANDED">Landed Costs</option>
-            <option value="OVERDUE">Overdue Disbursements</option>
+            <option value="ALL">{t('finance:accounts_payable.filter_all', { count: (bills || []).length, defaultValue: `All Payables (${(bills || []).length})` })}</option>
+            <option value="PO">{t('finance:accounts_payable.filter_po', 'PO-Backed Bills')}</option>
+            <option value="OPEX">{t('finance:accounts_payable.filter_opex', 'Direct Opex')}</option>
+            <option value="LANDED">{t('finance:accounts_payable.filter_landed', 'Landed Costs')}</option>
+            <option value="OVERDUE">{t('finance:accounts_payable.filter_overdue', 'Overdue Disbursements')}</option>
           </select>
 
           {selectedBills.length > 0 && (
             <span style={{ fontSize: '11.5px', color: 'var(--text-muted)' }}>
-              Selected: <b>{selectedBills.length}</b> bills (${selectedTotal.toFixed(2)})
+              {t('finance:accounts_payable.selected_count', { count: selectedBills.length, amount: selectedTotal.toFixed(2), defaultValue: `Selected: ${selectedBills.length} bills ($${selectedTotal.toFixed(2)})` })}
             </span>
           )}
         </div>
@@ -206,7 +208,7 @@ function ExpenseClassView() {
             style={{ display: 'flex', alignItems: 'center', gap: '6px' }}
           >
             <Plus size={14} weight="bold" />
-            <span>Create Bill from PO</span>
+            <span>{t('finance:accounts_payable.btn_create_bill', 'Create Bill from PO')}</span>
           </button>
           <button
             className="btn btn-primary"
@@ -214,7 +216,7 @@ function ExpenseClassView() {
             style={{ display: 'flex', alignItems: 'center', gap: '6px' }}
           >
             <Play size={14} weight="fill" />
-            <span>Execute Payment Run {selectedBills.length > 0 ? `(${selectedBills.length})` : ''}</span>
+            <span>{t('finance:accounts_payable.btn_execute_payment_run', 'Execute Payment Run')} {selectedBills.length > 0 ? `(${selectedBills.length})` : ''}</span>
           </button>
         </div>
       </div>
@@ -231,15 +233,15 @@ function ExpenseClassView() {
                   onChange={selectAllBills}
                 />
               </th>
-              <th>Bill Ref</th>
-              <th>Vendor</th>
-              <th>Category</th>
-              <th>Due Date</th>
-              <th>Total Amount</th>
-              <th>Balance Due</th>
-              <th>Match Status</th>
-              <th>Payment Status</th>
-              <th>Action</th>
+              <th>{t('finance:accounts_payable.th_bill_ref', 'Bill Ref')}</th>
+              <th>{t('finance:accounts_payable.th_vendor', 'Vendor')}</th>
+              <th>{t('finance:accounts_payable.th_category', 'Category')}</th>
+              <th>{t('finance:accounts_payable.th_due_date', 'Due Date')}</th>
+              <th>{t('finance:accounts_payable.th_total_amount', 'Total Amount')}</th>
+              <th>{t('finance:accounts_payable.th_balance_due', 'Balance Due')}</th>
+              <th>{t('finance:accounts_payable.th_match_status', 'Match Status')}</th>
+              <th>{t('finance:accounts_payable.th_payment_status', 'Payment Status')}</th>
+              <th>{t('common:actions.action', 'Action')}</th>
             </tr>
           </thead>
           <tbody>
@@ -260,18 +262,18 @@ function ExpenseClassView() {
                       disabled={isPaid}
                     />
                   </td>
-                  <td className="mono cell-strong">{bill.bill_number || bill.bill_id}</td>
+                  <td className="mono cell-strong bidi-ltr" dir="ltr">{bill.bill_number || bill.bill_id}</td>
                   <td>{bill.vendor_name}</td>
                   <td>
                     <span className="tag-pill">
                       {bill.po_reference ? `Inventory (13110)` : `Opex (61300)`}
                     </span>
                   </td>
-                  <td className="mono">{bill.due_date}</td>
-                  <td className="mono cell-strong">
+                  <td className="mono bidi-ltr" dir="ltr">{bill.due_date}</td>
+                  <td className="mono cell-strong bidi-ltr" dir="ltr">
                     ${(bill.total_amount || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}
                   </td>
-                  <td className="mono" style={{ color: isPaid ? 'var(--text-muted)' : '#b91c1c', fontWeight: 600 }}>
+                  <td className="mono bidi-ltr" dir="ltr" style={{ color: isPaid ? 'var(--text-muted)' : '#b91c1c', fontWeight: 600 }}>
                     ${(bill.balance_due !== undefined ? bill.balance_due : bill.total_amount).toLocaleString('en-US', { minimumFractionDigits: 2 })}
                   </td>
                   <td>
@@ -289,10 +291,10 @@ function ExpenseClassView() {
                   <td>
                     {!isPaid ? (
                       <span className="link-action" onClick={() => openPayModal(bill)}>
-                        Pay
+                        {t('finance:accounts_payable.btn_pay', 'Pay')}
                       </span>
                     ) : (
-                      <span style={{ fontSize: '11px', color: '#15803d', fontWeight: 600 }}>Settled</span>
+                      <span style={{ fontSize: '11px', color: '#15803d', fontWeight: 600 }}>{t('common:status.paid', 'Settled')}</span>
                     )}
                   </td>
                 </tr>
@@ -307,7 +309,7 @@ function ExpenseClassView() {
         <div className="modal-overlay" onClick={() => setIsPaymentRunModalOpen(false)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '540px' }}>
             <div className="modal-header">
-              <div className="modal-title">Execute AP Batch Payment Run</div>
+              <div className="modal-title">{t('finance:accounts_payable.modal_payment_run_title', 'Execute AP Batch Payment Run')}</div>
               <button className="modal-close-btn" onClick={() => setIsPaymentRunModalOpen(false)}>
                 <X size={16} />
               </button>
@@ -321,14 +323,14 @@ function ExpenseClassView() {
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '14px', fontWeight: 700 }}>
                   <span>Total Disbursement Amount:</span>
-                  <span className="mono" style={{ color: '#15803d' }}>
+                  <span className="mono" style={{ color: '#15803d' }} dir="ltr">
                     ${(selectedBills.length > 0 ? selectedTotal : (metrics?.totalAP || 36890)).toFixed(2)}
                   </span>
                 </div>
               </div>
 
               <div style={{ marginBottom: '14px' }}>
-                <label className="form-label">Disbursement Bank Account</label>
+                <label className="form-label">{t('finance:accounts_payable.form_disburse_from', 'Disbursement Bank Account')}</label>
                 <select
                   className="select"
                   style={{ width: '100%' }}
@@ -354,10 +356,10 @@ function ExpenseClassView() {
 
               <div className="modal-footer">
                 <button type="button" className="btn btn-ghost" onClick={() => setIsPaymentRunModalOpen(false)}>
-                  Cancel
+                  {t('common:actions.cancel', 'Cancel')}
                 </button>
                 <button type="submit" className="btn btn-primary">
-                  Confirm &amp; Disburse Payments
+                  {t('finance:accounts_payable.btn_confirm_disbursement', 'Confirm & Disburse Payments')}
                 </button>
               </div>
             </form>
@@ -370,7 +372,7 @@ function ExpenseClassView() {
         <div className="modal-overlay" onClick={() => setIsPaySingleModalOpen(false)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '480px' }}>
             <div className="modal-header">
-              <div className="modal-title">Pay Vendor Bill — {activeBillToPay.bill_number || activeBillToPay.bill_id}</div>
+              <div className="modal-title">{t('finance:accounts_payable.btn_pay', 'Pay Vendor Bill')} — <span dir="ltr">{activeBillToPay.bill_number || activeBillToPay.bill_id}</span></div>
               <button className="modal-close-btn" onClick={() => setIsPaySingleModalOpen(false)}>
                 <X size={16} />
               </button>
@@ -378,19 +380,20 @@ function ExpenseClassView() {
 
             <form onSubmit={handlePaySingle}>
               <div style={{ marginBottom: '12px' }}>
-                <div style={{ fontSize: '11.5px', color: 'var(--text-muted)' }}>Vendor: <b>{activeBillToPay.vendor_name}</b></div>
-                <div style={{ fontSize: '11.5px', color: 'var(--text-muted)' }}>Total Amount: <b>${(activeBillToPay.total_amount || 0).toFixed(2)}</b></div>
-                <div style={{ fontSize: '11.5px', color: '#b91c1c', fontWeight: 600 }}>Balance Due: <b>${(activeBillToPay.balance_due || activeBillToPay.total_amount).toFixed(2)}</b></div>
+                <div style={{ fontSize: '11.5px', color: 'var(--text-muted)' }}>{t('finance:accounts_payable.th_vendor', 'Vendor')}: <b>{activeBillToPay.vendor_name}</b></div>
+                <div style={{ fontSize: '11.5px', color: 'var(--text-muted)' }}>{t('finance:accounts_payable.th_total_amount', 'Total Amount')}: <b dir="ltr">${(activeBillToPay.total_amount || 0).toFixed(2)}</b></div>
+                <div style={{ fontSize: '11.5px', color: '#b91c1c', fontWeight: 600 }}>{t('finance:accounts_payable.th_balance_due', 'Balance Due')}: <b dir="ltr">${(activeBillToPay.balance_due !== undefined ? activeBillToPay.balance_due : activeBillToPay.total_amount).toFixed(2)}</b></div>
               </div>
 
               <div style={{ marginBottom: '14px' }}>
-                <label className="form-label">Payment Amount ($)</label>
+                <label className="form-label">{t('finance:accounts_payable.th_total_amount', 'Payment Amount')} ($)</label>
                 <input
                   type="number"
                   step="0.01"
                   min="0.01"
                   max={activeBillToPay.balance_due || activeBillToPay.total_amount}
                   className="input input-full mono"
+                  dir="ltr"
                   value={payAmount}
                   onChange={(e) => setPayAmount(e.target.value)}
                   required
@@ -398,7 +401,7 @@ function ExpenseClassView() {
               </div>
 
               <div style={{ marginBottom: '14px' }}>
-                <label className="form-label">From Bank Account</label>
+                <label className="form-label">{t('finance:accounts_payable.form_disburse_from', 'From Bank Account')}</label>
                 <select
                   className="select"
                   style={{ width: '100%' }}
@@ -415,10 +418,10 @@ function ExpenseClassView() {
 
               <div className="modal-footer">
                 <button type="button" className="btn btn-ghost" onClick={() => setIsPaySingleModalOpen(false)}>
-                  Cancel
+                  {t('common:actions.cancel', 'Cancel')}
                 </button>
                 <button type="submit" className="btn btn-primary">
-                  Post Payment &amp; Settle AP
+                  {t('finance:accounts_payable.btn_pay', 'Post Payment & Settle AP')}
                 </button>
               </div>
             </form>
@@ -431,7 +434,7 @@ function ExpenseClassView() {
         <div className="modal-overlay" onClick={() => setIsCreateModalOpen(false)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '580px' }}>
             <div className="modal-header">
-              <div className="modal-title">Create Vendor Bill from PO / GRN</div>
+              <div className="modal-title">{t('finance:accounts_payable.modal_create_bill_title', 'Create Vendor Bill from PO / GRN')}</div>
               <button className="modal-close-btn" onClick={() => setIsCreateModalOpen(false)}>
                 <X size={16} />
               </button>
@@ -440,7 +443,7 @@ function ExpenseClassView() {
             <form onSubmit={handleCreateBill}>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '14px' }}>
                 <div>
-                  <label className="form-label">Vendor</label>
+                  <label className="form-label">{t('finance:accounts_payable.form_vendor', 'Vendor')}</label>
                   <select
                     className="select"
                     style={{ width: '100%' }}
@@ -453,7 +456,7 @@ function ExpenseClassView() {
                   </select>
                 </div>
                 <div>
-                  <label className="form-label">Payment Terms</label>
+                  <label className="form-label">{t('finance:accounts_payable.form_terms', 'Payment Terms')}</label>
                   <select
                     className="select"
                     style={{ width: '100%' }}
@@ -470,18 +473,20 @@ function ExpenseClassView() {
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '14px' }}>
                 <div>
-                  <label className="form-label">PO Reference</label>
+                  <label className="form-label">{t('finance:matching.th_po_ref', 'PO Reference')}</label>
                   <input
                     className="input input-full"
+                    dir="ltr"
                     value={newBillPo}
                     onChange={(e) => setNewBillPo(e.target.value)}
                     required
                   />
                 </div>
                 <div>
-                  <label className="form-label">GRN Reference</label>
+                  <label className="form-label">{t('finance:matching.th_grn_ref', 'GRN Reference')}</label>
                   <input
                     className="input input-full"
+                    dir="ltr"
                     value={newBillGrn}
                     onChange={(e) => setNewBillGrn(e.target.value)}
                     required
@@ -491,11 +496,12 @@ function ExpenseClassView() {
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px', marginBottom: '16px' }}>
                 <div>
-                  <label className="form-label">Subtotal ($)</label>
+                  <label className="form-label">{t('finance:accounts_payable.form_subtotal', 'Subtotal Amount')} ($)</label>
                   <input
                     type="number"
                     step="0.01"
                     className="input input-full mono"
+                    dir="ltr"
                     value={newBillSubtotal}
                     onChange={(e) => {
                       const sub = parseFloat(e.target.value) || 0;
@@ -506,22 +512,24 @@ function ExpenseClassView() {
                   />
                 </div>
                 <div>
-                  <label className="form-label">5% VAT ($)</label>
+                  <label className="form-label">{t('finance:accounts_payable.form_tax', 'Input VAT (5%)')} ($)</label>
                   <input
                     type="number"
                     step="0.01"
                     className="input input-full mono"
+                    dir="ltr"
                     value={newBillTax}
                     onChange={(e) => setNewBillTax(parseFloat(e.target.value) || 0)}
                     required
                   />
                 </div>
                 <div>
-                  <label className="form-label">Landed Cost ($)</label>
+                  <label className="form-label">{t('finance:accounts_payable.form_landed', 'Freight & Landed Costs')} ($)</label>
                   <input
                     type="number"
                     step="0.01"
                     className="input input-full mono"
+                    dir="ltr"
                     value={newBillLanded}
                     onChange={(e) => setNewBillLanded(parseFloat(e.target.value) || 0)}
                   />
@@ -529,16 +537,16 @@ function ExpenseClassView() {
               </div>
 
               <div style={{ background: '#f8fafc', padding: '12px 14px', borderRadius: '6px', border: '1px solid var(--border-color)', marginBottom: '16px', display: 'flex', justifyContent: 'space-between', fontWeight: 700, fontSize: '13px' }}>
-                <span>Calculated Total Bill Amount:</span>
-                <span className="mono">${((parseFloat(newBillSubtotal) || 0) + (parseFloat(newBillTax) || 0) + (parseFloat(newBillLanded) || 0)).toFixed(2)}</span>
+                <span>{t('finance:accounts_payable.th_total_amount', 'Calculated Total Bill Amount')}:</span>
+                <span className="mono bidi-ltr" dir="ltr">${((parseFloat(newBillSubtotal) || 0) + (parseFloat(newBillTax) || 0) + (parseFloat(newBillLanded) || 0)).toFixed(2)}</span>
               </div>
 
               <div className="modal-footer">
                 <button type="button" className="btn btn-ghost" onClick={() => setIsCreateModalOpen(false)}>
-                  Cancel
+                  {t('common:actions.cancel', 'Cancel')}
                 </button>
                 <button type="submit" className="btn btn-primary">
-                  Ingest Bill &amp; Post AP Journal
+                  {t('finance:accounts_payable.btn_create_bill', 'Create Bill from PO')}
                 </button>
               </div>
             </form>

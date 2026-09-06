@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useFinance } from '../../context/FinanceContext';
 import { useInventory } from '../../context/InventoryContext';
 import {
@@ -14,6 +15,7 @@ import {
 } from '@phosphor-icons/react';
 
 function CostCentersView() {
+  const { t } = useTranslation('finance');
   const { costCenters, requisitions, createRequisition } = useFinance();
   const { inventory } = useInventory();
 
@@ -392,7 +394,7 @@ function CostCentersView() {
                           </td>
                           <td className="mono">${(item.unitCost || 0).toFixed(2)}</td>
                           <td className="mono cell-strong">${(item.qty * item.unitCost).toFixed(2)}</td>
-                          <td style={{ textAlign: 'center' }}>
+                          <td style={{ textAlign: 'right' }}>
                             {reqItems.length > 1 && (
                               <button
                                 type="button"

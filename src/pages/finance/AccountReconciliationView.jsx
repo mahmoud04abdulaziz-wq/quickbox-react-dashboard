@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useFinance } from '../../context/FinanceContext';
 import {
   ArrowsClockwise,
@@ -17,6 +18,7 @@ import {
 } from '@phosphor-icons/react';
 
 function AccountReconciliationView() {
+  const { t } = useTranslation('finance');
   const {
     bankAccounts,
     bankTransactions,
@@ -101,14 +103,14 @@ function AccountReconciliationView() {
       {/* Header */}
       <div className="page-header" style={{ marginBottom: '18px' }}>
         <div>
-          <h1 style={{ fontSize: '18px', fontWeight: 700, margin: 0 }}>Account &amp; Bank Reconciliation</h1>
+          <h1 style={{ fontSize: '18px', fontWeight: 700, margin: 0 }}>{t('reconciliation.title')}</h1>
           <div style={{ fontSize: '11.5px', color: 'var(--text-muted)', fontFamily: 'monospace', marginTop: '2px' }}>
-            / finance / account reconciliation &amp; audit balance
+            {t('reconciliation.breadcrumb')}
           </div>
         </div>
         <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
           <span className="badge ok">
-            <span className="d"></span> CBJ JoPACC / ECC Feed Connected
+            <span className="d"></span> {t('reconciliation.badge_cbj')}
           </span>
           <button
             className="btn-primary"
@@ -116,7 +118,7 @@ function AccountReconciliationView() {
             style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', padding: '6px 12px' }}
           >
             <ShieldCheck size={14} weight="bold" />
-            <span>Sign-Off Period</span>
+            <span>{t('reconciliation.btn_sign_off')}</span>
           </button>
         </div>
       </div>
@@ -133,48 +135,48 @@ function AccountReconciliationView() {
       <div className="metrics-4" style={{ marginBottom: '20px' }}>
         <div className="card metric-card">
           <div className="metric-top">
-            <span className="metric-label">Reconciled Cash Balance</span>
+            <span className="metric-label">{t('reconciliation.kpi_reconciled_cash')}</span>
             <div className="metric-icon" style={{ background: '#f0fdf4', color: '#15803d' }}>
               <Bank size={16} weight="bold" />
             </div>
           </div>
-          <div className="metric-value">JOD {totalReconciledCash.toLocaleString(undefined, { minimumFractionDigits: 2 })}</div>
-          <div className="metric-delta">Across {reconciliations.length} Commercial Bank Accounts</div>
+          <div className="metric-value bidi-ltr" dir="ltr">JOD {totalReconciledCash.toLocaleString(undefined, { minimumFractionDigits: 2 })}</div>
+          <div className="metric-delta">{t('reconciliation.kpi_reconciled_cash_delta')}</div>
         </div>
 
         <div className="card metric-card">
           <div className="metric-top">
-            <span className="metric-label">Unreconciled Variance</span>
+            <span className="metric-label">{t('reconciliation.kpi_variance')}</span>
             <div className="metric-icon" style={{ background: totalUnreconciledDiff === 0 ? '#f0fdf4' : '#fef2f2', color: totalUnreconciledDiff === 0 ? '#15803d' : '#ef4444' }}>
               <Scales size={16} weight="bold" />
             </div>
           </div>
-          <div className="metric-value" style={{ color: totalUnreconciledDiff === 0 ? 'var(--primary-green)' : '#ef4444' }}>
+          <div className="metric-value bidi-ltr" dir="ltr" style={{ color: totalUnreconciledDiff === 0 ? 'var(--primary-green)' : '#ef4444' }}>
             JOD {totalUnreconciledDiff.toFixed(2)}
           </div>
-          <div className="metric-delta up" style={{ color: '#15803d' }}>Perfect Ledger Equilibrium</div>
+          <div className="metric-delta up" style={{ color: '#15803d' }}>{t('reconciliation.kpi_variance_delta')}</div>
         </div>
 
         <div className="card metric-card">
           <div className="metric-top">
-            <span className="metric-label">Unmatched Bank Items</span>
+            <span className="metric-label">{t('reconciliation.kpi_statement_bal')}</span>
             <div className="metric-icon" style={{ background: '#fef9c3', color: '#a16207' }}>
               <Warning size={16} weight="bold" />
             </div>
           </div>
-          <div className="metric-value">{pendingUnmatchedCount} Items</div>
-          <div className="metric-delta" style={{ color: '#a16207', fontWeight: 600 }}>Transit Timing &amp; Bank Fees</div>
+          <div className="metric-value bidi-ltr" dir="ltr">{pendingUnmatchedCount} {t('common:status.Items', { defaultValue: 'Items' })}</div>
+          <div className="metric-delta" style={{ color: '#a16207', fontWeight: 600 }}>{t('reconciliation.kpi_statement_bal_delta')}</div>
         </div>
 
         <div className="card metric-card">
           <div className="metric-top">
-            <span className="metric-label">Auto-Match Clearance Rate</span>
+            <span className="metric-label">{t('reconciliation.kpi_ledger_bal')}</span>
             <div className="metric-icon" style={{ background: '#eff6ff', color: '#2563eb' }}>
               <ArrowsClockwise size={16} weight="bold" />
             </div>
           </div>
-          <div className="metric-value">{matchRate}%</div>
-          <div className="metric-delta">Electronic JoPACC Rules</div>
+          <div className="metric-value bidi-ltr" dir="ltr">{matchRate}%</div>
+          <div className="metric-delta">{t('reconciliation.kpi_ledger_bal_delta')}</div>
         </div>
       </div>
 
@@ -184,19 +186,19 @@ function AccountReconciliationView() {
           className={`tab-btn ${activeTab === 'bank-reconciliation' ? 'active' : ''}`}
           onClick={() => setActiveTab('bank-reconciliation')}
         >
-          Dual-Panel Bank Workspace
+          {t('reconciliation.tab_bank_recon')}
         </button>
         <button
           className={`tab-btn ${activeTab === 'unmatched-items' ? 'active' : ''}`}
           onClick={() => setActiveTab('unmatched-items')}
         >
-          Unmatched Items &amp; GL Adjustments ({unmatchedBankTransactions.length})
+          {t('reconciliation.tab_unmatched')} ({unmatchedBankTransactions.length})
         </button>
         <button
           className={`tab-btn ${activeTab === 'reconciliation-history' ? 'active' : ''}`}
           onClick={() => setActiveTab('reconciliation-history')}
         >
-          Period-End Sign-Off Archive ({reconciliationLogs.length})
+          {t('reconciliation.tab_history')} ({reconciliationLogs.length})
         </button>
       </div>
 
@@ -253,11 +255,11 @@ function AccountReconciliationView() {
                 <table className="table" style={{ width: '100%', fontSize: '11.5px' }}>
                   <thead>
                     <tr>
-                      <th>Date</th>
+                      <th>{t('common:th_date', { defaultValue: 'Date' })}</th>
                       <th>JV Ref</th>
-                      <th>Description</th>
-                      <th style={{ textAlign: 'right' }}>Debit (In)</th>
-                      <th style={{ textAlign: 'right' }}>Credit (Out)</th>
+                      <th>{t('common:th_description', { defaultValue: 'Description' })}</th>
+                      <th style={{ textAlign: 'end' }}>Debit (In)</th>
+                      <th style={{ textAlign: 'end' }}>Credit (Out)</th>
                       <th style={{ textAlign: 'center' }}>Cleared</th>
                     </tr>
                   </thead>
@@ -271,10 +273,10 @@ function AccountReconciliationView() {
                           <td style={{ maxWidth: '160px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                             {jv.memo}
                           </td>
-                          <td style={{ textAlign: 'right', color: line?.debit_amount > 0 ? 'var(--primary-green)' : 'inherit' }} className="mono">
+                          <td style={{ textAlign: 'end', color: line?.debit_amount > 0 ? 'var(--primary-green)' : 'inherit' }} className="mono">
                             {line?.debit_amount > 0 ? `JOD ${line.debit_amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}` : '—'}
                           </td>
-                          <td style={{ textAlign: 'right', color: line?.credit_amount > 0 ? '#ef4444' : 'inherit' }} className="mono">
+                          <td style={{ textAlign: 'end', color: line?.credit_amount > 0 ? '#ef4444' : 'inherit' }} className="mono">
                             {line?.credit_amount > 0 ? `JOD ${line.credit_amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}` : '—'}
                           </td>
                           <td style={{ textAlign: 'center' }}>
@@ -305,7 +307,7 @@ function AccountReconciliationView() {
                       <th>Txn Date</th>
                       <th>Bank Ref</th>
                       <th>Transaction Narrative</th>
-                      <th style={{ textAlign: 'right' }}>Amount (JOD)</th>
+                      <th style={{ textAlign: 'end' }}>Amount (JOD)</th>
                       <th style={{ textAlign: 'center' }}>Status</th>
                     </tr>
                   </thead>
@@ -315,7 +317,7 @@ function AccountReconciliationView() {
                         <td className="mono">{tx.date}</td>
                         <td className="mono" style={{ fontWeight: 600 }}>{tx.reference}</td>
                         <td>{tx.description}</td>
-                        <td style={{ textAlign: 'right', fontWeight: 600, color: tx.amount >= 0 ? 'var(--primary-green)' : '#ef4444' }} className="mono">
+                        <td style={{ textAlign: 'end', fontWeight: 600, color: tx.amount >= 0 ? 'var(--primary-green)' : '#ef4444' }} className="mono">
                           {tx.amount >= 0 ? `+JOD ${tx.amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}` : `-JOD ${Math.abs(tx.amount).toLocaleString(undefined, { minimumFractionDigits: 2 })}`}
                         </td>
                         <td style={{ textAlign: 'center' }}>
@@ -368,7 +370,7 @@ function AccountReconciliationView() {
                     <th>Source Feed</th>
                     <th>Discrepancy Description</th>
                     <th>Bank Reference</th>
-                    <th style={{ textAlign: 'right' }}>Amount (JOD)</th>
+                    <th style={{ textAlign: 'end' }}>Amount (JOD)</th>
                     <th>Suggested GL Account</th>
                     <th style={{ textAlign: 'center' }}>Status</th>
                     <th style={{ textAlign: 'center' }}>Action</th>
@@ -384,7 +386,7 @@ function AccountReconciliationView() {
                       </td>
                       <td style={{ fontWeight: 600 }}>{item.description}</td>
                       <td className="mono">{item.reference}</td>
-                      <td style={{ textAlign: 'right', fontWeight: 700, color: item.amount >= 0 ? 'var(--primary-green)' : '#ef4444' }} className="mono">
+                      <td style={{ textAlign: 'end', fontWeight: 700, color: item.amount >= 0 ? 'var(--primary-green)' : '#ef4444' }} className="mono">
                         {item.amount >= 0 ? `+JOD ${item.amount.toFixed(2)}` : `-JOD ${Math.abs(item.amount).toFixed(2)}`}
                       </td>
                       <td className="mono">{item.suggested_gl_account}</td>
@@ -445,7 +447,7 @@ function AccountReconciliationView() {
                     <th>Log ID</th>
                     <th>Fiscal Period</th>
                     <th>Bank Institution</th>
-                    <th style={{ textAlign: 'right' }}>Certified Ending Balance</th>
+                    <th style={{ textAlign: 'end' }}>Certified Ending Balance</th>
                     <th>Auditor / Signatory</th>
                     <th>SHA-256 Audit Verification Hash</th>
                     <th style={{ textAlign: 'center' }}>Period Status</th>
@@ -457,7 +459,7 @@ function AccountReconciliationView() {
                       <td className="mono" style={{ fontWeight: 600 }}>{log.log_id}</td>
                       <td className="mono" style={{ fontWeight: 600 }}>{log.period}</td>
                       <td>{log.bank_name}</td>
-                      <td style={{ textAlign: 'right', fontWeight: 700 }} className="mono">
+                      <td style={{ textAlign: 'end', fontWeight: 700 }} className="mono">
                         JOD {log.ending_balance.toLocaleString(undefined, { minimumFractionDigits: 2 })}
                       </td>
                       <td>{log.verified_by}</td>

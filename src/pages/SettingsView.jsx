@@ -1,40 +1,42 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 function SettingsView() {
+  const { t } = useTranslation(['inventory', 'common']);
   return (
     <>
       <div className="page-header">
-        <h1>System Settings</h1>
-        <button className="btn-primary">Save Changes</button>
+        <h1>{t('common:settings.title')}</h1>
+        <button className="btn-primary">{t('common:actions.save_changes')}</button>
       </div>
 
       <div className="grid-2">
         {/* User Profile */}
         <div className="card">
-          <h2>User Profile</h2>
+          <h2>{t('common:settings.user_profile')}</h2>
           <div className="form-group">
-            <label>Full Name</label>
+            <label>{t('common:settings.full_name')}</label>
             <input type="text" className="form-control" defaultValue="Washim" />
           </div>
           <div className="form-group">
-            <label>Email Address</label>
-            <input type="email" className="form-control" defaultValue="washim@hotel.com" />
+            <label>{t('common:settings.email_address')}</label>
+            <input type="email" className="form-control" defaultValue="washim@hotel.com" dir="ltr" className="bidi-ltr" />
           </div>
           <div className="form-group">
-            <label>Role</label>
+            <label>{t('common:settings.role')}</label>
             <input type="text" className="form-control" defaultValue="Inventory Manager" disabled style={{ backgroundColor: '#f9fafb' }} />
           </div>
           <div className="form-group">
-            <label>Phone</label>
-            <input type="tel" className="form-control" defaultValue="+971 50 123 4567" />
+            <label>{t('common:settings.phone')}</label>
+            <input type="tel" className="form-control" defaultValue="+971 50 123 4567" dir="ltr" className="bidi-ltr" />
           </div>
         </div>
 
         {/* System Config */}
         <div className="card">
-          <h2>System Configuration</h2>
+          <h2>{t('common:settings.system_config')}</h2>
           <div className="form-group">
-            <label>Default Currency</label>
+            <label>{t('common:settings.default_currency')}</label>
             <select className="form-control">
               <option>AED (د.إ)</option>
               <option>USD ($)</option>
@@ -42,18 +44,18 @@ function SettingsView() {
             </select>
           </div>
           <div className="form-group">
-            <label>Low Stock Alert Threshold (%)</label>
-            <input type="number" className="form-control" defaultValue="20" />
+            <label>{t('common:settings.low_stock_threshold')}</label>
+            <input type="number" className="form-control" defaultValue="20" dir="ltr" className="bidi-ltr" />
           </div>
           <div className="form-group">
-            <label>Auto-generate POs on Low Stock</label>
+            <label>{t('common:settings.auto_generate_pos')}</label>
             <div style={{ marginTop: '8px' }}>
               <input type="checkbox" id="autoPo" defaultChecked style={{ marginRight: '8px' }} />
-              <label htmlFor="autoPo" style={{ display: 'inline', fontWeight: 500 }}>Enable automatic PO creation</label>
+              <label htmlFor="autoPo" style={{ display: 'inline', fontWeight: 500 }}>{t('common:settings.enable_auto_po')}</label>
             </div>
           </div>
           <div className="form-group">
-            <label>Default Warehouse</label>
+            <label>{t('common:settings.default_warehouse')}</label>
             <select className="form-control">
               <option>Main Warehouse</option>
               <option>Kitchen Store</option>
@@ -65,22 +67,22 @@ function SettingsView() {
 
         {/* Notification Preferences */}
         <div className="card">
-          <h2>Notification Preferences</h2>
+          <h2>{t('common:settings.notification_preferences')}</h2>
           <div className="form-group">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 0', borderBottom: '1px solid #f3f4f6' }}>
-              <span style={{ fontSize: '12px', fontWeight: 500 }}>Email alerts for low stock</span>
+              <span style={{ fontSize: '12px', fontWeight: 500 }}>{t('common:settings.email_low_stock')}</span>
               <input type="checkbox" defaultChecked />
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 0', borderBottom: '1px solid #f3f4f6' }}>
-              <span style={{ fontSize: '12px', fontWeight: 500 }}>Email alerts for PO delivery</span>
+              <span style={{ fontSize: '12px', fontWeight: 500 }}>{t('common:settings.email_po_delivery')}</span>
               <input type="checkbox" defaultChecked />
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 0', borderBottom: '1px solid #f3f4f6' }}>
-              <span style={{ fontSize: '12px', fontWeight: 500 }}>Daily inventory summary</span>
+              <span style={{ fontSize: '12px', fontWeight: 500 }}>{t('common:settings.daily_summary')}</span>
               <input type="checkbox" />
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 0' }}>
-              <span style={{ fontSize: '12px', fontWeight: 500 }}>Weekly audit report</span>
+              <span style={{ fontSize: '12px', fontWeight: 500 }}>{t('common:settings.weekly_audit')}</span>
               <input type="checkbox" defaultChecked />
             </div>
           </div>
@@ -88,23 +90,23 @@ function SettingsView() {
 
         {/* Storage Locations */}
         <div className="card">
-          <h2>Storage Locations</h2>
+          <h2>{t('common:settings.storage_locations')}</h2>
           <div className="table-container">
             <table>
               <thead>
                 <tr>
-                  <th>Location Name</th>
-                  <th>Type</th>
-                  <th>Status</th>
+                  <th>{t('common:settings.location_name')}</th>
+                  <th>{t('common:settings.location_type')}</th>
+                  <th>{t('common:settings.location_status')}</th>
                 </tr>
               </thead>
               <tbody>
-                <tr><td>Main Warehouse</td><td>Dry</td><td><span className="status in-stock">Active</span></td></tr>
-                <tr><td>Kitchen Store</td><td>Cold/Dry</td><td><span className="status in-stock">Active</span></td></tr>
-                <tr><td>Floor 1 Storage</td><td>Dry</td><td><span className="status in-stock">Active</span></td></tr>
-                <tr><td>Floor 2 Storage</td><td>Dry</td><td><span className="status in-stock">Active</span></td></tr>
-                <tr><td>Maintenance Room</td><td>Secure</td><td><span className="status in-stock">Active</span></td></tr>
-                <tr><td>Laundry Room</td><td>Secure</td><td><span className="status in-stock">Active</span></td></tr>
+                <tr><td>Main Warehouse</td><td>Dry</td><td><span className="status in-stock">{t('common:status.active')}</span></td></tr>
+                <tr><td>Kitchen Store</td><td>Cold/Dry</td><td><span className="status in-stock">{t('common:status.active')}</span></td></tr>
+                <tr><td>Floor 1 Storage</td><td>Dry</td><td><span className="status in-stock">{t('common:status.active')}</span></td></tr>
+                <tr><td>Floor 2 Storage</td><td>Dry</td><td><span className="status in-stock">{t('common:status.active')}</span></td></tr>
+                <tr><td>Maintenance Room</td><td>Secure</td><td><span className="status in-stock">{t('common:status.active')}</span></td></tr>
+                <tr><td>Laundry Room</td><td>Secure</td><td><span className="status in-stock">{t('common:status.active')}</span></td></tr>
               </tbody>
             </table>
           </div>

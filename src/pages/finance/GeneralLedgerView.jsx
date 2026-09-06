@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useFinance } from '../../context/FinanceContext';
 import {
   BookOpen,
@@ -15,6 +16,7 @@ import {
 } from '@phosphor-icons/react';
 
 function GeneralLedgerView() {
+  const { t } = useTranslation(['finance', 'common']);
   const { journalEntries, accounts, postJournalEntry, metrics } = useFinance();
 
   const [selectedModule, setSelectedModule] = useState('ALL');
@@ -132,17 +134,17 @@ function GeneralLedgerView() {
       {/* Top Title Header */}
       <div className="page-header" style={{ marginBottom: '18px' }}>
         <div>
-          <h1 style={{ fontSize: '18px', fontWeight: 700, margin: 0 }}>General Ledger</h1>
-          <div style={{ fontSize: '11.5px', color: 'var(--text-muted)', fontFamily: 'monospace', marginTop: '2px' }}>
-            / finance / general ledger
+          <h1 style={{ fontSize: '18px', fontWeight: 700, margin: 0 }}>{t('finance:general_ledger.title', 'General Ledger')}</h1>
+          <div style={{ fontSize: '11.5px', color: 'var(--text-muted)', fontFamily: 'monospace', marginTop: '2px' }} dir="ltr">
+            {t('finance:general_ledger.breadcrumb', '/ finance / general ledger')}
           </div>
         </div>
         <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
           <span className="badge ok">
-            <span className="d"></span> Multi-Currency Ledger
+            <span className="d"></span> {t('finance:general_ledger.badge_multi_currency', 'Multi-Currency Ledger')}
           </span>
           <span className="badge ok">
-            <span className="d"></span> Real-Time Double-Entry
+            <span className="d"></span> {t('finance:general_ledger.badge_double_entry', 'Real-Time Double-Entry')}
           </span>
         </div>
       </div>
@@ -151,48 +153,48 @@ function GeneralLedgerView() {
       <div className="metrics-4">
         <div className="card metric-card">
           <div className="metric-top">
-            <span className="metric-label">Posted Volume</span>
+            <span className="metric-label">{t('finance:general_ledger.kpi_posted_volume', 'Posted Volume')}</span>
             <div className="metric-icon" style={{ background: '#f0fdf4', color: '#15803d' }}>
               <BookOpen size={16} weight="bold" />
             </div>
           </div>
-          <div className="metric-value">$1.42M</div>
-          <div className="metric-delta">{(journalEntries || []).length || 142} vouchers MTD</div>
+          <div className="metric-value" dir="ltr">$1.42M</div>
+          <div className="metric-delta">{t('finance:general_ledger.kpi_posted_volume_delta', { count: (journalEntries || []).length || 142, defaultValue: '{{count}} vouchers MTD' })}</div>
         </div>
 
         <div className="card metric-card">
           <div className="metric-top">
-            <span className="metric-label">Auto-Postings</span>
+            <span className="metric-label">{t('finance:general_ledger.kpi_auto_postings', 'Auto-Postings')}</span>
             <div className="metric-icon" style={{ background: '#eff6ff', color: '#2563eb' }}>
               <Lightning size={16} weight="bold" />
             </div>
           </div>
-          <div className="metric-value">
+          <div className="metric-value" dir="ltr">
             {((journalEntries || []).filter(j => j.voucher_type === 'INVENTORY').length || 84)} · 59%
           </div>
-          <div className="metric-delta">Zero human touch</div>
+          <div className="metric-delta">{t('finance:general_ledger.kpi_auto_postings_delta', 'Zero human touch')}</div>
         </div>
 
         <div className="card metric-card">
           <div className="metric-top">
-            <span className="metric-label">Equilibrium</span>
+            <span className="metric-label">{t('finance:general_ledger.kpi_equilibrium', 'Equilibrium')}</span>
             <div className="metric-icon" style={{ background: '#f0fdf4', color: '#15803d' }}>
               <CheckCircle size={16} weight="bold" />
             </div>
           </div>
-          <div className="metric-value">Balanced</div>
-          <div className="metric-delta up" style={{ color: '#15803d', fontWeight: 600 }}>Δ $0.00</div>
+          <div className="metric-value">{t('common:status.balanced', 'Balanced')}</div>
+          <div className="metric-delta up" style={{ color: '#15803d', fontWeight: 600 }} dir="ltr">Δ $0.00</div>
         </div>
 
         <div className="card metric-card">
           <div className="metric-top">
-            <span className="metric-label">Pending Review</span>
+            <span className="metric-label">{t('finance:general_ledger.kpi_pending_review', 'Pending Review')}</span>
             <div className="metric-icon" style={{ background: '#fef2f2', color: '#b91c1c' }}>
               <WarningCircle size={16} weight="bold" />
             </div>
           </div>
-          <div className="metric-value">4</div>
-          <div className="metric-delta">Totaling $18,200</div>
+          <div className="metric-value" dir="ltr">4</div>
+          <div className="metric-delta">{t('finance:general_ledger.kpi_pending_review_delta', { amount: '18,200', defaultValue: 'Totaling $18,200' })}</div>
         </div>
       </div>
 
@@ -204,25 +206,26 @@ function GeneralLedgerView() {
             value={selectedModule}
             onChange={(e) => setSelectedModule(e.target.value)}
           >
-            <option value="ALL">All Modules ({(journalEntries || []).length})</option>
-            <option value="INVENTORY">Inventory Automated ({(journalEntries || []).filter(j => j.voucher_type === 'INVENTORY').length})</option>
-            <option value="AP">Accounts Payable ({(journalEntries || []).filter(j => j.voucher_type === 'AP').length})</option>
-            <option value="AR">Accounts Receivable ({(journalEntries || []).filter(j => j.voucher_type === 'AR').length})</option>
-            <option value="PAYROLL">Payroll ({(journalEntries || []).filter(j => j.voucher_type === 'PAYROLL').length})</option>
-            <option value="MANUAL">Manual Entries ({(journalEntries || []).filter(j => j.voucher_type === 'MANUAL').length})</option>
+            <option value="ALL">{t('finance:general_ledger.filter_all_modules', { count: (journalEntries || []).length, defaultValue: `All Modules (${(journalEntries || []).length})` })}</option>
+            <option value="INVENTORY">{t('finance:general_ledger.filter_inventory_auto', { count: (journalEntries || []).filter(j => j.voucher_type === 'INVENTORY').length, defaultValue: `Inventory Automated (${(journalEntries || []).filter(j => j.voucher_type === 'INVENTORY').length})` })}</option>
+            <option value="AP">{t('finance:general_ledger.filter_ap', { count: (journalEntries || []).filter(j => j.voucher_type === 'AP').length, defaultValue: `Accounts Payable (${(journalEntries || []).filter(j => j.voucher_type === 'AP').length})` })}</option>
+            <option value="AR">{t('finance:general_ledger.filter_ar', { count: (journalEntries || []).filter(j => j.voucher_type === 'AR').length, defaultValue: `Accounts Receivable (${(journalEntries || []).filter(j => j.voucher_type === 'AR').length})` })}</option>
+            <option value="PAYROLL">{t('finance:general_ledger.filter_payroll', { count: (journalEntries || []).filter(j => j.voucher_type === 'PAYROLL').length, defaultValue: `Payroll (${(journalEntries || []).filter(j => j.voucher_type === 'PAYROLL').length})` })}</option>
+            <option value="MANUAL">{t('finance:general_ledger.filter_manual', { count: (journalEntries || []).filter(j => j.voucher_type === 'MANUAL').length, defaultValue: `Manual Entries (${(journalEntries || []).filter(j => j.voucher_type === 'MANUAL').length})` })}</option>
           </select>
 
           <div style={{ position: 'relative' }}>
             <input
               className="input"
-              placeholder="Search voucher #, account, doc ref…"
-              style={{ width: '260px', paddingLeft: '30px' }}
+              dir="ltr"
+              placeholder={t('finance:general_ledger.search_placeholder', 'Search voucher #, account, doc ref…')}
+              style={{ width: '260px', paddingInlineStart: '30px' }}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
             <MagnifyingGlass
               size={14}
-              style={{ position: 'absolute', left: '10px', top: '10px', color: 'var(--text-muted)' }}
+              style={{ position: 'absolute', insetInlineStart: '10px', top: '10px', color: 'var(--text-muted)' }}
             />
           </div>
         </div>
@@ -233,7 +236,7 @@ function GeneralLedgerView() {
           onClick={() => setIsModalOpen(true)}
         >
           <Plus size={14} weight="bold" />
-          <span>New Journal Voucher</span>
+          <span>{t('finance:general_ledger.btn_new_voucher', 'New Journal Voucher')}</span>
         </button>
       </div>
 
@@ -243,14 +246,14 @@ function GeneralLedgerView() {
           <thead>
             <tr>
               <th style={{ width: '32px' }}></th>
-              <th>Voucher</th>
-              <th>Date</th>
-              <th>Source</th>
-              <th>Doc Ref</th>
-              <th>Memo</th>
-              <th>Debit</th>
-              <th>Credit</th>
-              <th>Status</th>
+              <th>{t('finance:general_ledger.th_voucher', 'Voucher')}</th>
+              <th>{t('finance:general_ledger.th_date', 'Date')}</th>
+              <th>{t('finance:general_ledger.th_source', 'Source')}</th>
+              <th>{t('finance:general_ledger.th_doc_ref', 'Doc Ref')}</th>
+              <th>{t('finance:general_ledger.th_memo', 'Memo')}</th>
+              <th>{t('finance:general_ledger.th_debit', 'Debit')}</th>
+              <th>{t('finance:general_ledger.th_credit', 'Credit')}</th>
+              <th>{t('finance:general_ledger.th_status', 'Status')}</th>
             </tr>
           </thead>
           <tbody>
@@ -268,24 +271,24 @@ function GeneralLedgerView() {
                   >
                     <td>
                       <span className="link-action" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        {isExpanded ? <CaretDown size={14} weight="bold" /> : <CaretRight size={14} weight="bold" />}
+                        {isExpanded ? <CaretDown size={14} weight="bold" /> : <CaretRight size={14} weight="bold" className="icon-rtl-flip" />}
                       </span>
                     </td>
-                    <td className="mono cell-strong">{entry.voucher_number}</td>
-                    <td className="mono">{entry.posting_date}</td>
+                    <td className="mono cell-strong" dir="ltr">{entry.voucher_number}</td>
+                    <td className="mono" dir="ltr">{entry.posting_date}</td>
                     <td>
                       <span className={`tag-pill ${entry.voucher_type === 'INVENTORY' ? 'solid' : ''}`}>
                         {entry.voucher_type}
                       </span>
                     </td>
-                    <td className="mono">{entry.reference_number || '—'}</td>
+                    <td className="mono" dir="ltr">{entry.reference_number || '—'}</td>
                     <td>{entry.memo}</td>
-                    <td className="mono cell-strong">${(entry.total_debit || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
-                    <td className="mono cell-strong">${(entry.total_credit || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
+                    <td className="mono cell-strong" dir="ltr">${(entry.total_debit || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
+                    <td className="mono cell-strong" dir="ltr">${(entry.total_credit || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
                     <td>
                       <span className={`badge ${isBalanced ? 'ok' : 'crit'}`}>
                         <span className="d"></span>
-                        {isBalanced ? 'Balanced' : 'Unbalanced'}
+                        {isBalanced ? t('common:status.balanced', 'Balanced') : t('common:status.unbalanced', 'Unbalanced')}
                       </span>
                     </td>
                   </tr>
@@ -298,25 +301,25 @@ function GeneralLedgerView() {
                           <table>
                             <thead>
                               <tr>
-                                <th>Account</th>
-                                <th>Account Title</th>
-                                <th>Description / Memo</th>
-                                <th>Debit</th>
-                                <th>Credit</th>
+                                <th>{t('finance:general_ledger.th_account', 'Account')}</th>
+                                <th>{t('finance:general_ledger.th_account_title', 'Account Title')}</th>
+                                <th>{t('finance:general_ledger.th_description', 'Description / Memo')}</th>
+                                <th>{t('finance:general_ledger.th_debit', 'Debit')}</th>
+                                <th>{t('finance:general_ledger.th_credit', 'Credit')}</th>
                               </tr>
                             </thead>
                             <tbody>
                               {(entry.lines || []).map((line, lIdx) => (
                                 <tr key={line.line_id || lIdx}>
-                                  <td className="mono cell-strong">{line.account_code}</td>
+                                  <td className="mono cell-strong" dir="ltr">{line.account_code}</td>
                                   <td>{line.account_name}</td>
                                   <td style={{ color: 'var(--text-muted)', fontSize: '11px' }}>
                                     {line.description || entry.memo}
                                   </td>
-                                  <td className="mono" style={{ color: line.debit_amount > 0 ? 'var(--text-main)' : 'var(--text-muted)' }}>
+                                  <td className="mono" dir="ltr" style={{ color: line.debit_amount > 0 ? 'var(--text-main)' : 'var(--text-muted)' }}>
                                     ${(line.debit_amount || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}
                                   </td>
-                                  <td className="mono" style={{ color: line.credit_amount > 0 ? 'var(--text-main)' : 'var(--text-muted)' }}>
+                                  <td className="mono" dir="ltr" style={{ color: line.credit_amount > 0 ? 'var(--text-main)' : 'var(--text-muted)' }}>
                                     ${(line.credit_amount || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}
                                   </td>
                                 </tr>
@@ -324,9 +327,9 @@ function GeneralLedgerView() {
                             </tbody>
                           </table>
                           <div className="sub-foot">
-                            <span>Posted by: <b>{entry.posted_by || 'System (Auto-GL)'}</b></span>
-                            <span>Fiscal Period: <b>{entry.fiscal_period || '2026-08'}</b></span>
-                            <span>Total Debits: <b>${(entry.total_debit || 0).toFixed(2)}</b> ≡ Total Credits: <b>${(entry.total_credit || 0).toFixed(2)}</b></span>
+                            <span>{t('finance:general_ledger.posted_by', { user: entry.posted_by || 'System (Auto-GL)', defaultValue: `Posted by: ${entry.posted_by || 'System (Auto-GL)'}` })}</span>
+                            <span>{t('finance:general_ledger.fiscal_period', { period: entry.fiscal_period || '2026-08', defaultValue: `Fiscal Period: ${entry.fiscal_period || '2026-08'}` })}</span>
+                            <span dir="ltr">{t('finance:general_ledger.total_debits_equal_credits', { debit: (entry.total_debit || 0).toFixed(2), credit: (entry.total_credit || 0).toFixed(2), defaultValue: `Total Debits: $${(entry.total_debit || 0).toFixed(2)} ≡ Total Credits: $${(entry.total_credit || 0).toFixed(2)}` })}</span>
                           </div>
                         </div>
                       </td>
@@ -344,7 +347,7 @@ function GeneralLedgerView() {
         <div className="modal-overlay" onClick={() => setIsModalOpen(false)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '680px' }}>
             <div className="modal-header">
-              <div className="modal-title">Post New General Journal Voucher</div>
+              <div className="modal-title">{t('finance:general_ledger.modal_title', 'Post New General Journal Voucher')}</div>
               <button className="modal-close-btn" onClick={() => setIsModalOpen(false)}>
                 <X size={16} />
               </button>
@@ -353,9 +356,10 @@ function GeneralLedgerView() {
             <form onSubmit={handleCreateVoucher}>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px', marginBottom: '14px' }}>
                 <div>
-                  <label className="form-label">Posting Date</label>
+                  <label className="form-label">{t('finance:general_ledger.form_posting_date', 'Posting Date')}</label>
                   <input
                     type="date"
+                    dir="ltr"
                     className="input input-full"
                     value={newVoucherDate}
                     onChange={(e) => setNewVoucherDate(e.target.value)}
@@ -363,7 +367,7 @@ function GeneralLedgerView() {
                   />
                 </div>
                 <div>
-                  <label className="form-label">Source Module</label>
+                  <label className="form-label">{t('finance:general_ledger.form_source_module', 'Source Module')}</label>
                   <select
                     className="select"
                     style={{ width: '100%', height: '36px' }}
@@ -378,9 +382,10 @@ function GeneralLedgerView() {
                   </select>
                 </div>
                 <div>
-                  <label className="form-label">Document Ref</label>
+                  <label className="form-label">{t('finance:general_ledger.form_doc_ref', 'Document Ref')}</label>
                   <input
                     type="text"
+                    dir="ltr"
                     className="input input-full"
                     placeholder="e.g. ADJ-0042"
                     value={newVoucherRef}
@@ -390,7 +395,7 @@ function GeneralLedgerView() {
               </div>
 
               <div style={{ marginBottom: '16px' }}>
-                <label className="form-label">Journal Description / Memo</label>
+                <label className="form-label">{t('finance:general_ledger.form_memo', 'Journal Description / Memo')}</label>
                 <input
                   type="text"
                   className="input input-full"
@@ -404,13 +409,13 @@ function GeneralLedgerView() {
               {/* Multi-line Debit/Credit Table */}
               <div style={{ marginBottom: '14px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
-                  <span className="section-label" style={{ margin: 0 }}>Voucher Line Items</span>
+                  <span className="section-label" style={{ margin: 0 }}>{t('finance:general_ledger.form_lines_title', 'Voucher Line Items')}</span>
                   <button
                     type="button"
                     onClick={addLine}
                     style={{ background: 'none', border: 'none', color: 'var(--primary-green)', fontWeight: 600, fontSize: '11.5px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
                   >
-                    <PlusCircle size={14} /> Add Line
+                    <PlusCircle size={14} /> {t('finance:general_ledger.btn_add_line', 'Add Line')}
                   </button>
                 </div>
 
@@ -418,9 +423,9 @@ function GeneralLedgerView() {
                   <table>
                     <thead>
                       <tr>
-                        <th style={{ width: '40%' }}>Account</th>
-                        <th style={{ width: '25%' }}>Debit ($)</th>
-                        <th style={{ width: '25%' }}>Credit ($)</th>
+                        <th style={{ width: '40%' }}>{t('finance:general_ledger.th_account', 'Account')}</th>
+                        <th style={{ width: '25%' }}>{t('finance:general_ledger.th_debit', 'Debit')} ($)</th>
+                        <th style={{ width: '25%' }}>{t('finance:general_ledger.th_credit', 'Credit')} ($)</th>
                         <th style={{ width: '10%' }}></th>
                       </tr>
                     </thead>
@@ -446,6 +451,7 @@ function GeneralLedgerView() {
                               type="number"
                               step="0.01"
                               min="0"
+                              dir="ltr"
                               className="input"
                               style={{ width: '100%', fontSize: '11.5px', fontFamily: 'monospace' }}
                               value={line.debit_amount || ''}
@@ -458,6 +464,7 @@ function GeneralLedgerView() {
                               type="number"
                               step="0.01"
                               min="0"
+                              dir="ltr"
                               className="input"
                               style={{ width: '100%', fontSize: '11.5px', fontFamily: 'monospace' }}
                               value={line.credit_amount || ''}
@@ -486,9 +493,9 @@ function GeneralLedgerView() {
               {/* Total & Equilibrium Warning */}
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 14px', background: isModalBalanced ? '#f0fdf4' : '#fef2f2', border: `1px solid ${isModalBalanced ? '#bbf7d0' : '#fecaca'}`, borderRadius: '6px', fontSize: '11.5px' }}>
                 <span style={{ fontWeight: 600, color: isModalBalanced ? '#15803d' : '#b91c1c' }}>
-                  {isModalBalanced ? '✓ Balanced Entry' : `⚠ Unbalanced: Δ $${modalDelta.toFixed(2)}`}
+                  {isModalBalanced ? t('finance:general_ledger.balanced_entry', '✓ Balanced Entry') : t('finance:general_ledger.unbalanced_entry', { delta: modalDelta.toFixed(2), defaultValue: `⚠ Unbalanced: Δ $${modalDelta.toFixed(2)}` })}
                 </span>
-                <span className="mono" style={{ color: 'var(--text-main)' }}>
+                <span className="mono" style={{ color: 'var(--text-main)' }} dir="ltr">
                   Total Debits: <b>${modalTotalDebit.toFixed(2)}</b> | Total Credits: <b>${modalTotalCredit.toFixed(2)}</b>
                 </span>
               </div>
@@ -499,7 +506,7 @@ function GeneralLedgerView() {
                   className="btn btn-ghost"
                   onClick={() => setIsModalOpen(false)}
                 >
-                  Cancel
+                  {t('common:actions.cancel', 'Cancel')}
                 </button>
                 <button
                   type="submit"
@@ -507,7 +514,7 @@ function GeneralLedgerView() {
                   disabled={!isModalBalanced}
                   style={{ opacity: isModalBalanced ? 1 : 0.5, cursor: isModalBalanced ? 'pointer' : 'not-allowed' }}
                 >
-                  Post Voucher to GL
+                  {t('finance:general_ledger.btn_post_voucher', 'Post Voucher to GL')}
                 </button>
               </div>
             </form>

@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useFinance } from '../../context/FinanceContext';
 import {
   CheckCircle,
@@ -16,6 +17,7 @@ import {
 } from '@phosphor-icons/react';
 
 function ThreeWayMatchingView() {
+  const { t } = useTranslation(['finance', 'common']);
   const { threeWayMatches, runAutoMatch, runThreeWayMatch, postJournalEntry } = useFinance();
 
   const [filterStatus, setFilterStatus] = useState('ALL');
@@ -66,20 +68,20 @@ function ThreeWayMatchingView() {
 
   return (
     <div className="page-container" style={{ paddingBottom: '32px' }}>
-      {/* Page Title Header */}
+      {/* Top Title Header */}
       <div className="page-header" style={{ marginBottom: '18px' }}>
         <div>
-          <h1 style={{ fontSize: '18px', fontWeight: 700, margin: 0 }}>3-Way Matching Engine</h1>
-          <div style={{ fontSize: '11.5px', color: 'var(--text-muted)', fontFamily: 'monospace', marginTop: '2px' }}>
-            / finance / procurement & matching
+          <h1 style={{ fontSize: '18px', fontWeight: 700, margin: 0 }}>{t('finance:matching.title', '3-Way Matching Engine')}</h1>
+          <div style={{ fontSize: '11.5px', color: 'var(--text-muted)', fontFamily: 'monospace', marginTop: '2px' }} dir="ltr">
+            {t('finance:matching.breadcrumb', '/ finance / procurement & matching')}
           </div>
         </div>
         <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
           <span className="badge ok">
-            <span className="d"></span> Tolerance: ±2.0% ($50 Cap)
+            <span className="d"></span> {t('finance:matching.badge_tolerance', 'Tolerance: ±2.0% ($50 Cap)')}
           </span>
           <span className="badge ok">
-            <span className="d"></span> Automated Clearing Active
+            <span className="d"></span> {t('finance:matching.badge_clearing_active', 'Automated Clearing Active')}
           </span>
         </div>
       </div>
@@ -88,46 +90,46 @@ function ThreeWayMatchingView() {
       <div className="metrics-4">
         <div className="card metric-card">
           <div className="metric-top">
-            <span className="metric-label">Fully Matched</span>
+            <span className="metric-label">{t('finance:matching.kpi_fully_matched', 'Fully Matched')}</span>
             <div className="metric-icon" style={{ background: '#f0fdf4', color: '#15803d' }}>
               <CheckCircle size={16} weight="bold" />
             </div>
           </div>
-          <div className="metric-value">$184,250</div>
-          <div className="metric-delta up" style={{ color: '#15803d', fontWeight: 600 }}>42 POs cleared</div>
+          <div className="metric-value" dir="ltr">$184,250</div>
+          <div className="metric-delta up" style={{ color: '#15803d', fontWeight: 600 }}>{t('finance:matching.kpi_fully_matched_delta', '42 POs cleared')}</div>
         </div>
 
         <div className="card metric-card">
           <div className="metric-top">
-            <span className="metric-label">Price Variance (PPV)</span>
+            <span className="metric-label">{t('finance:matching.kpi_ppv', 'Price Variance (PPV)')}</span>
             <div className="metric-icon" style={{ background: '#fef9c3', color: '#a16207' }}>
               <WarningCircle size={16} weight="bold" />
             </div>
           </div>
-          <div className="metric-value">$8,420</div>
-          <div className="metric-delta" style={{ color: '#ca8a04', fontWeight: 600 }}>5 bills &gt; 2.0%</div>
+          <div className="metric-value" dir="ltr">$8,420</div>
+          <div className="metric-delta" style={{ color: '#ca8a04', fontWeight: 600 }}>{t('finance:matching.kpi_ppv_delta', '5 bills > 2.0%')}</div>
         </div>
 
         <div className="card metric-card">
           <div className="metric-top">
-            <span className="metric-label">Qty Discrepancy</span>
+            <span className="metric-label">{t('finance:matching.kpi_qty_discrepancy', 'Qty Discrepancy')}</span>
             <div className="metric-icon" style={{ background: '#fef2f2', color: '#b91c1c' }}>
               <XCircle size={16} weight="bold" />
             </div>
           </div>
-          <div className="metric-value">$12,100</div>
-          <div className="metric-delta" style={{ color: '#dc2626', fontWeight: 600 }}>3 bills on hold</div>
+          <div className="metric-value" dir="ltr">$12,100</div>
+          <div className="metric-delta" style={{ color: '#dc2626', fontWeight: 600 }}>{t('finance:matching.kpi_qty_discrepancy_delta', '3 bills on hold')}</div>
         </div>
 
         <div className="card metric-card">
           <div className="metric-top">
-            <span className="metric-label">GR/IR Clearing</span>
+            <span className="metric-label">{t('finance:matching.kpi_grir_clearing', 'GR/IR Clearing')}</span>
             <div className="metric-icon" style={{ background: '#eff6ff', color: '#2563eb' }}>
               <Clock size={16} weight="bold" />
             </div>
           </div>
-          <div className="metric-value">$18,000</div>
-          <div className="metric-delta">8 unbilled receipts</div>
+          <div className="metric-value" dir="ltr">$18,000</div>
+          <div className="metric-delta">{t('finance:matching.kpi_grir_clearing_delta', '8 unbilled receipts')}</div>
         </div>
       </div>
 
@@ -139,11 +141,11 @@ function ThreeWayMatchingView() {
             value={filterStatus}
             onChange={(e) => setFilterStatus(e.target.value)}
           >
-            <option value="ALL">All Matches ({(threeWayMatches || []).length})</option>
-            <option value="MATCHED">Perfect Match ({(threeWayMatches || []).filter(m => m.status === 'MATCHED' || m.status === 'PERFECT').length})</option>
-            <option value="PPV_HOLD">PPV Hold ({(threeWayMatches || []).filter(m => m.status === 'PPV_HOLD' || m.status === 'PPV').length})</option>
-            <option value="QTY_HOLD">Qty Discrepancy ({(threeWayMatches || []).filter(m => m.status === 'QTY_HOLD').length})</option>
-            <option value="UNBILLED">Unbilled GRN ({(threeWayMatches || []).filter(m => m.status === 'UNBILLED_GRN' || !m.bill_ref || m.bill_ref === '—').length})</option>
+            <option value="ALL">{t('finance:matching.filter_all', { count: (threeWayMatches || []).length, defaultValue: `All Matches (${(threeWayMatches || []).length})` })}</option>
+            <option value="MATCHED">{t('finance:matching.filter_matched', { count: (threeWayMatches || []).filter(m => m.status === 'MATCHED' || m.status === 'PERFECT').length, defaultValue: `Perfect Match (${(threeWayMatches || []).filter(m => m.status === 'MATCHED' || m.status === 'PERFECT').length})` })}</option>
+            <option value="PPV_HOLD">{t('finance:matching.filter_ppv_hold', { count: (threeWayMatches || []).filter(m => m.status === 'PPV_HOLD' || m.status === 'PPV').length, defaultValue: `PPV Hold (${(threeWayMatches || []).filter(m => m.status === 'PPV_HOLD' || m.status === 'PPV').length})` })}</option>
+            <option value="QTY_HOLD">{t('finance:matching.filter_qty_hold', { count: (threeWayMatches || []).filter(m => m.status === 'QTY_HOLD').length, defaultValue: `Qty Discrepancy (${(threeWayMatches || []).filter(m => m.status === 'QTY_HOLD').length})` })}</option>
+            <option value="UNBILLED">{t('finance:matching.filter_unbilled', { count: (threeWayMatches || []).filter(m => m.status === 'UNBILLED_GRN' || !m.bill_ref || m.bill_ref === '—').length, defaultValue: `Unbilled GRN (${(threeWayMatches || []).filter(m => m.status === 'UNBILLED_GRN' || !m.bill_ref || m.bill_ref === '—').length})` })}</option>
           </select>
         </div>
 
@@ -154,7 +156,7 @@ function ThreeWayMatchingView() {
             style={{ display: 'flex', alignItems: 'center', gap: '6px' }}
           >
             <Play size={14} weight="fill" />
-            <span>Run Auto-Match</span>
+            <span>{t('finance:matching.btn_run_automatch', 'Run Auto-Match')}</span>
           </button>
           <button
             className="btn btn-primary"
@@ -162,7 +164,7 @@ function ThreeWayMatchingView() {
             style={{ display: 'flex', alignItems: 'center', gap: '6px' }}
           >
             <ArrowsLeftRight size={14} weight="bold" />
-            <span>+ Manual Match Link</span>
+            <span>{t('finance:matching.btn_manual_override', 'Manual Match Override')}</span>
           </button>
         </div>
       </div>
@@ -172,15 +174,15 @@ function ThreeWayMatchingView() {
         <table>
           <thead>
             <tr>
-              <th>Status</th>
-              <th>PO Ref</th>
-              <th>GRN Ref</th>
-              <th>Bill Ref</th>
-              <th>Vendor</th>
-              <th>SKU / Item</th>
-              <th>PPV Variance</th>
-              <th>Tolerance Rule</th>
-              <th>Action</th>
+              <th>{t('finance:general_ledger.th_status', 'Status')}</th>
+              <th>{t('finance:matching.th_po_ref', 'PO Ref')}</th>
+              <th>{t('finance:matching.th_grn_ref', 'GRN Ref')}</th>
+              <th>{t('finance:matching.th_bill_ref', 'Bill Ref')}</th>
+              <th>{t('finance:matching.th_vendor', 'Vendor')}</th>
+              <th>{t('common:filters.category_all', 'SKU / Item')}</th>
+              <th>{t('finance:matching.th_ppv_var', 'PPV Var')}</th>
+              <th>{t('finance:matching.badge_tolerance', 'Tolerance Rule')}</th>
+              <th>{t('finance:matching.th_action_req', 'Action')}</th>
             </tr>
           </thead>
           <tbody>
@@ -199,12 +201,12 @@ function ThreeWayMatchingView() {
                       {badgeLabel}
                     </span>
                   </td>
-                  <td className="mono cell-strong">{m.po_ref}</td>
-                  <td className="mono">{m.grn_ref}</td>
-                  <td className="mono">{m.bill_ref || '—'}</td>
+                  <td className="mono cell-strong" dir="ltr">{m.po_ref}</td>
+                  <td className="mono" dir="ltr">{m.grn_ref}</td>
+                  <td className="mono" dir="ltr">{m.bill_ref || '—'}</td>
                   <td>{m.vendor_name}</td>
-                  <td>{m.sku || 'General Supply'}</td>
-                  <td className="mono cell-strong">
+                  <td dir="ltr">{m.sku || 'General Supply'}</td>
+                  <td className="mono cell-strong" dir="ltr">
                     {m.ppv_amount > 0 ? `+$${m.ppv_amount.toFixed(2)}` : '$0.00'}
                   </td>
                   <td>
@@ -218,7 +220,7 @@ function ThreeWayMatchingView() {
                       className="link-action"
                       onClick={() => setSelectedMatch(m)}
                     >
-                      Inspect
+                      {t('common:actions.view', 'Inspect')}
                     </span>
                   </td>
                 </tr>
@@ -235,7 +237,7 @@ function ThreeWayMatchingView() {
             <div className="modal-header">
               <div className="modal-title" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <ArrowsLeftRight size={18} weight="bold" />
-                <span>3-Way Matching Inspection Audit — {selectedMatch.po_ref}</span>
+                <span>{t('finance:matching.modal_override_title', '3-Way Matching Inspection Audit')} — <span dir="ltr">{selectedMatch.po_ref}</span></span>
               </div>
               <button className="modal-close-btn" onClick={() => setSelectedMatch(null)}>
                 <X size={16} />
@@ -245,15 +247,15 @@ function ThreeWayMatchingView() {
             <div style={{ marginBottom: '16px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#f8fafc', padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--border-color)', marginBottom: '16px' }}>
                 <div>
-                  <div style={{ fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 600 }}>Vendor / Supplier</div>
+                  <div style={{ fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 600 }}>{t('finance:matching.th_vendor', 'Vendor / Supplier')}</div>
                   <div style={{ fontSize: '13px', fontWeight: 700 }}>{selectedMatch.vendor_name}</div>
                 </div>
                 <div>
                   <div style={{ fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 600 }}>Item SKU</div>
-                  <div className="mono" style={{ fontSize: '13px', fontWeight: 700 }}>{selectedMatch.sku}</div>
+                  <div className="mono" style={{ fontSize: '13px', fontWeight: 700 }} dir="ltr">{selectedMatch.sku}</div>
                 </div>
                 <div>
-                  <div style={{ fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 600 }}>Match Status</div>
+                  <div style={{ fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 600 }}>{t('common:status.status', 'Match Status')}</div>
                   <span className={`badge ${selectedMatch.status === 'MATCHED' ? 'ok' : 'warn'}`}>
                     <span className="d"></span>{selectedMatch.status}
                   </span>
@@ -266,20 +268,20 @@ function ThreeWayMatchingView() {
                 <div style={{ border: '1px solid var(--border-color)', borderRadius: '8px', padding: '14px', background: '#ffffff' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '10px', color: 'var(--text-main)' }}>
                     <FileText size={16} weight="bold" />
-                    <span style={{ fontSize: '12px', fontWeight: 700 }}>1. Purchase Order</span>
+                    <span style={{ fontSize: '12px', fontWeight: 700 }}>{t('finance:matching.field_po', '1. Purchase Order')}</span>
                   </div>
-                  <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '4px' }}>Ref: <b className="mono">{selectedMatch.po_ref}</b></div>
+                  <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '4px' }}>Ref: <b className="mono" dir="ltr">{selectedMatch.po_ref}</b></div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0', borderBottom: '1px solid #f3f4f6', fontSize: '12px' }}>
                     <span>Ordered Qty:</span>
-                    <span className="mono" style={{ fontWeight: 600 }}>{selectedMatch.po_qty || 100}</span>
+                    <span className="mono" style={{ fontWeight: 600 }} dir="ltr">{selectedMatch.po_qty || 100}</span>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0', borderBottom: '1px solid #f3f4f6', fontSize: '12px' }}>
                     <span>Unit Price:</span>
-                    <span className="mono" style={{ fontWeight: 600 }}>${(selectedMatch.po_unit_price || 12.50).toFixed(2)}</span>
+                    <span className="mono" style={{ fontWeight: 600 }} dir="ltr">${(selectedMatch.po_unit_price || 12.50).toFixed(2)}</span>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0 0', fontSize: '12px', fontWeight: 700 }}>
                     <span>PO Total:</span>
-                    <span className="mono">${((selectedMatch.po_qty || 100) * (selectedMatch.po_unit_price || 12.50)).toFixed(2)}</span>
+                    <span className="mono" dir="ltr">${((selectedMatch.po_qty || 100) * (selectedMatch.po_unit_price || 12.50)).toFixed(2)}</span>
                   </div>
                 </div>
 
@@ -287,20 +289,20 @@ function ThreeWayMatchingView() {
                 <div style={{ border: '1px solid var(--border-color)', borderRadius: '8px', padding: '14px', background: '#ffffff' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '10px', color: '#15803d' }}>
                     <Package size={16} weight="bold" />
-                    <span style={{ fontSize: '12px', fontWeight: 700 }}>2. Goods Receipt (GRN)</span>
+                    <span style={{ fontSize: '12px', fontWeight: 700 }}>{t('finance:matching.field_grn', '2. Goods Receipt (GRN)')}</span>
                   </div>
-                  <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '4px' }}>Ref: <b className="mono">{selectedMatch.grn_ref}</b></div>
+                  <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '4px' }}>Ref: <b className="mono" dir="ltr">{selectedMatch.grn_ref}</b></div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0', borderBottom: '1px solid #f3f4f6', fontSize: '12px' }}>
                     <span>Received Qty:</span>
-                    <span className="mono" style={{ fontWeight: 600 }}>{selectedMatch.grn_qty || 100}</span>
+                    <span className="mono" style={{ fontWeight: 600 }} dir="ltr">{selectedMatch.grn_qty || 100}</span>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0', borderBottom: '1px solid #f3f4f6', fontSize: '12px' }}>
                     <span>Valuation Rate:</span>
-                    <span className="mono" style={{ fontWeight: 600 }}>${(selectedMatch.po_unit_price || 12.50).toFixed(2)}</span>
+                    <span className="mono" style={{ fontWeight: 600 }} dir="ltr">${(selectedMatch.po_unit_price || 12.50).toFixed(2)}</span>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0 0', fontSize: '12px', fontWeight: 700 }}>
                     <span>GRN Asset:</span>
-                    <span className="mono">${((selectedMatch.grn_qty || 100) * (selectedMatch.po_unit_price || 12.50)).toFixed(2)}</span>
+                    <span className="mono" dir="ltr">${((selectedMatch.grn_qty || 100) * (selectedMatch.po_unit_price || 12.50)).toFixed(2)}</span>
                   </div>
                 </div>
 
@@ -308,20 +310,20 @@ function ThreeWayMatchingView() {
                 <div style={{ border: `1px solid ${selectedMatch.ppv_amount > 0 ? '#f59e0b' : 'var(--border-color)'}`, borderRadius: '8px', padding: '14px', background: '#ffffff' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '10px', color: selectedMatch.ppv_amount > 0 ? '#ca8a04' : '#2563eb' }}>
                     <Receipt size={16} weight="bold" />
-                    <span style={{ fontSize: '12px', fontWeight: 700 }}>3. Vendor Invoice</span>
+                    <span style={{ fontSize: '12px', fontWeight: 700 }}>{t('finance:matching.field_bill', '3. Vendor Invoice')}</span>
                   </div>
-                  <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '4px' }}>Ref: <b className="mono">{selectedMatch.bill_ref || '—'}</b></div>
+                  <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '4px' }}>Ref: <b className="mono" dir="ltr">{selectedMatch.bill_ref || '—'}</b></div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0', borderBottom: '1px solid #f3f4f6', fontSize: '12px' }}>
                     <span>Billed Qty:</span>
-                    <span className="mono" style={{ fontWeight: 600 }}>{selectedMatch.bill_qty || 100}</span>
+                    <span className="mono" style={{ fontWeight: 600 }} dir="ltr">{selectedMatch.bill_qty || 100}</span>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0', borderBottom: '1px solid #f3f4f6', fontSize: '12px' }}>
                     <span>Billed Unit Price:</span>
-                    <span className="mono" style={{ fontWeight: 600 }}>${(selectedMatch.bill_unit_price || 13.00).toFixed(2)}</span>
+                    <span className="mono" style={{ fontWeight: 600 }} dir="ltr">${(selectedMatch.bill_unit_price || 13.00).toFixed(2)}</span>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0 0', fontSize: '12px', fontWeight: 700 }}>
                     <span>Billed Total:</span>
-                    <span className="mono">${((selectedMatch.bill_qty || 100) * (selectedMatch.bill_unit_price || 13.00)).toFixed(2)}</span>
+                    <span className="mono" dir="ltr">${((selectedMatch.bill_qty || 100) * (selectedMatch.bill_unit_price || 13.00)).toFixed(2)}</span>
                   </div>
                 </div>
               </div>
@@ -333,13 +335,13 @@ function ThreeWayMatchingView() {
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', padding: '3px 0' }}>
                   <span>Price Variance (PPV Amount):</span>
-                  <span className="mono" style={{ fontWeight: 700, color: selectedMatch.ppv_amount > 0 ? '#b91c1c' : '#15803d' }}>
+                  <span className="mono" style={{ fontWeight: 700, color: selectedMatch.ppv_amount > 0 ? '#b91c1c' : '#15803d' }} dir="ltr">
                     ${(selectedMatch.ppv_amount || 0).toFixed(2)} ({selectedMatch.ppv_variance_percent || 0}%)
                   </span>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', padding: '3px 0' }}>
                   <span>Automated GL Variance Account:</span>
-                  <span className="mono"><b>51200</b> (Purchase Price Variance)</span>
+                  <span className="mono" dir="ltr"><b>51200</b> (Purchase Price Variance)</span>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', padding: '3px 0' }}>
                   <span>Audit Verdict:</span>
@@ -350,14 +352,14 @@ function ThreeWayMatchingView() {
 
             <div className="modal-footer">
               <button className="btn btn-ghost" onClick={() => setSelectedMatch(null)}>
-                Close Audit
+                {t('common:actions.close', 'Close')}
               </button>
               {selectedMatch.status !== 'MATCHED' && (
                 <button
                   className="btn btn-primary"
                   onClick={() => handleApprovePpv(selectedMatch)}
                 >
-                  Approve PPV & Release Payment Hold
+                  {t('finance:matching.action_release_hold', 'Approve PPV & Release Hold')}
                 </button>
               )}
             </div>
@@ -370,7 +372,7 @@ function ThreeWayMatchingView() {
         <div className="modal-overlay" onClick={() => setIsOverrideModalOpen(false)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '520px' }}>
             <div className="modal-header">
-              <div className="modal-title">Manual 3-Way Reconciliation Link</div>
+              <div className="modal-title">{t('finance:matching.modal_override_title', 'Manual 3-Way Reconciliation Link')}</div>
               <button className="modal-close-btn" onClick={() => setIsOverrideModalOpen(false)}>
                 <X size={16} />
               </button>
@@ -378,9 +380,10 @@ function ThreeWayMatchingView() {
 
             <form onSubmit={handleManualOverride}>
               <div style={{ marginBottom: '14px' }}>
-                <label className="form-label">Purchase Order (PO)</label>
+                <label className="form-label">{t('finance:matching.field_po', 'Purchase Order (PO)')}</label>
                 <input
                   className="input input-full"
+                  dir="ltr"
                   value={overridePo}
                   onChange={(e) => setOverridePo(e.target.value)}
                   placeholder="PO-2026-001"
@@ -389,9 +392,10 @@ function ThreeWayMatchingView() {
               </div>
 
               <div style={{ marginBottom: '14px' }}>
-                <label className="form-label">Goods Receipt Note (GRN)</label>
+                <label className="form-label">{t('finance:matching.field_grn', 'Goods Receipt Note (GRN)')}</label>
                 <input
                   className="input input-full"
+                  dir="ltr"
                   value={overrideGrn}
                   onChange={(e) => setOverrideGrn(e.target.value)}
                   placeholder="GRN-2026-004"
@@ -400,9 +404,10 @@ function ThreeWayMatchingView() {
               </div>
 
               <div style={{ marginBottom: '14px' }}>
-                <label className="form-label">Vendor Bill (Invoice)</label>
+                <label className="form-label">{t('finance:matching.field_bill', 'Vendor Invoice (Bill)')}</label>
                 <input
                   className="input input-full"
+                  dir="ltr"
                   value={overrideBill}
                   onChange={(e) => setOverrideBill(e.target.value)}
                   placeholder="BILL-2026-089"
@@ -412,10 +417,10 @@ function ThreeWayMatchingView() {
 
               <div className="modal-footer">
                 <button type="button" className="btn btn-ghost" onClick={() => setIsOverrideModalOpen(false)}>
-                  Cancel
+                  {t('common:actions.cancel', 'Cancel')}
                 </button>
                 <button type="submit" className="btn btn-primary">
-                  Execute 3-Way Match
+                  {t('finance:matching.btn_force_match', 'Force Match & Clear GR/IR')}
                 </button>
               </div>
             </form>

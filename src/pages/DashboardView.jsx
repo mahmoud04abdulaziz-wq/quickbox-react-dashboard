@@ -1,8 +1,10 @@
 import React, { useState, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useInventory } from '../context/InventoryContext';
 import { Package, WarningCircle, ArrowUp, ArrowDown, Prohibit, ShoppingBag } from '@phosphor-icons/react';
 
 function DashboardView() {
+  const { t } = useTranslation(['inventory', 'common']);
   const { inventory, logs } = useInventory();
   const [selectedCategory, setSelectedCategory] = useState('Housekeeping');
 
@@ -52,7 +54,7 @@ function DashboardView() {
   return (
     <>
       <div className="page-header">
-        <h1>Dashboard Summary</h1>
+        <h1>{t('dashboard.title')}</h1>
       </div>
 
       {/* Metric Cards Grid */}
@@ -62,10 +64,10 @@ function DashboardView() {
             <Package size={22} weight="bold" />
           </div>
           <div>
-            <div className="metric-label">Total Items</div>
-            <div className="metric-value">4,812</div>
+            <div className="metric-label">{t('dashboard.total_items')}</div>
+            <div className="metric-value" dir="ltr">4,812</div>
             <div style={{ fontSize: '11px', color: '#16a34a', fontWeight: 600, marginTop: '4px' }}>
-              +126 this month
+              {t('dashboard.this_month')}
             </div>
           </div>
         </div>
@@ -75,12 +77,12 @@ function DashboardView() {
             <WarningCircle size={22} weight="bold" />
           </div>
           <div>
-            <div className="metric-label">Low Stock</div>
-            <div className="metric-value" style={{ color: '#f59e0b' }}>
+            <div className="metric-label">{t('dashboard.low_stock')}</div>
+            <div className="metric-value" dir="ltr" style={{ color: '#f59e0b' }}>
               {lowStockItems > 0 ? lowStockItems : 37}
             </div>
             <div style={{ fontSize: '11px', color: '#ca8a04', fontWeight: 600, marginTop: '4px' }}>
-              across 6 categories
+              {t('dashboard.across_categories')}
             </div>
           </div>
         </div>
@@ -90,10 +92,10 @@ function DashboardView() {
             <ShoppingBag size={22} weight="bold" />
           </div>
           <div>
-            <div className="metric-label">Pending Orders</div>
-            <div className="metric-value" style={{ color: '#2563eb' }}>{pendingOrdersCount}</div>
+            <div className="metric-label">{t('dashboard.pending_orders')}</div>
+            <div className="metric-value" dir="ltr" style={{ color: '#2563eb' }}>{pendingOrdersCount}</div>
             <div style={{ fontSize: '11px', color: '#4b5563', fontWeight: 600, marginTop: '4px' }}>
-              4 due this week
+              {t('dashboard.due_this_week')}
             </div>
           </div>
         </div>
@@ -103,10 +105,10 @@ function DashboardView() {
             <Prohibit size={22} weight="bold" />
           </div>
           <div>
-            <div className="metric-label">Out of Stock</div>
-            <div className="metric-value" style={{ color: '#ef4444' }}>{outOfStockItems}</div>
+            <div className="metric-label">{t('dashboard.out_of_stock')}</div>
+            <div className="metric-value" dir="ltr" style={{ color: '#ef4444' }}>{outOfStockItems}</div>
             <div style={{ fontSize: '11px', color: '#ef4444', fontWeight: 600, marginTop: '4px' }}>
-              requires reorder
+              {t('dashboard.requires_reorder')}
             </div>
           </div>
         </div>
@@ -117,7 +119,7 @@ function DashboardView() {
         <div className="card">
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
             <h2 style={{ fontSize: '14px', borderBottom: 'none', paddingBottom: 0, margin: 0 }}>
-              Usage Trend — Last 30 Days
+              {t('dashboard.usage_trend_title')}
             </h2>
             <select
               value={selectedCategory}
@@ -196,29 +198,29 @@ function DashboardView() {
         {/* Category Breakdown Card */}
         <div className="card">
           <h2 style={{ fontSize: '14px', borderBottom: 'none', paddingBottom: 0, marginBottom: '16px' }}>
-            Category Breakdown
+            {t('dashboard.category_breakdown_title')}
           </h2>
           <div className="table-container">
             <table>
               <thead>
                 <tr>
-                  <th>Category</th>
-                  <th>Items</th>
-                  <th>Total Units</th>
-                  <th>Alerts</th>
+                  <th>{t('dashboard.th_category')}</th>
+                  <th>{t('dashboard.th_items')}</th>
+                  <th>{t('dashboard.th_total_units')}</th>
+                  <th>{t('dashboard.th_alerts')}</th>
                 </tr>
               </thead>
               <tbody>
                 {categoryStats.map(cat => (
                   <tr key={cat.name}>
                     <td style={{ fontWeight: 600 }}>{cat.name}</td>
-                    <td>{cat.count}</td>
-                    <td>{cat.units.toLocaleString()}</td>
+                    <td dir="ltr" className="bidi-ltr">{cat.count}</td>
+                    <td dir="ltr" className="bidi-ltr">{cat.units.toLocaleString()}</td>
                     <td>
                       {cat.alerts > 0 ? (
                         <span className="status low-stock">{cat.alerts} alert{cat.alerts > 1 ? 's' : ''}</span>
                       ) : (
-                        <span className="status in-stock">OK</span>
+                        <span className="status in-stock">{t('common:status.ok')}</span>
                       )}
                     </td>
                   </tr>
@@ -233,17 +235,17 @@ function DashboardView() {
       <div className="grid-2" style={{ marginTop: '20px' }}>
         <div className="card">
           <h2 style={{ fontSize: '14px', borderBottom: 'none', paddingBottom: 0, marginBottom: '16px' }}>
-            Items Below Threshold
+            {t('dashboard.items_below_threshold_title')}
           </h2>
           <div className="table-container">
             <table>
               <thead>
                 <tr>
-                  <th>Item</th>
-                  <th>Stock</th>
-                  <th>Threshold</th>
-                  <th>Level</th>
-                  <th>Status</th>
+                  <th>{t('dashboard.th_item')}</th>
+                  <th>{t('dashboard.th_stock')}</th>
+                  <th>{t('dashboard.th_threshold')}</th>
+                  <th>{t('dashboard.th_level')}</th>
+                  <th>{t('dashboard.th_status')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -253,8 +255,8 @@ function DashboardView() {
                   return (
                     <tr key={item.sku}>
                       <td style={{ fontWeight: 600 }}>{item.name}</td>
-                      <td style={{ fontWeight: 700, color: item.stock === 0 ? '#ef4444' : '#ca8a04' }}>{item.stock}</td>
-                      <td>{item.threshold}</td>
+                      <td dir="ltr" className="bidi-ltr" style={{ fontWeight: 700, color: item.stock === 0 ? '#ef4444' : '#ca8a04' }}>{item.stock}</td>
+                      <td dir="ltr" className="bidi-ltr">{item.threshold}</td>
                       <td>
                         <div className="stock-bar-container">
                           <div className="stock-bar-track">
@@ -262,14 +264,18 @@ function DashboardView() {
                           </div>
                         </div>
                       </td>
-                      <td><span className={`status ${item.statusClass}`}>{item.status}</span></td>
+                      <td>
+                        <span className={`status ${item.statusClass}`}>
+                          {t(`common:status.${item.status.toLowerCase().replace(/ /g, '_')}`, { defaultValue: item.status })}
+                        </span>
+                      </td>
                     </tr>
                   );
                 })}
                 {inventory.filter(i => i.status !== 'In Stock').length === 0 && (
                   <tr>
                     <td colSpan="5" style={{ textAlign: 'center', color: '#9ca3af', padding: '20px' }}>
-                      All items are well-stocked.
+                      {t('dashboard.all_items_stocked')}
                     </td>
                   </tr>
                 )}
@@ -281,7 +287,7 @@ function DashboardView() {
         {/* Activity Feed with relative timestamps */}
         <div className="card">
           <h2 style={{ fontSize: '14px', borderBottom: 'none', paddingBottom: 0, marginBottom: '16px' }}>
-            Recent Activity
+            {t('dashboard.recent_activity_title')}
           </h2>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
             {logs.slice(0, 6).map((log, idx) => (
@@ -291,7 +297,7 @@ function DashboardView() {
                 </div>
                 <div style={{ flex: 1 }}>
                   <span style={{ fontWeight: 600 }}>{log.staff}</span> {log.type.toLowerCase()}d{' '}
-                  <span style={{ fontWeight: 600 }}>{log.qty}</span> of <em>{log.item}</em>
+                  <span dir="ltr" className="bidi-ltr" style={{ fontWeight: 600 }}>{log.qty}</span> of <em>{log.item}</em>
                 </div>
                 <div style={{ fontSize: '10px', color: '#9ca3af', whiteSpace: 'nowrap' }}>
                   {relativeTimes[idx % relativeTimes.length]}
@@ -300,7 +306,7 @@ function DashboardView() {
             ))}
             {logs.length === 0 && (
               <div className="empty-state">
-                <p>No recent activity.</p>
+                <p>{t('dashboard.no_recent_activity')}</p>
               </div>
             )}
           </div>

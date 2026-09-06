@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { DownloadSimple, ArrowUp, ArrowDown, ArrowsLeftRight, CaretDown, CaretUp } from '@phosphor-icons/react';
 import { useInventory } from '../context/InventoryContext';
 
 function ActionBadge({ type }) {
+  const { t } = useTranslation(['inventory', 'common']);
   let badgeClass = 'status';
   if (type === 'Receive' || type === 'Return') badgeClass += ' in-stock';
   else if (type === 'Issue' || type === 'Checkout') badgeClass += ' out-stock';
   else if (type === 'Transfer') badgeClass += ' low-stock';
 
-  return <span className={badgeClass}>{type}</span>;
+  return <span className={badgeClass}>{t(`stock_ops.movement_${type.toLowerCase()}`, { defaultValue: type })}</span>;
 }
 
 function ActionIcon({ type }) {
@@ -29,6 +31,7 @@ function ActionIcon({ type }) {
 
 // Collapsible Row Component for Batch Items
 function TransactionRow({ log }) {
+  const { t } = useTranslation(['inventory', 'common']);
   const [expanded, setExpanded] = useState(false);
   const staffInitials = log.staff ? log.staff.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() : 'ST';
   const locationDisplay = log.to ? log.to : log.from ? log.from : 'Main Warehouse';
@@ -40,7 +43,7 @@ function TransactionRow({ log }) {
   return (
     <>
       <tr style={{ cursor: 'pointer', backgroundColor: expanded ? '#f9fafb' : 'transparent' }} onClick={() => setExpanded(!expanded)}>
-        <td style={{ fontFamily: 'monospace', color: '#4b5563' }}>
+        <td dir="ltr" className="bidi-ltr" style={{ fontFamily: 'monospace', color: '#4b5563' }}>
           <div>{log.id}</div>
           <div style={{ fontSize: '11px', color: '#9ca3af' }}>{log.date}</div>
         </td>
@@ -58,12 +61,12 @@ function TransactionRow({ log }) {
           </div>
         </td>
         <td style={{ fontWeight: 600 }}>
-          {uniqueSkus} SKU(s)
+          {t('audit.skus_count', { count: uniqueSkus })}
           <div style={{ fontSize: '11px', color: '#6b7280', fontWeight: 'normal' }}>
-            {totalItemsCount} total units
+            {t('audit.units_count', { count: totalItemsCount })}
           </div>
         </td>
-        <td style={{ textAlign: 'right', color: '#9ca3af' }}>
+        <td style={{ textAlign: 'end', color: '#9ca3af' }}>
           {expanded ? <CaretUp weight="bold" /> : <CaretDown weight="bold" />}
         </td>
       </tr>
@@ -74,24 +77,24 @@ function TransactionRow({ log }) {
           <td colSpan="6" style={{ padding: '0 24px 16px 24px', borderBottom: '1px solid #e5e7eb' }}>
             <div style={{ padding: '12px', backgroundColor: 'white', borderRadius: '8px', border: '1px solid #e5e7eb', boxShadow: '0 1px 2px rgba(0,0,0,0.05)' }}>
               <div style={{ fontSize: '11px', fontWeight: 600, color: '#6b7280', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                Items involved in {log.id}
+                {t('audit.items_involved', { id: log.id })}
               </div>
               <table style={{ width: '100%', fontSize: '13px' }}>
                 <thead>
                   <tr>
-                    <th style={{ padding: '4px 8px', borderBottom: '1px solid #e5e7eb', color: '#9ca3af', fontWeight: 500 }}>SKU</th>
-                    <th style={{ padding: '4px 8px', borderBottom: '1px solid #e5e7eb', color: '#9ca3af', fontWeight: 500 }}>Item Name</th>
-                    <th style={{ padding: '4px 8px', borderBottom: '1px solid #e5e7eb', color: '#9ca3af', fontWeight: 500, textAlign: 'right' }}>Qty Changed</th>
+                    <th style={{ padding: '4px 8px', borderBottom: '1px solid #e5e7eb', color: '#9ca3af', fontWeight: 500 }}>{t('stock_ops.th_sku')}</th>
+                    <th style={{ padding: '4px 8px', borderBottom: '1px solid #e5e7eb', color: '#9ca3af', fontWeight: 500 }}>{t('stock_ops.th_item')}</th>
+                    <th style={{ padding: '4px 8px', borderBottom: '1px solid #e5e7eb', color: '#9ca3af', fontWeight: 500, textAlign: 'end' }}>{t('audit.th_qty_changed')}</th>
                   </tr>
                 </thead>
                 <tbody>
                   {log.items && log.items.map((item, idx) => (
                     <tr key={idx}>
-                      <td style={{ padding: '6px 8px', fontFamily: 'monospace', color: '#4b5563' }}>{item.sku}</td>
+                      <td dir="ltr" className="bidi-ltr" style={{ padding: '6px 8px', fontFamily: 'monospace', color: '#4b5563' }}>{item.sku}</td>
                       <td style={{ padding: '6px 8px', fontWeight: 500 }}>{item.name}</td>
-                      <td style={{ 
+                      <td dir="ltr" className="bidi-ltr" style={{ 
                         padding: '6px 8px', 
-                        textAlign: 'right', 
+                        textAlign: 'end', 
                         fontWeight: 600, 
                         fontFamily: 'monospace',
                         color: (log.type === 'Receive' || log.type === 'Return') ? '#16a34a' : ((log.type === 'Issue' || log.type === 'Checkout') ? '#ea580c' : '#4f46e5')

@@ -1,8 +1,10 @@
 import React, { useState, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useInventory } from '../context/InventoryContext';
 import { CheckCircle, MagnifyingGlass, Trash, ArrowRight, Plus, Minus } from '@phosphor-icons/react';
 
 function StockOpsView() {
+  const { t } = useTranslation(['inventory', 'common']);
   const { inventory, processBatchTransaction } = useInventory();
   const [toasts, setToasts] = useState([]);
 
@@ -86,7 +88,7 @@ function StockOpsView() {
     const destination = (movementType === 'Receive' || movementType === 'Return') ? warehouse : referenceNo || 'Consumed/User';
 
     processBatchTransaction(movementType, cart, source, destination);
-    showToast(`✓ Processed ${movementType} for ${cart.length} item(s)`);
+    showToast(t('stock_ops.toast_processed', { type: movementType, count: cart.length }));
     
     // Reset transaction
     setCart([]);
@@ -104,23 +106,23 @@ function StockOpsView() {
   const showPrice = movementType === 'Receive' || movementType === 'Issue';
 
   // Shared table header style
-  const thStyle = { padding: '12px 16px', textAlign: 'left', color: '#64748b', fontWeight: 600, fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.05em', borderBottom: '1px solid #e2e8f0' };
+  const thStyle = { padding: '12px 16px', textAlign: 'start', color: '#64748b', fontWeight: 600, fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.05em', borderBottom: '1px solid #e2e8f0' };
 
   return (
     <>
       {toasts.length > 0 && (
         <div className="toast-container">
-          {toasts.map(t => (
-            <div key={t.id} className="toast toast-success">
+          {toasts.map(tItem => (
+            <div key={tItem.id} className="toast toast-success">
               <CheckCircle size={18} weight="bold" />
-              {t.message}
+              {tItem.message}
             </div>
           ))}
         </div>
       )}
 
       <div className="page-header" style={{ marginBottom: '20px' }}>
-        <h1 style={{ fontSize: '24px', fontWeight: 700, color: '#111827' }}>Stock Operations</h1>
+        <h1 style={{ fontSize: '24px', fontWeight: 700, color: '#111827' }}>{t('stock_ops.title')}</h1>
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: '400px 1fr', gap: '24px', alignItems: 'start' }}>
@@ -129,21 +131,21 @@ function StockOpsView() {
         <div style={{ backgroundColor: '#f8fafc', padding: '24px', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
           
           <div style={{ marginBottom: '24px' }}>
-            <h2 style={{ fontSize: '18px', fontWeight: 600, color: '#1e293b', marginBottom: '16px' }}>Create Transaction</h2>
+            <h2 style={{ fontSize: '18px', fontWeight: 600, color: '#1e293b', marginBottom: '16px' }}>{t('stock_ops.create_transaction_title')}</h2>
             
             <div style={{ marginBottom: '16px' }}>
-              <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: '#475569', marginBottom: '6px' }}>Movement Type</label>
+              <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: '#475569', marginBottom: '6px' }}>{t('stock_ops.movement_type')}</label>
               <select 
                 className="select input-full"
                 value={movementType}
                 onChange={e => setMovementType(e.target.value)}
                 style={{ backgroundColor: '#f1f5f9', border: '1px solid #cbd5e1' }}
               >
-                <option value="Receive">Receive (In)</option>
-                <option value="Issue">Issue (Out)</option>
-                <option value="Transfer">Transfer</option>
-                <option value="Checkout">Checkout (In Use)</option>
-                <option value="Return">Return (Back to Stock)</option>
+                <option value="Receive">{t('stock_ops.movement_receive')}</option>
+                <option value="Issue">{t('stock_ops.movement_issue')}</option>
+                <option value="Transfer">{t('stock_ops.movement_transfer')}</option>
+                <option value="Checkout">{t('stock_ops.movement_checkout')}</option>
+                <option value="Return">{t('stock_ops.movement_return')}</option>
               </select>
             </div>
 
@@ -166,7 +168,8 @@ function StockOpsView() {
                   className="input input-full" 
                   value={referenceNo}
                   onChange={e => setReferenceNo(e.target.value)}
-                  placeholder="Reference No."
+                  placeholder={t('stock_ops.reference_no')}
+                  dir="ltr"
                   style={{ fontSize: '13px' }}
                 />
               </div>
@@ -174,22 +177,23 @@ function StockOpsView() {
           </div>
 
           <div style={{ borderTop: '1px solid #e2e8f0', paddingTop: '24px' }}>
-            <h3 style={{ fontSize: '16px', fontWeight: 600, color: '#1e293b', marginBottom: '4px' }}>Add Items</h3>
-            <p style={{ fontSize: '13px', color: '#64748b', marginBottom: '16px' }}>Add items by SKU</p>
+            <h3 style={{ fontSize: '16px', fontWeight: 600, color: '#1e293b', marginBottom: '4px' }}>{t('stock_ops.add_items_title')}</h3>
+            <p style={{ fontSize: '13px', color: '#64748b', marginBottom: '16px' }}>{t('stock_ops.add_items_sub')}</p>
 
             <div style={{ position: 'relative', marginBottom: '20px' }}>
-              <MagnifyingGlass size={16} style={{ position: 'absolute', left: '12px', top: '10px', color: '#94a3b8' }} />
+              <MagnifyingGlass size={16} style={{ position: 'absolute', insetInlineStart: '12px', top: '10px', color: '#94a3b8' }} />
               <input 
                 type="text" 
                 className="input input-full" 
-                placeholder="Search SKU or Item Name..."
+                placeholder={t('stock_ops.search_sku_placeholder')}
                 value={searchQuery}
                 onChange={handleSearchChange}
-                style={{ paddingLeft: '36px', paddingRight: '36px', fontSize: '13px' }}
+                dir="ltr"
+                style={{ paddingInlineStart: '36px', paddingInlineEnd: '36px', fontSize: '13px' }}
               />
               <button 
                 type="button" 
-                style={{ position: 'absolute', right: '12px', top: '10px', background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer' }}
+                style={{ position: 'absolute', insetInlineEnd: '12px', top: '10px', background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer' }}
                 onClick={() => { setSearchQuery(''); setSelectedSku(''); }}
               >
                 <Trash size={16} />
@@ -199,32 +203,34 @@ function StockOpsView() {
             <form onSubmit={handleAddToCart}>
               <div style={{ display: 'grid', gridTemplateColumns: '120px 1fr 120px', gap: '16px', alignItems: 'start', marginBottom: '20px' }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#475569', marginBottom: '6px' }}>SKU:</label>
+                  <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#475569', marginBottom: '6px' }}>{t('stock_ops.label_sku')}</label>
                   <input 
                     type="text" 
                     className="input input-full" 
                     value={selectedSku}
                     onChange={e => setSelectedSku(e.target.value)}
-                    placeholder="Enter SKU"
+                    placeholder={t('stock_ops.enter_sku_placeholder')}
+                    dir="ltr"
                     style={{ fontSize: '13px', padding: '8px' }}
                     required
                   />
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#475569', marginBottom: '6px' }}>Product:</label>
+                  <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#475569', marginBottom: '6px' }}>{t('stock_ops.label_product')}</label>
                   <div style={{ fontSize: '13px', color: matchedItem ? '#1e293b' : '#94a3b8', paddingTop: '8px', lineHeight: '1.4' }}>
                     {matchedItem ? matchedItem.name : '—'}
                   </div>
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#475569', marginBottom: '6px' }}>Quantity:</label>
+                  <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#475569', marginBottom: '6px' }}>{t('stock_ops.label_quantity')}</label>
                   <div style={{ display: 'flex', alignItems: 'center', border: '1px solid #cbd5e1', borderRadius: '6px', overflow: 'hidden', backgroundColor: 'white' }}>
-                    <div style={{ padding: '8px', fontSize: '12px', color: '#64748b', borderRight: '1px solid #cbd5e1' }}>Number:</div>
+                    <div style={{ padding: '8px', fontSize: '12px', color: '#64748b', borderInlineEnd: '1px solid #cbd5e1' }}>{t('stock_ops.number_prefix', { defaultValue: 'Number:' })}</div>
                     <input 
                       type="number" 
                       value={addQty}
                       onChange={e => setAddQty(e.target.value)}
                       min="1"
+                      dir="ltr"
                       style={{ width: '40px', border: 'none', outline: 'none', textAlign: 'center', fontSize: '13px', fontWeight: 500, padding: '0' }}
                     />
                   </div>
@@ -250,7 +256,7 @@ function StockOpsView() {
                   }}
                   disabled={!matchedItem}
                 >
-                  Add to Batch <Plus size={14} weight="bold" />
+                  {t('stock_ops.btn_add_to_batch')} <Plus size={14} weight="bold" />
                 </button>
               </div>
             </form>
@@ -264,16 +270,16 @@ function StockOpsView() {
           <div style={{ padding: '20px 24px', borderBottom: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
             <div>
               <h2 style={{ fontSize: '18px', fontWeight: 600, color: '#1e293b', marginBottom: '4px' }}>
-                Pending Batch <span style={{ color: '#64748b', fontWeight: 400 }}>({totalItemsCount} Items)</span>
+                {t('stock_ops.pending_batch_title', { count: totalItemsCount })}
               </h2>
               <div style={{ fontSize: '13px', color: '#475569', fontWeight: 500 }}>
-                Total Qty: {totalUnits}
+                {t('stock_ops.total_qty', { count: totalUnits })}
               </div>
             </div>
-            <div style={{ textAlign: 'right' }}>
-              <div style={{ fontSize: '13px', color: '#64748b', marginBottom: '4px' }}>Total Qty: <span style={{ color: '#1e293b', fontWeight: 600 }}>{totalUnits}</span></div>
+            <div style={{ textAlign: 'end' }}>
+              <div style={{ fontSize: '13px', color: '#64748b', marginBottom: '4px' }}>{t('stock_ops.total_qty', { count: totalUnits })}</div>
               {showPrice && (
-                <div style={{ fontSize: '13px', color: '#64748b' }}>Total Value: <span style={{ color: '#1e293b', fontWeight: 600 }}>${totalValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span></div>
+                <div style={{ fontSize: '13px', color: '#64748b' }}>{t('stock_ops.total_value', { amount: totalValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) })}</div>
               )}
             </div>
           </div>
@@ -283,23 +289,23 @@ function StockOpsView() {
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px' }}>
               <thead>
                 <tr>
-                  <th style={thStyle}>SKU</th>
-                  <th style={thStyle}>Item</th>
-                  <th style={thStyle}>Quantity</th>
+                  <th style={thStyle}>{t('stock_ops.th_sku')}</th>
+                  <th style={thStyle}>{t('stock_ops.th_item')}</th>
+                  <th style={thStyle}>{t('stock_ops.th_quantity')}</th>
                   {showPrice && (
                     <>
-                      <th style={{ ...thStyle, textAlign: 'right' }}>Unit Price</th>
-                      <th style={{ ...thStyle, textAlign: 'right' }}>Total</th>
+                      <th style={{ ...thStyle, textAlign: 'end' }}>{t('stock_ops.th_unit_price')}</th>
+                      <th style={{ ...thStyle, textAlign: 'end' }}>{t('stock_ops.th_total')}</th>
                     </>
                   )}
                   {movementType === 'Return' && (
-                    <th style={thStyle}>Condition</th>
+                    <th style={thStyle}>{t('stock_ops.th_condition')}</th>
                   )}
                   {movementType === 'Checkout' && (
-                    <th style={thStyle}>Assigned To</th>
+                    <th style={thStyle}>{t('stock_ops.th_assigned_to')}</th>
                   )}
                   {movementType === 'Transfer' && (
-                    <th style={thStyle}>Destination</th>
+                    <th style={thStyle}>{t('stock_ops.th_destination')}</th>
                   )}
                   <th style={{ padding: '12px 24px', textAlign: 'center', borderBottom: '1px solid #e2e8f0' }}></th>
                 </tr>
@@ -307,7 +313,7 @@ function StockOpsView() {
               <tbody>
                 {cart.map((item, idx) => (
                   <tr key={item.sku} style={{ borderBottom: '1px solid #f1f5f9' }}>
-                    <td style={{ padding: '16px 24px', color: '#475569', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <td dir="ltr" className="bidi-ltr" style={{ padding: '16px 24px', color: '#475569', display: 'flex', alignItems: 'center', gap: '8px' }}>
                       <span style={{ color: '#94a3b8', fontSize: '12px' }}>{idx + 1}.</span> {item.sku}
                     </td>
                     <td style={{ padding: '16px 16px', color: '#1e293b', fontWeight: 500 }}>
@@ -324,6 +330,7 @@ function StockOpsView() {
                           type="number"
                           value={item.qty}
                           onChange={(e) => handleUpdateQty(item.sku, e.target.value)}
+                          dir="ltr"
                           style={{ width: '40px', textAlign: 'center', border: '1px solid #cbd5e1', borderRadius: '4px', padding: '2px 4px' }}
                           min="1"
                         />
@@ -336,10 +343,10 @@ function StockOpsView() {
                     </td>
                     {showPrice && (
                       <>
-                        <td style={{ padding: '16px 16px', textAlign: 'right', color: '#475569' }}>
+                        <td dir="ltr" className="bidi-ltr" style={{ padding: '16px 16px', textAlign: 'end', color: '#475569' }}>
                           ${(item.unitCost || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </td>
-                        <td style={{ padding: '16px 16px', textAlign: 'right', color: '#1e293b', fontWeight: 600 }}>
+                        <td dir="ltr" className="bidi-ltr" style={{ padding: '16px 16px', textAlign: 'end', color: '#1e293b', fontWeight: 600 }}>
                           ${(item.qty * (item.unitCost || 0)).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </td>
                       </>
@@ -351,9 +358,9 @@ function StockOpsView() {
                           onChange={(e) => setCart(prev => prev.map(c => c.sku === item.sku ? { ...c, condition: e.target.value } : c))}
                           style={{ fontSize: '12px', padding: '4px 8px', border: '1px solid #cbd5e1', borderRadius: '4px', backgroundColor: '#f8fafc' }}
                         >
-                          <option value="Good">Good</option>
-                          <option value="Needs Repair">Needs Repair</option>
-                          <option value="Damaged">Damaged</option>
+                          <option value="Good">{t('stock_ops.condition_good')}</option>
+                          <option value="Needs Repair">{t('stock_ops.condition_needs_repair')}</option>
+                          <option value="Damaged">{t('stock_ops.condition_damaged')}</option>
                         </select>
                       </td>
                     )}
@@ -361,7 +368,7 @@ function StockOpsView() {
                       <td style={{ padding: '16px 16px' }}>
                         <input 
                           type="text"
-                          placeholder="Staff name..."
+                          placeholder={t('stock_ops.placeholder_staff')}
                           value={item.assignedTo || ''}
                           onChange={(e) => setCart(prev => prev.map(c => c.sku === item.sku ? { ...c, assignedTo: e.target.value } : c))}
                           style={{ fontSize: '12px', padding: '4px 8px', border: '1px solid #cbd5e1', borderRadius: '4px', width: '120px' }}
@@ -399,8 +406,8 @@ function StockOpsView() {
                   <tr>
                     <td colSpan="6" style={{ textAlign: 'center', padding: '60px 20px', color: '#94a3b8' }}>
                       {movementType === 'Return' 
-                        ? 'No items to return. Use the suggestions below or search manually.'
-                        : 'No items added to batch yet. Use the left panel to search and add items.'}
+                        ? t('stock_ops.empty_cart_return')
+                        : t('stock_ops.empty_cart')}
                     </td>
                   </tr>
                 )}
@@ -410,13 +417,13 @@ function StockOpsView() {
 
           {movementType === 'Return' && (
             <div style={{ padding: '16px 24px', backgroundColor: '#f1f5f9', borderTop: '1px solid #e2e8f0' }}>
-               <h4 style={{ fontSize: '13px', fontWeight: 600, color: '#475569', marginBottom: '12px' }}>Quick Add: Items Currently In Use</h4>
+               <h4 style={{ fontSize: '13px', fontWeight: 600, color: '#475569', marginBottom: '12px' }}>{t('stock_ops.quick_add_in_use')}</h4>
                <div style={{ display: 'flex', gap: '12px', overflowX: 'auto', paddingBottom: '8px' }}>
                   {inventory.filter(i => (i.inUse || 0) > 0 && !cart.find(c => c.sku === i.sku)).map(item => (
                     <div key={item.sku} style={{ minWidth: '220px', backgroundColor: 'white', padding: '12px', border: '1px solid #e2e8f0', borderRadius: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', boxShadow: '0 1px 2px rgba(0,0,0,0.05)' }}>
                         <div>
                           <div style={{ fontSize: '13px', fontWeight: 600, color: '#1e293b', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '130px' }} title={item.name}>{item.name}</div>
-                          <div style={{ fontSize: '11px', color: '#64748b', marginTop: '2px' }}>In Use: <span style={{ fontWeight: 600, color: '#475569' }}>{item.inUse}</span></div>
+                          <div style={{ fontSize: '11px', color: '#64748b', marginTop: '2px' }}>{t('stock_ops.in_use_label', { count: item.inUse })}</div>
                         </div>
                         <button 
                           type="button"
@@ -424,12 +431,12 @@ function StockOpsView() {
                           style={{ padding: '6px 10px', backgroundColor: '#e0e7ff', color: '#4f46e5', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '12px', fontWeight: 600, transition: 'all 0.2s' }}
                           title="Add all to return batch"
                         >
-                          + Return
+                          {t('stock_ops.btn_return')}
                         </button>
                     </div>
                   ))}
                   {inventory.filter(i => (i.inUse || 0) > 0 && !cart.find(c => c.sku === i.sku)).length === 0 && (
-                     <div style={{ fontSize: '13px', color: '#94a3b8', fontStyle: 'italic', padding: '8px 0' }}>No additional items currently in use.</div>
+                     <div style={{ fontSize: '13px', color: '#94a3b8', fontStyle: 'italic', padding: '8px 0' }}>{t('stock_ops.no_items_in_use')}</div>
                   )}
                </div>
             </div>
@@ -455,7 +462,7 @@ function StockOpsView() {
               onClick={handleProcessBatch}
               disabled={cart.length === 0}
             >
-              Process Batch ({totalUnits} Items) <ArrowRight size={16} weight="bold" />
+              {t('stock_ops.btn_process_batch', { count: totalUnits })} <ArrowRight size={16} weight="bold" className="icon-rtl-flip" />
             </button>
           </div>
 

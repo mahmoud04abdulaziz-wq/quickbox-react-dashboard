@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useFinance } from '../../context/FinanceContext';
 import {
   Archive,
@@ -13,6 +14,7 @@ import {
 } from '@phosphor-icons/react';
 
 function FixedAssetsView() {
+  const { t } = useTranslation('finance');
   const { fixedAssets, runMonthlyDepreciation, costCenters, accounts } = useFinance();
 
   const [categoryFilter, setCategoryFilter] = useState('ALL');

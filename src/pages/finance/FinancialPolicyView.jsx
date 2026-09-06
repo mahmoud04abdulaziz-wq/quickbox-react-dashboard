@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useFinance } from '../../context/FinanceContext';
 import {
   Scroll,
@@ -18,6 +19,7 @@ import {
 } from '@phosphor-icons/react';
 
 function FinancialPolicyView() {
+  const { t } = useTranslation('finance');
   const {
     policies,
     regulatoryReferences,
@@ -73,7 +75,7 @@ function FinancialPolicyView() {
       summary: revSummary
     });
 
-    setPolicySuccess(`Policy ${selectedPolicy.code} updated to version ${revVersion}`);
+    setPolicySuccess(t('policies.msg_policy_updated', { code: selectedPolicy.code, version: revVersion }));
     setIsRevisionModalOpen(false);
     setTimeout(() => setPolicySuccess(null), 5000);
   };
@@ -83,26 +85,26 @@ function FinancialPolicyView() {
       {/* Header */}
       <div className="page-header" style={{ marginBottom: '18px' }}>
         <div>
-          <h1 style={{ fontSize: '18px', fontWeight: 700, margin: 0 }}>Corporate Financial Policies &amp; Statutory Governance</h1>
+          <h1 style={{ fontSize: '18px', fontWeight: 700, margin: 0 }}>{t('policies.title')}</h1>
           <div style={{ fontSize: '11.5px', color: 'var(--text-muted)', fontFamily: 'monospace', marginTop: '2px' }}>
-            / finance / financial policies &amp; jordanian regulatory baseline
+            {t('policies.breadcrumb')}
           </div>
         </div>
         <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
           <span className="badge ok">
-            <span className="d"></span> Jordan Statutory Baseline 2026
+            <span className="d"></span> {t('policies.badge_statutory')}
           </span>
           <button
             className="btn-primary"
             onClick={() => {
-              setPolicySuccess('Generating corporate policy handbook export dossier...');
-              setTimeout(() => setPolicySuccess('Corporate Financial Policy Manual v2026.2 exported successfully.'), 1500);
+              setPolicySuccess(t('policies.msg_generating_export'));
+              setTimeout(() => setPolicySuccess(t('policies.msg_export_success')), 1500);
               setTimeout(() => setPolicySuccess(null), 5000);
             }}
             style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', padding: '6px 12px' }}
           >
             <DownloadSimple size={14} weight="bold" />
-            <span>Export Policy Handbook</span>
+            <span>{t('policies.btn_export_manual')}</span>
           </button>
         </div>
       </div>
@@ -119,46 +121,46 @@ function FinancialPolicyView() {
       <div className="metrics-4" style={{ marginBottom: '20px' }}>
         <div className="card metric-card">
           <div className="metric-top">
-            <span className="metric-label">Active Policy Manuals</span>
+            <span className="metric-label">{t('policies.kpi_manuals')}</span>
             <div className="metric-icon" style={{ background: '#f8fafc', color: '#475569' }}>
               <Scroll size={16} weight="bold" />
             </div>
           </div>
           <div className="metric-value">{totalPolicies} Manuals</div>
-          <div className="metric-delta">v2026.2 Corporate Edition</div>
+          <div className="metric-delta">{t('policies.kpi_manuals_delta')}</div>
         </div>
 
         <div className="card metric-card">
           <div className="metric-top">
-            <span className="metric-label">Statutory Rules Enforced</span>
+            <span className="metric-label">{t('policies.kpi_rules')}</span>
             <div className="metric-icon" style={{ background: '#eff6ff', color: '#2563eb' }}>
               <Scales size={16} weight="bold" />
             </div>
           </div>
           <div className="metric-value">{statutoryCount} Directives</div>
-          <div className="metric-delta">ISTD, SSC &amp; GTD Standard</div>
+          <div className="metric-delta">{t('policies.kpi_rules_delta')}</div>
         </div>
 
         <div className="card metric-card">
           <div className="metric-top">
-            <span className="metric-label">Average Compliance Score</span>
+            <span className="metric-label">{t('policies.kpi_compliance')}</span>
             <div className="metric-icon" style={{ background: '#f0fdf4', color: '#15803d' }}>
               <ShieldCheck size={16} weight="bold" />
             </div>
           </div>
-          <div className="metric-value">{avgComplianceScore}%</div>
-          <div className="metric-delta up" style={{ color: '#15803d' }}>IFRS &amp; Jordanian Law Aligned</div>
+          <div className="metric-value"><span className="bidi-ltr" dir="ltr">{avgComplianceScore}%</span></div>
+          <div className="metric-delta up" style={{ color: '#15803d' }}>{t('policies.kpi_compliance_delta')}</div>
         </div>
 
         <div className="card metric-card">
           <div className="metric-top">
-            <span className="metric-label">E-Invoicing Fawateer Status</span>
+            <span className="metric-label">{t('policies.kpi_einvoicing')}</span>
             <div className="metric-icon" style={{ background: '#fdf4ff', color: '#a21caf' }}>
               <QrCode size={16} weight="bold" />
             </div>
           </div>
-          <div className="metric-value">100% Validated</div>
-          <div className="metric-delta">By-Law No. 13/2023 Compliant</div>
+          <div className="metric-value">{t('policies.kpi_einvoicing_val')}</div>
+          <div className="metric-delta">{t('policies.kpi_einvoicing_delta')}</div>
         </div>
       </div>
 
@@ -168,25 +170,25 @@ function FinancialPolicyView() {
           className={`tab-btn ${activeTab === 'company-policies' ? 'active' : ''}`}
           onClick={() => setActiveTab('company-policies')}
         >
-          Corporate Financial SOPs ({policies.length})
+          {t('policies.tab_sops_count', { count: policies.length })}
         </button>
         <button
           className={`tab-btn ${activeTab === 'jordan-regulations' ? 'active' : ''}`}
           onClick={() => setActiveTab('jordan-regulations')}
         >
-          Jordanian Statutory Fiscal Baseline ({regulatoryReferences.length})
+          {t('policies.tab_jordan_regs_count', { count: regulatoryReferences.length })}
         </button>
         <button
           className={`tab-btn ${activeTab === 'e-invoicing-standards' ? 'active' : ''}`}
           onClick={() => setActiveTab('e-invoicing-standards')}
         >
-          Fawateer E-Invoicing Standards (5 Requirements)
+          {t('policies.tab_einvoicing_reqs')}
         </button>
         <button
           className={`tab-btn ${activeTab === 'compliance-audit-logs' ? 'active' : ''}`}
           onClick={() => setActiveTab('compliance-audit-logs')}
         >
-          Policy Review &amp; Version History
+          {t('policies.tab_review_history')}
         </button>
       </div>
 
@@ -196,41 +198,41 @@ function FinancialPolicyView() {
           <div className="card" style={{ padding: '16px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
               <div>
-                <h3 style={{ margin: 0, fontSize: '14px', fontWeight: 600 }}>Standard Financial Operating Procedures (SOPs)</h3>
+                <h3 style={{ margin: 0, fontSize: '14px', fontWeight: 600 }}>{t('policies.h_sops_title')}</h3>
                 <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
-                  Enforced Automated System Rules and Governance Thresholds
+                  {t('policies.h_sops_sub')}
                 </div>
               </div>
-              <span className="badge ok"><span className="d"></span> Version Controlled</span>
+              <span className="badge ok"><span className="d"></span> {t('policies.badge_version_ctrl')}</span>
             </div>
 
             <div className="table-responsive">
               <table className="table" style={{ width: '100%', fontSize: '12px' }}>
                 <thead>
                   <tr>
-                    <th>Policy Code</th>
-                    <th>Policy Title</th>
-                    <th>Governance Category</th>
-                    <th style={{ textAlign: 'center' }}>Version</th>
-                    <th style={{ textAlign: 'center' }}>Compliance Score</th>
-                    <th>Legal / Statutory Baseline</th>
-                    <th>IFRS Reference</th>
-                    <th style={{ textAlign: 'center' }}>Status</th>
-                    <th style={{ textAlign: 'center' }}>Actions</th>
+                    <th>{t('policies.th_policy_code')}</th>
+                    <th>{t('policies.th_policy_title')}</th>
+                    <th>{t('policies.th_gov_category')}</th>
+                    <th style={{ textAlign: 'center' }}>{t('policies.th_version')}</th>
+                    <th style={{ textAlign: 'center' }}>{t('policies.th_compliance_score')}</th>
+                    <th>{t('policies.th_legal_baseline')}</th>
+                    <th>{t('policies.th_ifrs_ref')}</th>
+                    <th style={{ textAlign: 'center' }}>{t('policies.th_status')}</th>
+                    <th style={{ textAlign: 'center' }}>{t('policies.th_actions')}</th>
                   </tr>
                 </thead>
                 <tbody>
                   {policies.map((pol) => (
                     <tr key={pol.policy_id}>
-                      <td className="mono" style={{ fontWeight: 700 }}>{pol.code}</td>
+                      <td className="mono bidi-ltr" dir="ltr" style={{ fontWeight: 700 }}>{pol.code}</td>
                       <td style={{ fontWeight: 600 }}>{pol.title}</td>
                       <td><span className="tag-pill solid">{pol.category}</span></td>
-                      <td style={{ textAlign: 'center' }} className="mono">{pol.version}</td>
-                      <td style={{ textAlign: 'center', fontWeight: 700, color: 'var(--primary-green)' }} className="mono">
-                        {pol.compliance_score}%
+                      <td style={{ textAlign: 'center' }} className="mono bidi-ltr" dir="ltr">{pol.version}</td>
+                      <td style={{ textAlign: 'center', fontWeight: 700, color: 'var(--primary-green)' }} className="mono bidi-ltr" dir="ltr">
+                        {pol.compliance_score}<span className="bidi-ltr" dir="ltr">%</span>
                       </td>
                       <td style={{ fontSize: '11.5px', color: 'var(--text-muted)' }}>{pol.statutory_law_ref}</td>
-                      <td className="mono" style={{ fontSize: '11px' }}>{pol.ifrs_standard_ref}</td>
+                      <td className="mono bidi-ltr" dir="ltr" style={{ fontSize: '11px' }}>{pol.ifrs_standard_ref}</td>
                       <td style={{ textAlign: 'center' }}>
                         <span className="badge ok"><span className="d"></span> {pol.compliance_status}</span>
                       </td>
@@ -267,40 +269,40 @@ function FinancialPolicyView() {
           <div className="card" style={{ padding: '16px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
               <div>
-                <h3 style={{ margin: 0, fontSize: '14px', fontWeight: 600 }}>Jordanian Regulatory Fiscal Baseline (2026)</h3>
+                <h3 style={{ margin: 0, fontSize: '14px', fontWeight: 600 }}>{t('policies.h_jordan_regs_title')}</h3>
                 <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
-                  Income &amp; Sales Tax Law No. 34/2014, SSC Law No. 1/2014 &amp; Procurement Law No. 28/2019
+                  {t('policies.h_jordan_regs_sub')}
                 </div>
               </div>
-              <span className="badge ok"><span className="d"></span> Statutory Compliance</span>
+              <span className="badge ok"><span className="d"></span> {t('policies.badge_stat_compliance')}</span>
             </div>
 
             <div className="table-responsive">
               <table className="table" style={{ width: '100%', fontSize: '12px' }}>
                 <thead>
                   <tr>
-                    <th>Rule Code</th>
-                    <th>Regulatory Authority</th>
-                    <th>Statutory Provision</th>
-                    <th style={{ textAlign: 'center' }}>Official Rate / Requirement</th>
-                    <th>Legal Source / Article Reference</th>
-                    <th>Category</th>
-                    <th style={{ textAlign: 'center' }}>Application</th>
+                    <th>{t('policies.th_rule_code')}</th>
+                    <th>{t('policies.th_reg_authority')}</th>
+                    <th>{t('policies.th_stat_provision')}</th>
+                    <th style={{ textAlign: 'center' }}>{t('policies.th_official_rate')}</th>
+                    <th>{t('policies.th_legal_source')}</th>
+                    <th>{t('policies.th_category')}</th>
+                    <th style={{ textAlign: 'center' }}>{t('policies.th_application')}</th>
                   </tr>
                 </thead>
                 <tbody>
                   {regulatoryReferences.map((reg) => (
                     <tr key={reg.rule_id}>
-                      <td className="mono" style={{ fontWeight: 700 }}>{reg.rule_id}</td>
+                      <td className="mono bidi-ltr" dir="ltr" style={{ fontWeight: 700 }}>{reg.rule_id}</td>
                       <td style={{ fontWeight: 600 }}>{reg.authority}</td>
                       <td>{reg.regulation}</td>
-                      <td style={{ textAlign: 'center', fontWeight: 700, color: 'var(--primary-green)' }} className="mono">
+                      <td style={{ textAlign: 'center', fontWeight: 700, color: 'var(--primary-green)' }} className="mono bidi-ltr" dir="ltr">
                         {reg.rate}
                       </td>
                       <td style={{ fontSize: '11.5px', color: 'var(--text-muted)' }}>{reg.law_ref}</td>
                       <td><span className="tag-pill solid">{reg.category}</span></td>
                       <td style={{ textAlign: 'center' }}>
-                        <span className="badge ok"><span className="d"></span> Active</span>
+                        <span className="badge ok"><span className="d"></span> {t('policies.status_active')}</span>
                       </td>
                     </tr>
                   ))}
@@ -317,28 +319,28 @@ function FinancialPolicyView() {
           <div className="card" style={{ padding: '16px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
               <div>
-                <h3 style={{ margin: 0, fontSize: '14px', fontWeight: 600 }}>National E-Invoicing System (Fawateer / نظام الفوترة الوطني)</h3>
+                <h3 style={{ margin: 0, fontSize: '14px', fontWeight: 600 }}>{t('policies.h_fawateer_title')}</h3>
                 <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
-                  Technical Architecture and Schema Standards under Executive By-Law No. 13/2023
+                  {t('policies.h_fawateer_sub')}
                 </div>
               </div>
-              <span className="badge ok"><span className="d"></span> ISTD Gateway Verified</span>
+              <span className="badge ok"><span className="d"></span> {t('policies.badge_istd_verified')}</span>
             </div>
 
             <div className="table-responsive">
               <table className="table" style={{ width: '100%', fontSize: '12px' }}>
                 <thead>
                   <tr>
-                    <th>Standard Code</th>
-                    <th>Compliance Requirement</th>
-                    <th>Statutory Rule &amp; Technical Specification</th>
-                    <th style={{ textAlign: 'center' }}>Integration Status</th>
+                    <th>{t('policies.th_std_code')}</th>
+                    <th>{t('policies.th_compliance_req')}</th>
+                    <th>{t('policies.th_stat_rule_tech')}</th>
+                    <th style={{ textAlign: 'center' }}>{t('policies.th_integration_status')}</th>
                   </tr>
                 </thead>
                 <tbody>
                   {fawateerRequirements.map((req) => (
                     <tr key={req.code}>
-                      <td className="mono" style={{ fontWeight: 700 }}>{req.code}</td>
+                      <td className="mono bidi-ltr" dir="ltr" style={{ fontWeight: 700 }}>{req.code}</td>
                       <td style={{ fontWeight: 600 }}>{req.title}</td>
                       <td style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{req.rule}</td>
                       <td style={{ textAlign: 'center' }}>
@@ -359,32 +361,32 @@ function FinancialPolicyView() {
           <div className="card" style={{ padding: '16px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
               <div>
-                <h3 style={{ margin: 0, fontSize: '14px', fontWeight: 600 }}>Policy Revision History &amp; Annual Review Audit Trail</h3>
+                <h3 style={{ margin: 0, fontSize: '14px', fontWeight: 600 }}>{t('policies.h_history_title')}</h3>
                 <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
-                  Version Control Archive and Compliance Committee Sign-Off
+                  {t('policies.h_history_sub')}
                 </div>
               </div>
-              <span className="badge ok"><span className="d"></span> Annual Review Current</span>
+              <span className="badge ok"><span className="d"></span> {t('policies.badge_annual_review')}</span>
             </div>
 
             <div className="table-responsive">
               <table className="table" style={{ width: '100%', fontSize: '12px' }}>
                 <thead>
                   <tr>
-                    <th>Revision Tag</th>
-                    <th>Policy Code</th>
-                    <th>Effective Date</th>
-                    <th>Review Cycle</th>
-                    <th>Authorized Approvers</th>
-                    <th>Summary of Enforcement Modifications</th>
+                    <th>{t('policies.th_rev_tag')}</th>
+                    <th>{t('policies.th_policy_code')}</th>
+                    <th>{t('policies.th_effective_date')}</th>
+                    <th>{t('policies.th_review_cycle')}</th>
+                    <th>{t('policies.th_auth_approvers')}</th>
+                    <th>{t('policies.th_summary_mods')}</th>
                   </tr>
                 </thead>
                 <tbody>
                   {policies.map((p) => (
                     <tr key={p.policy_id}>
-                      <td className="mono" style={{ fontWeight: 700 }}>{p.version}</td>
-                      <td className="mono" style={{ fontWeight: 600 }}>{p.code}</td>
-                      <td className="mono">{p.effective_date}</td>
+                      <td className="mono bidi-ltr" dir="ltr" style={{ fontWeight: 700 }}>{p.version}</td>
+                      <td className="mono bidi-ltr" dir="ltr" style={{ fontWeight: 600 }}>{p.code}</td>
+                      <td className="mono bidi-ltr" dir="ltr">{p.effective_date}</td>
                       <td><span className="tag-pill solid">{p.review_cycle}</span></td>
                       <td style={{ fontSize: '11.5px' }}>{p.mandatory_approvers.join(', ')}</td>
                       <td style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{p.policy_summary}</td>
@@ -409,13 +411,13 @@ function FinancialPolicyView() {
             </div>
             <div className="modal-body" style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
               <div style={{ background: '#f8fafc', padding: '12px', borderRadius: '6px' }}>
-                <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Policy Scope &amp; Purpose:</div>
+                <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{t('policies.modal_scope_purpose')}</div>
                 <div style={{ fontSize: '12.5px', marginTop: '4px', lineHeight: 1.5 }}>
                   {selectedPolicy.policy_summary}
                 </div>
               </div>
 
-              <div style={{ fontSize: '12px', fontWeight: 700 }}>Automated System Enforcement Checks:</div>
+              <div style={{ fontSize: '12px', fontWeight: 700 }}>{t('policies.modal_auto_checks')}</div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                 {(selectedPolicy.enforcement_rules || []).map((rule, idx) => (
                   <div key={idx} style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', padding: '10px', borderRadius: '6px' }}>
@@ -423,7 +425,7 @@ function FinancialPolicyView() {
                       {rule.rule_code}: {rule.rule_name}
                     </div>
                     <div style={{ fontSize: '11.5px', color: 'var(--text-muted)', marginTop: '2px' }}>
-                      Mechanism: {rule.system_check} (Automated: {rule.automated ? 'Yes' : 'No'})
+                      {t('policies.modal_mechanism', { check: rule.system_check, auto: rule.automated ? 'Yes' : 'No' })}
                     </div>
                   </div>
                 ))}
@@ -431,11 +433,11 @@ function FinancialPolicyView() {
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', fontSize: '11.5px', marginTop: '8px' }}>
                 <div>
-                  <span style={{ color: 'var(--text-muted)' }}>Statutory Reference: </span>
+                  <span style={{ color: 'var(--text-muted)' }}>{t('policies.modal_stat_ref')} </span>
                   <div style={{ fontWeight: 600 }}>{selectedPolicy.statutory_law_ref}</div>
                 </div>
                 <div>
-                  <span style={{ color: 'var(--text-muted)' }}>IFRS Standard: </span>
+                  <span style={{ color: 'var(--text-muted)' }}>{t('policies.modal_ifrs_ref')} </span>
                   <div style={{ fontWeight: 600 }}>{selectedPolicy.ifrs_standard_ref}</div>
                 </div>
               </div>
@@ -454,7 +456,7 @@ function FinancialPolicyView() {
         <div className="modal-overlay">
           <div className="modal-content" style={{ maxWidth: '480px' }}>
             <div className="modal-header">
-              <h3 className="modal-title">Draft Policy Amendment: {selectedPolicy.code}</h3>
+              <h3 className="modal-title">{t('policies.modal_draft_amend', { code: selectedPolicy.code })}</h3>
               <button className="modal-close-btn" onClick={() => setIsRevisionModalOpen(false)}>
                 <X size={16} />
               </button>
@@ -463,7 +465,7 @@ function FinancialPolicyView() {
               <div className="modal-body" style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                   <div className="form-group">
-                    <label>New Version Tag</label>
+                    <label>{t('policies.lbl_new_version')}</label>
                     <input
                       type="text"
                       className="form-control"
@@ -474,7 +476,7 @@ function FinancialPolicyView() {
                   </div>
 
                   <div className="form-group">
-                    <label>Effective Date</label>
+                    <label>{t('policies.th_effective_date')}</label>
                     <input
                       type="date"
                       className="form-control"
@@ -486,7 +488,7 @@ function FinancialPolicyView() {
                 </div>
 
                 <div className="form-group">
-                  <label>Updated Policy Summary &amp; Directives</label>
+                  <label>{t('policies.lbl_updated_summary')}</label>
                   <textarea
                     className="form-control"
                     rows="4"
@@ -497,7 +499,7 @@ function FinancialPolicyView() {
                 </div>
 
                 <div style={{ fontSize: '11.5px', color: 'var(--text-muted)' }}>
-                  Amending this policy will log an audit entry and update version tracking for annual compliance reporting.
+                  {t('policies.msg_amending_audit')}
                 </div>
               </div>
               <div className="modal-footer" style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px', marginTop: '16px' }}>

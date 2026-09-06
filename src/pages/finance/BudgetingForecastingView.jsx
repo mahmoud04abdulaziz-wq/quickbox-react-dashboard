@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useFinance } from '../../context/FinanceContext';
 import {
   TrendUp,
@@ -19,6 +20,7 @@ import {
 } from '@phosphor-icons/react';
 
 function BudgetingForecastingView() {
+  const { t } = useTranslation('finance');
   const {
     budgets,
     forecastModels,
@@ -262,11 +264,11 @@ function BudgetingForecastingView() {
                     <th>Cost Center</th>
                     <th>Department Name</th>
                     <th>Manager</th>
-                    <th style={{ textAlign: 'right' }}>Annual Budget (JOD)</th>
-                    <th style={{ textAlign: 'right' }}>Q1-Q4 Allocation</th>
-                    <th style={{ textAlign: 'right' }}>YTD Actual (JOD)</th>
+                    <th style={{ textAlign: 'end' }}>Annual Budget (JOD)</th>
+                    <th style={{ textAlign: 'end' }}>Q1-Q4 Allocation</th>
+                    <th style={{ textAlign: 'end' }}>YTD Actual (JOD)</th>
                     <th style={{ width: '140px' }}>Budget Burn</th>
-                    <th style={{ textAlign: 'right' }}>Variance</th>
+                    <th style={{ textAlign: 'end' }}>Variance</th>
                     <th style={{ textAlign: 'center' }}>Status</th>
                     <th style={{ textAlign: 'center' }}>Actions</th>
                   </tr>
@@ -279,13 +281,13 @@ function BudgetingForecastingView() {
                         <td className="mono" style={{ fontWeight: 600 }}>{b.cost_center_code}</td>
                         <td style={{ fontWeight: 600 }}>{b.cost_center_name}</td>
                         <td>{b.manager}</td>
-                        <td style={{ textAlign: 'right', fontWeight: 600 }} className="mono">
+                        <td style={{ textAlign: 'end', fontWeight: 600 }} className="mono">
                           JOD {b.annual_budget.toLocaleString()}
                         </td>
-                        <td style={{ textAlign: 'right', color: 'var(--text-muted)', fontSize: '11px' }} className="mono">
+                        <td style={{ textAlign: 'end', color: 'var(--text-muted)', fontSize: '11px' }} className="mono">
                           Q1: {(b.quarterly_allocation?.Q1 || 0).toLocaleString()} | Q2: {(b.quarterly_allocation?.Q2 || 0).toLocaleString()}
                         </td>
-                        <td style={{ textAlign: 'right', fontWeight: 600 }} className="mono">
+                        <td style={{ textAlign: 'end', fontWeight: 600 }} className="mono">
                           JOD {b.ytd_actual.toLocaleString()}
                         </td>
                         <td>
@@ -303,7 +305,7 @@ function BudgetingForecastingView() {
                             <span style={{ fontSize: '10.5px', minWidth: '32px' }} className="mono">{burnPercent.toFixed(0)}%</span>
                           </div>
                         </td>
-                        <td style={{ textAlign: 'right', color: b.ytd_variance <= 0 ? 'var(--primary-green)' : '#ef4444' }} className="mono">
+                        <td style={{ textAlign: 'end', color: b.ytd_variance <= 0 ? 'var(--primary-green)' : '#ef4444' }} className="mono">
                           {b.ytd_variance <= 0 ? `+JOD ${Math.abs(b.ytd_variance).toLocaleString()}` : `-JOD ${Math.abs(b.ytd_variance).toLocaleString()}`}
                         </td>
                         <td style={{ textAlign: 'center' }}>
@@ -365,10 +367,10 @@ function BudgetingForecastingView() {
                     <tr>
                       <th>Account Code</th>
                       <th>Account Name</th>
-                      <th style={{ textAlign: 'right' }}>Annual Budget (JOD)</th>
-                      <th style={{ textAlign: 'right' }}>YTD Actual (JOD)</th>
-                      <th style={{ textAlign: 'right' }}>EOY Forecast (JOD)</th>
-                      <th style={{ textAlign: 'right' }}>Variance (JOD)</th>
+                      <th style={{ textAlign: 'end' }}>Annual Budget (JOD)</th>
+                      <th style={{ textAlign: 'end' }}>YTD Actual (JOD)</th>
+                      <th style={{ textAlign: 'end' }}>EOY Forecast (JOD)</th>
+                      <th style={{ textAlign: 'end' }}>Variance (JOD)</th>
                       <th style={{ textAlign: 'center' }}>Assessment</th>
                     </tr>
                   </thead>
@@ -377,10 +379,10 @@ function BudgetingForecastingView() {
                       <tr key={line.line_id}>
                         <td className="mono" style={{ fontWeight: 600 }}>{line.account_code}</td>
                         <td>{line.account_name}</td>
-                        <td style={{ textAlign: 'right' }} className="mono">JOD {line.annual_budget.toLocaleString()}</td>
-                        <td style={{ textAlign: 'right', fontWeight: 600 }} className="mono">JOD {line.ytd_actual.toLocaleString()}</td>
-                        <td style={{ textAlign: 'right' }} className="mono">JOD {line.ytd_forecast.toLocaleString()}</td>
-                        <td style={{ textAlign: 'right', color: line.variance <= 0 ? 'var(--primary-green)' : '#ef4444' }} className="mono">
+                        <td style={{ textAlign: 'end' }} className="mono">JOD {line.annual_budget.toLocaleString()}</td>
+                        <td style={{ textAlign: 'end', fontWeight: 600 }} className="mono">JOD {line.ytd_actual.toLocaleString()}</td>
+                        <td style={{ textAlign: 'end' }} className="mono">JOD {line.ytd_forecast.toLocaleString()}</td>
+                        <td style={{ textAlign: 'end', color: line.variance <= 0 ? 'var(--primary-green)' : '#ef4444' }} className="mono">
                           {line.variance <= 0 ? `+JOD ${Math.abs(line.variance).toLocaleString()}` : `-JOD ${Math.abs(line.variance).toLocaleString()}`}
                         </td>
                         <td style={{ textAlign: 'center' }}>
@@ -469,10 +471,10 @@ function BudgetingForecastingView() {
                     <th>Scenario</th>
                     <th>Growth Factor</th>
                     <th>Inflation Assumption</th>
-                    <th style={{ textAlign: 'right' }}>Revenue (JOD)</th>
-                    <th style={{ textAlign: 'right' }}>Gross Margin</th>
-                    <th style={{ textAlign: 'right' }}>OPEX (JOD)</th>
-                    <th style={{ textAlign: 'right' }}>Net Operating Income</th>
+                    <th style={{ textAlign: 'end' }}>Revenue (JOD)</th>
+                    <th style={{ textAlign: 'end' }}>Gross Margin</th>
+                    <th style={{ textAlign: 'end' }}>OPEX (JOD)</th>
+                    <th style={{ textAlign: 'end' }}>Net Operating Income</th>
                     <th style={{ textAlign: 'center' }}>Tax Provision (20% + 1%)</th>
                   </tr>
                 </thead>
@@ -485,10 +487,10 @@ function BudgetingForecastingView() {
                         <td style={{ fontWeight: 600 }}>{m.name}</td>
                         <td className="mono">+{m.revenue_growth_rate}%</td>
                         <td className="mono">{m.inflation_rate}%</td>
-                        <td style={{ textAlign: 'right', fontWeight: 600 }} className="mono">JOD {m.annual_projected_revenue.toLocaleString()}</td>
-                        <td style={{ textAlign: 'right' }} className="mono">{((grossProf / m.annual_projected_revenue) * 100).toFixed(1)}%</td>
-                        <td style={{ textAlign: 'right' }} className="mono">JOD {m.annual_projected_opex.toLocaleString()}</td>
-                        <td style={{ textAlign: 'right', fontWeight: 700, color: 'var(--primary-green)' }} className="mono">
+                        <td style={{ textAlign: 'end', fontWeight: 600 }} className="mono">JOD {m.annual_projected_revenue.toLocaleString()}</td>
+                        <td style={{ textAlign: 'end' }} className="mono">{((grossProf / m.annual_projected_revenue) * 100).toFixed(1)}%</td>
+                        <td style={{ textAlign: 'end' }} className="mono">JOD {m.annual_projected_opex.toLocaleString()}</td>
+                        <td style={{ textAlign: 'end', fontWeight: 700, color: 'var(--primary-green)' }} className="mono">
                           JOD {m.projected_ebitda.toLocaleString()}
                         </td>
                         <td style={{ textAlign: 'center' }} className="mono">JOD {taxProvision.toLocaleString()}</td>
@@ -530,8 +532,8 @@ function BudgetingForecastingView() {
                     <th>Item Description</th>
                     <th>Payee / Authority</th>
                     <th>Expense Category</th>
-                    <th style={{ textAlign: 'right' }}>Monthly Commitment (JOD)</th>
-                    <th style={{ textAlign: 'right' }}>Annual Budget (JOD)</th>
+                    <th style={{ textAlign: 'end' }}>Monthly Commitment (JOD)</th>
+                    <th style={{ textAlign: 'end' }}>Annual Budget (JOD)</th>
                     <th>Payment Due Day</th>
                     <th style={{ textAlign: 'center' }}>Contract Status</th>
                   </tr>
@@ -542,10 +544,10 @@ function BudgetingForecastingView() {
                       <td style={{ fontWeight: 600 }}>{item.item}</td>
                       <td>{item.vendor}</td>
                       <td><span className="tag-pill solid">{item.category}</span></td>
-                      <td style={{ textAlign: 'right', fontWeight: 600 }} className="mono">
+                      <td style={{ textAlign: 'end', fontWeight: 600 }} className="mono">
                         JOD {item.monthlyJod.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                       </td>
-                      <td style={{ textAlign: 'right' }} className="mono">
+                      <td style={{ textAlign: 'end' }} className="mono">
                         JOD {item.annualJod.toLocaleString()}
                       </td>
                       <td style={{ fontSize: '11.5px', color: 'var(--text-muted)' }}>{item.dueDay}</td>
@@ -642,10 +644,10 @@ function BudgetingForecastingView() {
               <thead>
                 <tr>
                   <th>Monthly Unit Volume</th>
-                  <th style={{ textAlign: 'right' }}>Total Revenue (JOD)</th>
-                  <th style={{ textAlign: 'right' }}>Total Variable Cost</th>
-                  <th style={{ textAlign: 'right' }}>Total Fixed Cost</th>
-                  <th style={{ textAlign: 'right' }}>Net Operating Profit</th>
+                  <th style={{ textAlign: 'end' }}>Total Revenue (JOD)</th>
+                  <th style={{ textAlign: 'end' }}>Total Variable Cost</th>
+                  <th style={{ textAlign: 'end' }}>Total Fixed Cost</th>
+                  <th style={{ textAlign: 'end' }}>Net Operating Profit</th>
                 </tr>
               </thead>
               <tbody>
@@ -657,10 +659,10 @@ function BudgetingForecastingView() {
                   return (
                     <tr key={multiplier} style={{ background: multiplier === 1.0 ? '#f0fdf4' : 'transparent' }}>
                       <td style={{ fontWeight: 600 }}>{testUnits.toLocaleString()} units ({multiplier * 100}%)</td>
-                      <td style={{ textAlign: 'right' }} className="mono">JOD {testRev.toLocaleString()}</td>
-                      <td style={{ textAlign: 'right' }} className="mono">JOD {testVar.toLocaleString()}</td>
-                      <td style={{ textAlign: 'right' }} className="mono">JOD {simMonthlyFixed.toLocaleString()}</td>
-                      <td style={{ textAlign: 'right', fontWeight: 700, color: testNet >= 0 ? 'var(--primary-green)' : '#ef4444' }} className="mono">
+                      <td style={{ textAlign: 'end' }} className="mono">JOD {testRev.toLocaleString()}</td>
+                      <td style={{ textAlign: 'end' }} className="mono">JOD {testVar.toLocaleString()}</td>
+                      <td style={{ textAlign: 'end' }} className="mono">JOD {simMonthlyFixed.toLocaleString()}</td>
+                      <td style={{ textAlign: 'end', fontWeight: 700, color: testNet >= 0 ? 'var(--primary-green)' : '#ef4444' }} className="mono">
                         {testNet >= 0 ? `+JOD ${testNet.toLocaleString()}` : `-JOD ${Math.abs(testNet).toLocaleString()}`}
                       </td>
                     </tr>

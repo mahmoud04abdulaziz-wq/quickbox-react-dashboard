@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useInventory } from '../context/InventoryContext';
 import { WarningCircle, Prohibit, Package, PaperPlaneTilt, PencilSimple } from '@phosphor-icons/react';
 
 function RopAlertsView() {
+  const { t } = useTranslation(['inventory', 'common']);
   const { inventory } = useInventory();
   const [requestSent, setRequestSent] = useState(false);
   const [isEditingDraft, setIsEditingDraft] = useState(false);
@@ -24,7 +26,7 @@ function RopAlertsView() {
   return (
     <>
       <div className="page-header">
-        <h1>Reorder Point (ROP) Alerts</h1>
+        <h1>{t('rop_alerts.title')}</h1>
       </div>
 
       {/* Alert summary */}
@@ -34,8 +36,8 @@ function RopAlertsView() {
             <Prohibit size={22} weight="bold" />
           </div>
           <div>
-            <div className="metric-label">Critical (Out of Stock)</div>
-            <div className="metric-value" style={{ color: '#ef4444' }}>{criticalCount}</div>
+            <div className="metric-label">{t('rop_alerts.metric_critical')}</div>
+            <div dir="ltr" className="bidi-ltr metric-value" style={{ color: '#ef4444' }}>{criticalCount}</div>
           </div>
         </div>
         <div className="metric-card">
@@ -43,8 +45,8 @@ function RopAlertsView() {
             <WarningCircle size={22} weight="bold" />
           </div>
           <div>
-            <div className="metric-label">Warning (Low Stock)</div>
-            <div className="metric-value" style={{ color: '#f59e0b' }}>{warningCount}</div>
+            <div className="metric-label">{t('rop_alerts.metric_warning')}</div>
+            <div dir="ltr" className="bidi-ltr metric-value" style={{ color: '#f59e0b' }}>{warningCount}</div>
           </div>
         </div>
         <div className="metric-card">
@@ -52,8 +54,8 @@ function RopAlertsView() {
             <Package size={22} weight="bold" />
           </div>
           <div>
-            <div className="metric-label">Total Alerts</div>
-            <div className="metric-value">{alerts.length}</div>
+            <div className="metric-label">{t('rop_alerts.metric_total_alerts')}</div>
+            <div dir="ltr" className="bidi-ltr metric-value">{alerts.length}</div>
           </div>
         </div>
       </div>
@@ -61,18 +63,18 @@ function RopAlertsView() {
       {/* Auto-Drafted Reorder Request Email Frame */}
       <div style={{ marginBottom: '24px' }}>
         <div style={{ fontSize: '12px', fontWeight: 600, color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '8px' }}>
-          Auto-drafted from {alerts.length} low-stock items
+          {t('rop_alerts.auto_drafted_from', { count: alerts.length })}
         </div>
 
         <div className="card email-frame">
           <div className="email-head">
             <div className="email-field">
-              <label>To</label>
+              <label>{t('rop_alerts.email_to')}</label>
               <div className="val">Coastal Linen Supply Co. &mdash; orders@coastallinen.example</div>
             </div>
             <div className="email-field">
-              <label>Subject</label>
-              <div className="val">Reorder Request &mdash; Harborline Hotel &mdash; 30 Jul 2026</div>
+              <label>{t('rop_alerts.email_subject')}</label>
+              <div className="val">{t('rop_alerts.reorder_subject_sample')}</div>
             </div>
           </div>
 
@@ -81,10 +83,10 @@ function RopAlertsView() {
               <table>
                 <thead>
                   <tr>
-                    <th>Item</th>
-                    <th>Current Stock</th>
-                    <th>Threshold</th>
-                    <th>Qty Requested</th>
+                    <th>{t('rop_alerts.th_item')}</th>
+                    <th>{t('rop_alerts.th_current_stock')}</th>
+                    <th>{t('rop_alerts.th_threshold')}</th>
+                    <th>{t('rop_alerts.th_qty_requested')}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -93,11 +95,11 @@ function RopAlertsView() {
                     return (
                       <tr key={item.sku}>
                         <td style={{ fontWeight: 600 }}>{item.name}</td>
-                        <td style={{ fontFamily: 'monospace', color: item.stock === 0 ? '#ef4444' : '#ca8a04', fontWeight: 700 }}>
+                        <td dir="ltr" className="bidi-ltr" style={{ fontFamily: 'monospace', color: item.stock === 0 ? '#ef4444' : '#ca8a04', fontWeight: 700 }}>
                           {item.stock} {item.uom || ''}
                         </td>
-                        <td style={{ fontFamily: 'monospace' }}>{item.threshold} {item.uom || ''}</td>
-                        <td style={{ fontFamily: 'monospace', fontWeight: 700, color: '#2563eb' }}>
+                        <td dir="ltr" className="bidi-ltr" style={{ fontFamily: 'monospace' }}>{item.threshold} {item.uom || ''}</td>
+                        <td dir="ltr" className="bidi-ltr" style={{ fontFamily: 'monospace', fontWeight: 700, color: '#2563eb' }}>
                           {requestedQty} {item.uom || ''}
                         </td>
                       </tr>
@@ -106,7 +108,7 @@ function RopAlertsView() {
                   {alerts.length === 0 && (
                     <tr>
                       <td colSpan="4" style={{ textAlign: 'center', color: '#9ca3af', padding: '20px' }}>
-                        No items currently require reordering.
+                        {t('rop_alerts.no_items_reorder')}
                       </td>
                     </tr>
                   )}
@@ -121,7 +123,7 @@ function RopAlertsView() {
                 onClick={handleSendRequest}
               >
                 <PaperPlaneTilt weight="bold" size={14} /> 
-                {requestSent ? 'Request Sent!' : 'Send Request'}
+                {requestSent ? t('rop_alerts.btn_request_sent') : t('rop_alerts.btn_send_request')}
               </button>
               <button 
                 className="btn-secondary" 
@@ -129,11 +131,11 @@ function RopAlertsView() {
                 onClick={() => setIsEditingDraft(!isEditingDraft)}
               >
                 <PencilSimple weight="bold" size={14} /> 
-                {isEditingDraft ? 'Done Editing' : 'Edit Draft'}
+                {isEditingDraft ? t('rop_alerts.btn_done_editing') : t('rop_alerts.btn_edit_draft')}
               </button>
               {requestSent && (
                 <span style={{ fontSize: '12px', color: '#16a34a', fontWeight: 600, marginLeft: '8px' }}>
-                  ✓ Reorder request successfully transmitted to supplier.
+                  {t('rop_alerts.toast_transmitted')}
                 </span>
               )}
             </div>
@@ -143,13 +145,13 @@ function RopAlertsView() {
 
       {/* Individual Item Alert Cards */}
       <h2 style={{ fontSize: '14px', marginBottom: '14px', fontWeight: 600, color: '#374151' }}>
-        Low Stock Item Breakdown
+        {t('rop_alerts.item_breakdown_title')}
       </h2>
       <div className="grid-2">
         {alerts.length === 0 ? (
           <div className="card empty-state">
             <Package size={40} color="#d1d5db" />
-            <p>All stock levels are optimal. No alerts.</p>
+            <p>{t('rop_alerts.empty_alerts')}</p>
           </div>
         ) : (
           alerts.map(item => {
@@ -164,34 +166,36 @@ function RopAlertsView() {
                     : <WarningCircle size={22} color="#f59e0b" weight="bold" />
                   }
                   <h3>{item.name}</h3>
-                  <span className={`status ${item.statusClass}`} style={{ marginLeft: 'auto' }}>{item.status}</span>
+                  <span className={`status ${item.statusClass}`} style={{ marginLeft: 'auto' }}>
+                    {t(`common:status.${item.status.toLowerCase().replace(/ /g, '_')}`, { defaultValue: item.status })}
+                  </span>
                 </div>
                 <div className="alert-card-meta">
-                  SKU: {item.sku} &bull; Location: {item.location} &bull; Category: {item.category}
+                  SKU: <span dir="ltr" className="bidi-ltr">{item.sku}</span> &bull; Location: {item.location} &bull; Category: {item.category}
                 </div>
                 
                 <div className="alert-stats">
                   <div className="alert-stat">
-                    <span className="alert-stat-label">Current Stock</span>
-                    <span className="alert-stat-value" style={{ color: isCritical ? '#ef4444' : '#ca8a04' }}>
+                    <span className="alert-stat-label">{t('rop_alerts.label_current_stock')}</span>
+                    <span dir="ltr" className="bidi-ltr alert-stat-value" style={{ color: isCritical ? '#ef4444' : '#ca8a04' }}>
                       {item.stock} {item.uom}
                     </span>
                   </div>
                   <div className="alert-stat">
-                    <span className="alert-stat-label">ROP Threshold</span>
-                    <span className="alert-stat-value">{item.threshold} {item.uom}</span>
+                    <span className="alert-stat-label">{t('rop_alerts.label_rop_threshold')}</span>
+                    <span dir="ltr" className="bidi-ltr alert-stat-value">{item.threshold} {item.uom}</span>
                   </div>
                   <div className="alert-stat">
-                    <span className="alert-stat-label">Shortfall</span>
-                    <span className="alert-stat-value" style={{ color: '#ef4444' }}>{shortfall} {item.uom}</span>
+                    <span className="alert-stat-label">{t('rop_alerts.label_shortfall')}</span>
+                    <span dir="ltr" className="bidi-ltr alert-stat-value" style={{ color: '#ef4444' }}>{shortfall} {item.uom}</span>
                   </div>
                 </div>
 
                 {/* Stock level bar */}
                 <div style={{ marginBottom: '16px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-                    <span style={{ fontSize: '10px', color: '#9ca3af', fontWeight: 600 }}>Stock Level</span>
-                    <span style={{ fontSize: '10px', color: '#9ca3af', fontWeight: 600 }}>{pct}%</span>
+                    <span style={{ fontSize: '10px', color: '#9ca3af', fontWeight: 600 }}>{t('rop_alerts.label_stock_level')}</span>
+                    <span dir="ltr" className="bidi-ltr" style={{ fontSize: '10px', color: '#9ca3af', fontWeight: 600 }}>{pct}%</span>
                   </div>
                   <div className="stock-bar-track" style={{ height: '6px' }}>
                     <div className={`stock-bar-fill ${isCritical ? 'fill-red' : 'fill-yellow'}`} style={{ width: `${pct}%` }} />
@@ -199,8 +203,8 @@ function RopAlertsView() {
                 </div>
                 
                 <div className="form-actions" style={{ marginTop: 0, gap: '8px' }}>
-                  <button className="btn-secondary">Dismiss</button>
-                  <button className="btn-primary">Acknowledge</button>
+                  <button className="btn-secondary">{t('rop_alerts.btn_dismiss')}</button>
+                  <button className="btn-primary">{t('rop_alerts.btn_acknowledge')}</button>
                 </div>
               </div>
             );

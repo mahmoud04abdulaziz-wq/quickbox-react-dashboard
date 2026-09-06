@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useInventory } from '../context/InventoryContext';
 import { DownloadSimple, Package, WarningCircle, Prohibit, CurrencyDollar } from '@phosphor-icons/react';
 import Filters from '../components/Filters';
@@ -6,6 +7,7 @@ import InventoryTable from '../components/InventoryTable';
 import Pagination from '../components/Pagination';
 
 function InventoryView() {
+  const { t } = useTranslation(['inventory', 'common']);
   const { inventory } = useInventory();
   const [activeTab, setActiveTab] = useState('All');
   const [categoryFilter, setCategoryFilter] = useState('All');
@@ -14,10 +16,10 @@ function InventoryView() {
   const [searchQuery, setSearchQuery] = useState('');
 
   const tabs = [
-    { id: 'All', label: 'All Categories', categories: null },
-    { id: 'Housekeeping', label: 'Housekeeping & Cleaning', categories: ['Linens', 'Cleaning', 'Toiletries', 'Equipment'] },
-    { id: 'F&B', label: 'Food & Beverage', categories: ['F&B'] },
-    { id: 'Maintenance', label: 'Maintenance & Tools', categories: ['Maintenance'] }
+    { id: 'All', labelKey: 'master.tab_all', label: 'All Categories', categories: null },
+    { id: 'Housekeeping', labelKey: 'master.tab_housekeeping', label: 'Housekeeping & Cleaning', categories: ['Linens', 'Cleaning', 'Toiletries', 'Equipment'] },
+    { id: 'F&B', labelKey: 'master.tab_fnb', label: 'Food & Beverage', categories: ['F&B'] },
+    { id: 'Maintenance', labelKey: 'master.tab_maintenance', label: 'Maintenance & Tools', categories: ['Maintenance'] }
   ];
 
   const activeCategories = tabs.find(t => t.id === activeTab)?.categories;
@@ -75,15 +77,18 @@ function InventoryView() {
     document.body.removeChild(link);
   };
 
+  const currentTab = tabs.find(t => t.id === activeTab);
+  const currentTabLabel = currentTab ? t(currentTab.labelKey, { defaultValue: currentTab.label }) : activeTab;
+
   return (
     <>
       <div className="page-header">
-        <h1>Inventory Master Grid</h1>
+        <h1>{t('master.title')}</h1>
         <div style={{ display: 'flex', gap: '8px' }}>
           <button className="btn-secondary" onClick={handleExportCSV}>
-            <DownloadSimple weight="bold" size={14} /> Export CSV
+            <DownloadSimple weight="bold" size={14} /> {t('common:actions.export_csv', { defaultValue: t('master.btn_export_csv') })}
           </button>
-          <button className="btn-primary">+ Add Item</button>
+          <button className="btn-primary">{t('master.btn_add_item')}</button>
         </div>
       </div>
 
@@ -98,7 +103,7 @@ function InventoryView() {
               setCategoryFilter('All');
             }}
           >
-            {tab.label}
+            {t(tab.labelKey, { defaultValue: tab.label })}
           </button>
         ))}
       </div>
@@ -110,8 +115,8 @@ function InventoryView() {
             <Package size={20} weight="bold" />
           </div>
           <div>
-            <div className="metric-label">Total SKUs ({activeTab})</div>
-            <div className="metric-value">{totalItems}</div>
+            <div className="metric-label">{t('master.total_skus', { tab: currentTabLabel })}</div>
+            <div className="metric-value" dir="ltr">{totalItems}</div>
           </div>
         </div>
         <div className="metric-card">
@@ -119,8 +124,8 @@ function InventoryView() {
             <WarningCircle size={20} weight="bold" />
           </div>
           <div>
-            <div className="metric-label">Needs Attention</div>
-            <div className="metric-value" style={{ color: (lowStock + outOfStock) > 0 ? '#f59e0b' : 'inherit' }}>
+            <div className="metric-label">{t('master.needs_attention')}</div>
+            <div className="metric-value" dir="ltr" style={{ color: (lowStock + outOfStock) > 0 ? '#f59e0b' : 'inherit' }}>
               {lowStock + outOfStock}
             </div>
           </div>
@@ -130,8 +135,8 @@ function InventoryView() {
             <Prohibit size={20} weight="bold" />
           </div>
           <div>
-            <div className="metric-label">Out of Stock</div>
-            <div className="metric-value" style={{ color: '#ef4444' }}>{outOfStock}</div>
+            <div className="metric-label">{t('master.out_of_stock')}</div>
+            <div className="metric-value" dir="ltr" style={{ color: '#ef4444' }}>{outOfStock}</div>
           </div>
         </div>
         <div className="metric-card">
@@ -139,8 +144,8 @@ function InventoryView() {
             <CurrencyDollar size={20} weight="bold" />
           </div>
           <div>
-            <div className="metric-label">Total Inventory Value</div>
-            <div className="metric-value">${totalValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+            <div className="metric-label">{t('master.total_value')}</div>
+            <div className="metric-value" dir="ltr">${totalValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
           </div>
         </div>
       </div>

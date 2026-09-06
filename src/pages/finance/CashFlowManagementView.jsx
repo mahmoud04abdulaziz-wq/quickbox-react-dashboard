@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useFinance } from '../../context/FinanceContext';
 import {
   Wallet,
@@ -18,6 +19,7 @@ import {
 } from '@phosphor-icons/react';
 
 function CashFlowManagementView() {
+  const { t } = useTranslation('finance');
   const {
     cashFlowEntries,
     liquidityForecasts,
@@ -230,12 +232,12 @@ function CashFlowManagementView() {
                 <thead>
                   <tr>
                     <th>Forecast Period</th>
-                    <th style={{ textAlign: 'right' }}>Beginning Cash</th>
-                    <th style={{ textAlign: 'right' }}>Expected Inflows (JOD)</th>
-                    <th style={{ textAlign: 'right' }}>Committed Outflows (JOD)</th>
-                    <th style={{ textAlign: 'right' }}>Net Cash Flow</th>
-                    <th style={{ textAlign: 'right' }}>Ending Projected Cash</th>
-                    <th style={{ textAlign: 'right' }}>Buffer Headroom</th>
+                    <th style={{ textAlign: 'end' }}>Beginning Cash</th>
+                    <th style={{ textAlign: 'end' }}>Expected Inflows (JOD)</th>
+                    <th style={{ textAlign: 'end' }}>Committed Outflows (JOD)</th>
+                    <th style={{ textAlign: 'end' }}>Net Cash Flow</th>
+                    <th style={{ textAlign: 'end' }}>Ending Projected Cash</th>
+                    <th style={{ textAlign: 'end' }}>Buffer Headroom</th>
                     <th style={{ textAlign: 'center' }}>Runway</th>
                     <th style={{ textAlign: 'center' }}>Status</th>
                   </tr>
@@ -244,20 +246,20 @@ function CashFlowManagementView() {
                   {liquidityForecasts.map((fc, idx) => (
                     <tr key={idx}>
                       <td style={{ fontWeight: 700 }}>{fc.period}</td>
-                      <td style={{ textAlign: 'right' }} className="mono">JOD {fc.beginning_cash.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
-                      <td style={{ textAlign: 'right', color: 'var(--primary-green)', fontWeight: 600 }} className="mono">
+                      <td style={{ textAlign: 'end' }} className="mono">JOD {fc.beginning_cash.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                      <td style={{ textAlign: 'end', color: 'var(--primary-green)', fontWeight: 600 }} className="mono">
                         +JOD {fc.expected_inflows.toLocaleString(undefined, { minimumFractionDigits: 2 })}
                       </td>
-                      <td style={{ textAlign: 'right', color: '#ef4444', fontWeight: 600 }} className="mono">
+                      <td style={{ textAlign: 'end', color: '#ef4444', fontWeight: 600 }} className="mono">
                         -JOD {fc.committed_outflows.toLocaleString(undefined, { minimumFractionDigits: 2 })}
                       </td>
-                      <td style={{ textAlign: 'right', fontWeight: 700, color: fc.net_cash_flow >= 0 ? 'var(--primary-green)' : '#ef4444' }} className="mono">
+                      <td style={{ textAlign: 'end', fontWeight: 700, color: fc.net_cash_flow >= 0 ? 'var(--primary-green)' : '#ef4444' }} className="mono">
                         {fc.net_cash_flow >= 0 ? `+JOD ${fc.net_cash_flow.toLocaleString()}` : `-JOD ${Math.abs(fc.net_cash_flow).toLocaleString()}`}
                       </td>
-                      <td style={{ textAlign: 'right', fontWeight: 700 }} className="mono">
+                      <td style={{ textAlign: 'end', fontWeight: 700 }} className="mono">
                         JOD {fc.projected_ending_cash.toLocaleString(undefined, { minimumFractionDigits: 2 })}
                       </td>
-                      <td style={{ textAlign: 'right', color: 'var(--primary-green)' }} className="mono">
+                      <td style={{ textAlign: 'end', color: 'var(--primary-green)' }} className="mono">
                         +JOD {fc.headroom.toLocaleString()}
                       </td>
                       <td style={{ textAlign: 'center', fontWeight: 600 }} className="mono">{fc.runway_months} Mo</td>
@@ -317,7 +319,7 @@ function CashFlowManagementView() {
                     <th>Event Narrative</th>
                     <th>Commercial Partner / Authority</th>
                     <th>Document Reference</th>
-                    <th style={{ textAlign: 'right' }}>Amount (JOD)</th>
+                    <th style={{ textAlign: 'end' }}>Amount (JOD)</th>
                     <th style={{ textAlign: 'center' }}>Status</th>
                   </tr>
                 </thead>
@@ -335,7 +337,7 @@ function CashFlowManagementView() {
                       <td style={{ fontWeight: 600 }}>{ev.sub_category}</td>
                       <td>{ev.party_name}</td>
                       <td className="mono" style={{ fontSize: '11.5px', color: 'var(--text-muted)' }}>{ev.reference}</td>
-                      <td style={{ textAlign: 'right', fontWeight: 700, color: ev.amount >= 0 ? 'var(--primary-green)' : '#ef4444' }} className="mono">
+                      <td style={{ textAlign: 'end', fontWeight: 700, color: ev.amount >= 0 ? 'var(--primary-green)' : '#ef4444' }} className="mono">
                         {ev.amount >= 0 ? `+JOD ${ev.amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}` : `-JOD ${Math.abs(ev.amount).toLocaleString(undefined, { minimumFractionDigits: 2 })}`}
                       </td>
                       <td style={{ textAlign: 'center' }}>
@@ -375,7 +377,7 @@ function CashFlowManagementView() {
                     <th>Check Number</th>
                     <th>Party / Drawer</th>
                     <th>Drawee Bank</th>
-                    <th style={{ textAlign: 'right' }}>Check Value (JOD)</th>
+                    <th style={{ textAlign: 'end' }}>Check Value (JOD)</th>
                     <th>Issue Date</th>
                     <th>Maturity Due Date</th>
                     <th style={{ textAlign: 'center' }}>Vault Status</th>
@@ -394,7 +396,7 @@ function CashFlowManagementView() {
                       <td className="mono" style={{ fontWeight: 700 }}>{pdc.check_number}</td>
                       <td style={{ fontWeight: 600 }}>{pdc.party_name}</td>
                       <td>{pdc.bank_name}</td>
-                      <td style={{ textAlign: 'right', fontWeight: 700 }} className="mono">
+                      <td style={{ textAlign: 'end', fontWeight: 700 }} className="mono">
                         JOD {pdc.amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}
                       </td>
                       <td className="mono" style={{ fontSize: '11.5px' }}>{pdc.issue_date}</td>

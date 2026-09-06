@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { CheckCircle, ArrowCircleRight, DotsThree } from '@phosphor-icons/react';
 
 /**
@@ -91,46 +92,48 @@ function SelfCheckIcons({ status }) {
   return (
     <>
       <CheckCircle weight="fill" className="icon-self-checkin" />
-      {isCheckedOut && <ArrowCircleRight weight="fill" className="icon-self-checkout" />}
+      {isCheckedOut && <ArrowCircleRight weight="fill" className="icon-self-checkout icon-rtl-flip" />}
     </>
   );
 }
 
 function ReservationsTable() {
+  const { t } = useTranslation(['inventory', 'common']);
+
   return (
     <div className="table-container">
       <table>
         <thead>
           <tr>
-            <th><input type="checkbox" /> Booking</th>
-            <th>Room</th>
-            <th>Guests</th>
-            <th>Check-In</th>
-            <th>Check-Out</th>
-            <th>Orders</th>
-            <th>Amount</th>
-            <th>Balance</th>
-            <th>Source</th>
-            <th>Status</th>
-            <th>Self Check In / Out</th>
+            <th><input type="checkbox" /> {t('reservations.th_booking')}</th>
+            <th>{t('reservations.th_room')}</th>
+            <th>{t('reservations.th_guests')}</th>
+            <th>{t('reservations.th_check_in')}</th>
+            <th>{t('reservations.th_check_out')}</th>
+            <th>{t('reservations.th_orders')}</th>
+            <th>{t('reservations.th_amount')}</th>
+            <th>{t('reservations.th_balance')}</th>
+            <th>{t('reservations.th_source')}</th>
+            <th>{t('reservations.th_status')}</th>
+            <th>{t('reservations.th_self_check')}</th>
             <th></th>
           </tr>
         </thead>
         <tbody>
           {mockReservations.map((res) => (
             <tr key={res.id}>
-              <td><input type="checkbox" /> {res.id}</td>
-              <td>{res.room}</td>
+              <td dir="ltr" className="bidi-ltr"><input type="checkbox" /> {res.id}</td>
+              <td dir="ltr" className="bidi-ltr">{res.room}</td>
               <td>{res.guest}</td>
-              <td>{res.checkIn}</td>
-              <td>{res.checkOut}</td>
-              <td>{res.orders}</td>
-              <td>{res.amount}</td>
-              <td>{res.balance}</td>
+              <td dir="ltr" className="bidi-ltr">{res.checkIn}</td>
+              <td dir="ltr" className="bidi-ltr">{res.checkOut}</td>
+              <td dir="ltr" className="bidi-ltr">{res.orders}</td>
+              <td dir="ltr" className="bidi-ltr">{res.amount}</td>
+              <td dir="ltr" className="bidi-ltr">{res.balance}</td>
               <td><SourceBrand source={res.source} /></td>
               <td>
                 <span className={`status ${res.statusClass}`}>
-                  {res.status}
+                  {t(`common:status.${res.statusClass.replace(/-/g, '_')}`, { defaultValue: res.status })}
                 </span>
               </td>
               <td className="actions-cell">

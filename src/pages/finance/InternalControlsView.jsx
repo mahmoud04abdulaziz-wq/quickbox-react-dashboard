@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useFinance } from '../../context/FinanceContext';
 import {
   ShieldCheck,
@@ -17,6 +18,7 @@ import {
 } from '@phosphor-icons/react';
 
 function InternalControlsView() {
+  const { t } = useTranslation('finance');
   const {
     approvalRequests,
     controlMatrix,
@@ -70,7 +72,7 @@ function InternalControlsView() {
   const handleOpenActionModal = (req, type) => {
     setSelectedRequest(req);
     setActionType(type);
-    setActionComment(type === 'APPROVE' ? 'Approved in compliance with authorization matrix.' : 'Rejected per internal control review.');
+    setActionComment(type === 'APPROVE' ? t('internal_controls.msg_approved_cmt') : t('internal_controls.msg_rejected_cmt'));
     setIsActionModalOpen(true);
   };
 
@@ -80,10 +82,10 @@ function InternalControlsView() {
 
     if (actionType === 'APPROVE') {
       approveRequest(selectedRequest.request_id, 'Sarah Nasser (CFO)', actionComment);
-      setActionSuccess(`Approved request ${selectedRequest.request_id} for JOD ${selectedRequest.amount.toLocaleString()}`);
+      setActionSuccess(t('internal_controls.msg_approved_req', { id: selectedRequest.request_id, amount: selectedRequest.amount.toLocaleString() }));
     } else {
       rejectRequest(selectedRequest.request_id, 'Sarah Nasser (CFO)', actionComment);
-      setActionSuccess(`Rejected request ${selectedRequest.request_id}`);
+      setActionSuccess(t('internal_controls.msg_rejected_req', { id: selectedRequest.request_id }));
     }
 
     setIsActionModalOpen(false);
@@ -114,7 +116,7 @@ function InternalControlsView() {
       justification: formJustification
     });
 
-    setActionSuccess(`Created expenditure authorization request for JOD ${parseFloat(formAmount).toLocaleString()}`);
+    setActionSuccess(t('internal_controls.msg_created_req', { amount: parseFloat(formAmount).toLocaleString() }));
     setIsNewRequestModalOpen(false);
     setTimeout(() => setActionSuccess(null), 5000);
   };
@@ -124,14 +126,14 @@ function InternalControlsView() {
       {/* Header */}
       <div className="page-header" style={{ marginBottom: '18px' }}>
         <div>
-          <h1 style={{ fontSize: '18px', fontWeight: 700, margin: 0 }}>Internal Controls &amp; Expenditure Approvals</h1>
+          <h1 style={{ fontSize: '18px', fontWeight: 700, margin: 0 }}>{t('internal_controls.title')}</h1>
           <div style={{ fontSize: '11.5px', color: 'var(--text-muted)', fontFamily: 'monospace', marginTop: '2px' }}>
-            / finance / internal controls &amp; multi-tier authorization
+            {t('internal_controls.breadcrumb')}
           </div>
         </div>
         <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
           <span className="badge ok">
-            <span className="d"></span> Jordan CCD Corporate Governance Matrix
+            <span className="d"></span> {t('internal_controls.badge_ccd')}
           </span>
           <button
             className="btn-primary"
@@ -139,7 +141,7 @@ function InternalControlsView() {
             style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', padding: '6px 12px' }}
           >
             <Plus size={14} weight="bold" />
-            <span>New Authorization Request</span>
+            <span>{t('internal_controls.btn_new_request')}</span>
           </button>
         </div>
       </div>
@@ -156,48 +158,48 @@ function InternalControlsView() {
       <div className="metrics-4" style={{ marginBottom: '20px' }}>
         <div className="card metric-card">
           <div className="metric-top">
-            <span className="metric-label">Pending Approvals Queue</span>
+            <span className="metric-label">{t('internal_controls.kpi_pending')}</span>
             <div className="metric-icon" style={{ background: pendingRequests.length > 0 ? '#fef9c3' : '#f0fdf4', color: pendingRequests.length > 0 ? '#a16207' : '#15803d' }}>
               <Clock size={16} weight="bold" />
             </div>
           </div>
           <div className="metric-value">{pendingRequests.length} Requests</div>
           <div className="metric-delta" style={{ color: '#a16207', fontWeight: 600 }}>
-            JOD {totalPendingAmount.toLocaleString()} ({criticalCount} Critical)
+            JOD <span className="bidi-ltr" dir="ltr">{totalPendingAmount.toLocaleString()}</span> (<span className="bidi-ltr" dir="ltr">{criticalCount}</span> {t('internal_controls.filter_critical', { count: '' }).trim()})
           </div>
         </div>
 
         <div className="card metric-card">
           <div className="metric-top">
-            <span className="metric-label">SoD Compliance Rating</span>
+            <span className="metric-label">{t('internal_controls.h_sod_title')}</span>
             <div className="metric-icon" style={{ background: '#f0fdf4', color: '#15803d' }}>
               <ShieldCheck size={16} weight="bold" />
             </div>
           </div>
-          <div className="metric-value">100% Clean</div>
-          <div className="metric-delta up" style={{ color: '#15803d' }}>0 Active Separation Conflicts</div>
+          <div className="metric-value"><span className="bidi-ltr" dir="ltr">100%</span> Clean</div>
+          <div className="metric-delta up" style={{ color: '#15803d' }}>{t('internal_controls.badge_zero_viol')}</div>
         </div>
 
         <div className="card metric-card">
           <div className="metric-top">
-            <span className="metric-label">Approvals Processed MTD</span>
+            <span className="metric-label">{t('internal_controls.kpi_approved')}</span>
             <div className="metric-icon" style={{ background: '#eff6ff', color: '#2563eb' }}>
               <UserCheck size={16} weight="bold" />
             </div>
           </div>
           <div className="metric-value">{approvedCount + 68} Actions</div>
-          <div className="metric-delta">Avg Turnaround: 1.4 Hours</div>
+          <div className="metric-delta">Avg Turnaround: <span className="bidi-ltr" dir="ltr">1.4</span> Hours</div>
         </div>
 
         <div className="card metric-card">
           <div className="metric-top">
-            <span className="metric-label">Authority Tiers Active</span>
+            <span className="metric-label">{t('internal_controls.kpi_approved_delta')}</span>
             <div className="metric-icon" style={{ background: '#fdf4ff', color: '#a21caf' }}>
               <Scales size={16} weight="bold" />
             </div>
           </div>
           <div className="metric-value">4 Tiers Matrix</div>
-          <div className="metric-delta">Dual Signatory &gt; JOD 10k</div>
+          <div className="metric-delta">Dual Signatory &gt; JOD <span className="bidi-ltr" dir="ltr">10k</span></div>
         </div>
       </div>
 
@@ -207,25 +209,25 @@ function InternalControlsView() {
           className={`tab-btn ${activeTab === 'pending-queue' ? 'active' : ''}`}
           onClick={() => setActiveTab('pending-queue')}
         >
-          Actionable Approvals Inbox ({pendingRequests.length})
+          {t('internal_controls.tab_actionable_queue', { count: pendingRequests.length })}
         </button>
         <button
           className={`tab-btn ${activeTab === 'control-matrix' ? 'active' : ''}`}
           onClick={() => setActiveTab('control-matrix')}
         >
-          Monetary Authorization Matrix ({controlMatrix.length})
+          {t('internal_controls.tab_matrix_count', { count: controlMatrix.length })}
         </button>
         <button
           className={`tab-btn ${activeTab === 'sod-rules' ? 'active' : ''}`}
           onClick={() => setActiveTab('sod-rules')}
         >
-          Segregation of Duties (SoD) Rules ({sodRules.length})
+          {t('internal_controls.tab_sod_count', { count: sodRules.length })}
         </button>
         <button
           className={`tab-btn ${activeTab === 'signatories' ? 'active' : ''}`}
           onClick={() => setActiveTab('signatories')}
         >
-          Commercial Register Signatories ({authorizedSignatories.length})
+          {t('internal_controls.tab_sig_count', { count: authorizedSignatories.length })}
         </button>
       </div>
 
@@ -235,37 +237,37 @@ function InternalControlsView() {
           {/* Filters Bar */}
           <div className="card" style={{ padding: '12px 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-muted)' }}>Filter Queue:</span>
+              <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-muted)' }}>{t('internal_controls.lbl_filter_queue')}</span>
               <button
                 className={filterUrgency === 'ALL' ? 'btn-primary' : 'btn-secondary'}
                 onClick={() => setFilterUrgency('ALL')}
                 style={{ fontSize: '11px', padding: '4px 10px' }}
               >
-                All Requests ({approvalRequests.length})
+                {t('internal_controls.filter_all_reqs', { count: approvalRequests.length })}
               </button>
               <button
                 className={filterUrgency === 'PENDING' ? 'btn-primary' : 'btn-secondary'}
                 onClick={() => setFilterUrgency('PENDING')}
                 style={{ fontSize: '11px', padding: '4px 10px' }}
               >
-                Pending ({pendingRequests.length})
+                {t('internal_controls.filter_pending_count', { count: pendingRequests.length })}
               </button>
               <button
                 className={filterUrgency === 'CRITICAL' ? 'btn-primary' : 'btn-secondary'}
                 onClick={() => setFilterUrgency('CRITICAL')}
                 style={{ fontSize: '11px', padding: '4px 10px' }}
               >
-                Critical ({criticalCount})
+                {t('internal_controls.filter_critical', { count: criticalCount })}
               </button>
               <button
                 className={filterUrgency === 'APPROVED' ? 'btn-primary' : 'btn-secondary'}
                 onClick={() => setFilterUrgency('APPROVED')}
                 style={{ fontSize: '11px', padding: '4px 10px' }}
               >
-                Approved ({approvedCount})
+                {t('internal_controls.filter_approved_count', { count: approvedCount })}
               </button>
             </div>
-            <span className="badge ok"><span className="d"></span> Maker-Checker Enforced</span>
+            <span className="badge ok"><span className="d"></span> {t('internal_controls.badge_maker_checker')}</span>
           </div>
 
           {/* Requests Cards List */}
@@ -282,33 +284,33 @@ function InternalControlsView() {
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '10px' }}>
                   <div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-                      <span className="mono" style={{ fontWeight: 700, fontSize: '13px' }}>{req.request_id}</span>
+                      <span className="mono bidi-ltr" dir="ltr" style={{ fontWeight: 700, fontSize: '13px' }}>{req.request_id}</span>
                       <span className={`badge ${req.urgency === 'Critical' ? 'crit' : 'ok'}`}>
-                        {req.urgency} Urgency
+                        {t('internal_controls.lbl_urgency_val', { val: req.urgency })}
                       </span>
                       <span className="tag-pill solid">{req.type.replace(/_/g, ' ')}</span>
                     </div>
                     <h3 style={{ margin: 0, fontSize: '14px', fontWeight: 600 }}>{req.title}</h3>
                   </div>
 
-                  <div style={{ textAlign: 'right' }}>
-                    <div className="mono" style={{ fontSize: '18px', fontWeight: 700, color: 'var(--text-main)' }}>
-                      JOD {req.amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                  <div style={{ textAlign: 'end' }}>
+                    <div className="mono bidi-ltr" dir="ltr" style={{ fontSize: '18px', fontWeight: 700, color: 'var(--text-main)' }}>
+                      JOD <span className="bidi-ltr" dir="ltr">{req.amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
                     </div>
                     <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
-                      Ref: <span className="mono">{req.source_ref}</span>
+                      Ref: <span className="mono bidi-ltr" dir="ltr">{req.source_ref}</span>
                     </div>
                   </div>
                 </div>
 
                 <p style={{ margin: '0 0 12px 0', fontSize: '12px', color: 'var(--text-muted)' }}>
-                  <strong>Justification:</strong> {req.justification}
+                  <strong>{t('internal_controls.lbl_justification')}</strong> {req.justification}
                 </p>
 
                 {/* Multi-Tier Approval Chain Visualizer */}
                 <div style={{ background: '#f8fafc', padding: '10px 14px', borderRadius: '6px', marginBottom: '12px' }}>
                   <div style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '8px' }}>
-                    Multi-Tier Signatory Chain (Tier {req.current_tier} of {req.required_tiers})
+                    {t('internal_controls.lbl_multi_tier', { current: req.current_tier, required: req.required_tiers })}
                   </div>
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px' }}>
                     {req.approval_chain.map((step) => (
@@ -321,7 +323,7 @@ function InternalControlsView() {
                           <Clock size={16} weight="bold" color="#f59e0b" />
                         )}
                         <div>
-                          <div style={{ fontWeight: 600 }}>Tier {step.tier}: {step.role}</div>
+                          <div style={{ fontWeight: 600 }}>{t('internal_controls.lbl_tier_role', { tier: step.tier, role: step.role })}</div>
                           <div style={{ fontSize: '10.5px', color: 'var(--text-muted)' }}>
                             {step.approver_name} {step.timestamp ? `(${step.timestamp})` : '— Pending'}
                           </div>
@@ -334,7 +336,7 @@ function InternalControlsView() {
                 {/* Card Footer & Action Buttons */}
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid var(--border-color)', paddingTop: '10px' }}>
                   <div style={{ fontSize: '11.5px', color: 'var(--text-muted)' }}>
-                    Submitted by: <strong>{req.requester}</strong> ({req.cost_center_name}) on {req.submission_date}
+                    {t('internal_controls.lbl_submitted_by')} <strong>{req.requester}</strong> ({req.cost_center_name}) on {req.submission_date}
                   </div>
 
                   {req.status === 'PENDING' ? (
@@ -356,7 +358,7 @@ function InternalControlsView() {
                     </div>
                   ) : (
                     <span className={`badge ${req.status === 'APPROVED' ? 'ok' : 'crit'}`}>
-                      <span className="d"></span> Status: {req.status}
+                      <span className="d"></span> {t('internal_controls.lbl_status_val', { val: req.status })}
                     </span>
                   )}
                 </div>
@@ -372,39 +374,39 @@ function InternalControlsView() {
           <div className="card" style={{ padding: '16px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
               <div>
-                <h3 style={{ margin: 0, fontSize: '14px', fontWeight: 600 }}>Multi-Tier Monetary Authorization Thresholds</h3>
+                <h3 style={{ margin: 0, fontSize: '14px', fontWeight: 600 }}>{t('internal_controls.h_matrix_title')}</h3>
                 <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
-                  Mandatory Financial Delegation Limits Compliant with Jordanian Corporate Directives
+                  {t('internal_controls.h_matrix_sub')}
                 </div>
               </div>
-              <span className="badge ok"><span className="d"></span> Commercial Register Aligned</span>
+              <span className="badge ok"><span className="d"></span> {t('internal_controls.badge_cr_aligned')}</span>
             </div>
 
             <div className="table-responsive">
               <table className="table" style={{ width: '100%', fontSize: '12px' }}>
                 <thead>
                   <tr>
-                    <th>Control ID</th>
-                    <th>Expenditure Category</th>
-                    <th style={{ textAlign: 'right' }}>Monetary Range (JOD)</th>
-                    <th>Required Signatory Authority</th>
-                    <th style={{ textAlign: 'center' }}>Required Tiers</th>
-                    <th>Operational Policy Rule</th>
-                    <th style={{ textAlign: 'center' }}>Status</th>
+                    <th>{t('internal_controls.th_control_id')}</th>
+                    <th>{t('internal_controls.th_exp_category')}</th>
+                    <th style={{ textAlign: 'end' }}>{t('internal_controls.th_monetary_range')}</th>
+                    <th>{t('internal_controls.th_req_auth')}</th>
+                    <th style={{ textAlign: 'center' }}>{t('internal_controls.th_req_tiers')}</th>
+                    <th>{t('internal_controls.th_op_rule')}</th>
+                    <th style={{ textAlign: 'center' }}>{t('internal_controls.th_status')}</th>
                   </tr>
                 </thead>
                 <tbody>
                   {controlMatrix.map((ctrl) => (
                     <tr key={ctrl.control_id}>
-                      <td className="mono" style={{ fontWeight: 600 }}>{ctrl.control_id}</td>
+                      <td className="mono bidi-ltr" dir="ltr" style={{ fontWeight: 600 }}>{ctrl.control_id}</td>
                       <td style={{ fontWeight: 600 }}>{ctrl.category}</td>
-                      <td style={{ textAlign: 'right', fontWeight: 700 }} className="mono">
+                      <td style={{ textAlign: 'end', fontWeight: 700 }} className="mono bidi-ltr" dir="ltr">
                         JOD {ctrl.threshold_min.toLocaleString()} — {ctrl.threshold_max >= 999999 ? 'No Limit' : `JOD ${ctrl.threshold_max.toLocaleString()}`}
                       </td>
                       <td>
                         <span className="tag-pill solid">{ctrl.required_role}</span>
                       </td>
-                      <td style={{ textAlign: 'center', fontWeight: 700 }} className="mono">{ctrl.required_tiers} Tier(s)</td>
+                      <td style={{ textAlign: 'center', fontWeight: 700 }} className="mono bidi-ltr" dir="ltr">{ctrl.required_tiers} Tier(s)</td>
                       <td style={{ fontSize: '11.5px', color: 'var(--text-muted)' }}>{ctrl.description}</td>
                       <td style={{ textAlign: 'center' }}>
                         <span className="badge ok"><span className="d"></span> Active</span>
@@ -424,12 +426,12 @@ function InternalControlsView() {
           <div className="card" style={{ padding: '16px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
               <div>
-                <h3 style={{ margin: 0, fontSize: '14px', fontWeight: 600 }}>Segregation of Duties (SoD) Incompatibility Matrix</h3>
+                <h3 style={{ margin: 0, fontSize: '14px', fontWeight: 600 }}>{t('internal_controls.h_sod_title')}</h3>
                 <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
-                  Preventative Controls Enforcing Incompatible Role Separation
+                  {t('internal_controls.h_sod_sub')}
                 </div>
               </div>
-              <span className="badge ok"><span className="d"></span> 0 Active Violations</span>
+              <span className="badge ok"><span className="d"></span> {t('internal_controls.badge_zero_viol')}</span>
             </div>
 
             <div className="table-responsive">
@@ -437,21 +439,21 @@ function InternalControlsView() {
                 <thead>
                   <tr>
                     <th>Rule Code</th>
-                    <th>Incompatible Business Roles</th>
-                    <th>Enforcement Mechanism</th>
-                    <th>Description &amp; Fraud Prevention Rationale</th>
-                    <th style={{ textAlign: 'center' }}>Active Violations</th>
-                    <th style={{ textAlign: 'center' }}>Enforcement</th>
+                    <th>{t('internal_controls.th_incompat_roles')}</th>
+                    <th>{t('internal_controls.th_enforce_mech')}</th>
+                    <th>{t('internal_controls.th_desc_fraud')}</th>
+                    <th style={{ textAlign: 'center' }}>{t('internal_controls.th_active_viol')}</th>
+                    <th style={{ textAlign: 'center' }}>{t('internal_controls.th_enforcement')}</th>
                   </tr>
                 </thead>
                 <tbody>
                   {sodRules.map((sod) => (
                     <tr key={sod.rule_id}>
-                      <td className="mono" style={{ fontWeight: 600 }}>{sod.rule_id}</td>
+                      <td className="mono bidi-ltr" dir="ltr" style={{ fontWeight: 600 }}>{sod.rule_id}</td>
                       <td style={{ fontWeight: 600 }}>{sod.name}</td>
-                      <td><span className="tag-pill solid">System Blocking Check</span></td>
+                      <td><span className="tag-pill solid">{t('internal_controls.badge_sys_block')}</span></td>
                       <td style={{ fontSize: '11.5px', color: 'var(--text-muted)' }}>{sod.description}</td>
-                      <td style={{ textAlign: 'center', fontWeight: 700, color: 'var(--primary-green)' }} className="mono">
+                      <td style={{ textAlign: 'center', fontWeight: 700, color: 'var(--primary-green)' }} className="mono bidi-ltr" dir="ltr">
                         {sod.violations}
                       </td>
                       <td style={{ textAlign: 'center' }}>
@@ -472,36 +474,36 @@ function InternalControlsView() {
           <div className="card" style={{ padding: '16px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
               <div>
-                <h3 style={{ margin: 0, fontSize: '14px', fontWeight: 600 }}>Commercial Registry Authorized Signatories</h3>
+                <h3 style={{ margin: 0, fontSize: '14px', fontWeight: 600 }}>{t('internal_controls.h_sig_title')}</h3>
                 <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
-                  Registered with Ministry of Industry &amp; Trade (Jordan Companies Control Department)
+                  {t('internal_controls.h_sig_sub')}
                 </div>
               </div>
-              <span className="badge ok"><span className="d"></span> Commercial Register Verified</span>
+              <span className="badge ok"><span className="d"></span> {t('internal_controls.badge_cr_verified')}</span>
             </div>
 
             <div className="table-responsive">
               <table className="table" style={{ width: '100%', fontSize: '12px' }}>
                 <thead>
                   <tr>
-                    <th>Signatory Code</th>
-                    <th>Official Signatory Name</th>
-                    <th>Corporate Title</th>
-                    <th>Signatory Class</th>
-                    <th>Statutory Monetary Ceiling</th>
-                    <th>CCD Register Ref</th>
-                    <th style={{ textAlign: 'center' }}>Status</th>
+                    <th>{t('internal_controls.th_sig_code')}</th>
+                    <th>{t('internal_controls.th_sig_name')}</th>
+                    <th>{t('internal_controls.th_corp_title')}</th>
+                    <th>{t('internal_controls.th_sig_class')}</th>
+                    <th>{t('internal_controls.th_stat_ceiling')}</th>
+                    <th>{t('internal_controls.th_ccd_ref')}</th>
+                    <th style={{ textAlign: 'center' }}>{t('internal_controls.th_status')}</th>
                   </tr>
                 </thead>
                 <tbody>
                   {authorizedSignatories.map((sig) => (
                     <tr key={sig.id}>
-                      <td className="mono" style={{ fontWeight: 600 }}>{sig.id}</td>
+                      <td className="mono bidi-ltr" dir="ltr" style={{ fontWeight: 600 }}>{sig.id}</td>
                       <td style={{ fontWeight: 600 }}>{sig.name}</td>
                       <td>{sig.title}</td>
                       <td><span className="tag-pill solid">{sig.class}</span></td>
-                      <td style={{ fontWeight: 600 }} className="mono">{sig.maxLimit}</td>
-                      <td className="mono" style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{sig.ccrNumber}</td>
+                      <td style={{ fontWeight: 600 }} className="mono bidi-ltr" dir="ltr">{sig.maxLimit}</td>
+                      <td className="mono bidi-ltr" dir="ltr" style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{sig.ccrNumber}</td>
                       <td style={{ textAlign: 'center' }}>
                         <span className="badge ok"><span className="d"></span> {sig.status}</span>
                       </td>
@@ -520,7 +522,7 @@ function InternalControlsView() {
           <div className="modal-content" style={{ maxWidth: '460px' }}>
             <div className="modal-header">
               <h3 className="modal-title">
-                {actionType === 'APPROVE' ? 'Approve Authorization Request' : 'Reject Authorization Request'}
+                {actionType === 'APPROVE' ? t('internal_controls.modal_approve_title') : t('internal_controls.modal_reject_title')}
               </h3>
               <button className="modal-close-btn" onClick={() => setIsActionModalOpen(false)}>
                 <X size={16} />
@@ -531,12 +533,12 @@ function InternalControlsView() {
                 <div style={{ background: '#f8fafc', padding: '12px', borderRadius: '6px' }}>
                   <div style={{ fontWeight: 700, fontSize: '13px' }}>{selectedRequest.title}</div>
                   <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '2px' }}>
-                    Amount: <strong className="mono" style={{ color: 'var(--text-main)' }}>JOD {selectedRequest.amount.toLocaleString()}</strong> | Ref: {selectedRequest.source_ref}
+                    {t('internal_controls.lbl_amount_ref')} <strong className="mono bidi-ltr" dir="ltr" style={{ color: 'var(--text-main)' }}>JOD {selectedRequest.amount.toLocaleString()}</strong> | {t('internal_controls.lbl_ref')} {selectedRequest.source_ref}
                   </div>
                 </div>
 
                 <div className="form-group">
-                  <label>{actionType === 'APPROVE' ? 'Approval Audit Comment' : 'Rejection Reason (Mandatory)'}</label>
+                  <label>{actionType === 'APPROVE' ? t('internal_controls.lbl_approve_cmt') : t('internal_controls.lbl_reject_cmt')}</label>
                   <textarea
                     className="form-control"
                     rows="3"
@@ -547,7 +549,7 @@ function InternalControlsView() {
                 </div>
 
                 <div style={{ fontSize: '11.5px', color: 'var(--text-muted)' }}>
-                  Acting Signatory: <strong>Sarah Nasser, CPA (CFO / Class A Signatory)</strong>
+                  {t('internal_controls.lbl_acting_sig')} <strong>Sarah Nasser, CPA (CFO / Class A Signatory)</strong>
                 </div>
               </div>
               <div className="modal-footer" style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px', marginTop: '16px' }}>
@@ -559,7 +561,7 @@ function InternalControlsView() {
                   className={actionType === 'APPROVE' ? 'btn-primary' : 'btn-secondary'}
                   style={{ background: actionType === 'REJECT' ? '#ef4444' : undefined, color: actionType === 'REJECT' ? 'white' : undefined }}
                 >
-                  {actionType === 'APPROVE' ? 'Confirm Approval' : 'Confirm Rejection'}
+                  {actionType === 'APPROVE' ? t('internal_controls.btn_confirm_approve') : t('internal_controls.btn_confirm_reject')}
                 </button>
               </div>
             </form>
@@ -572,7 +574,7 @@ function InternalControlsView() {
         <div className="modal-overlay">
           <div className="modal-content" style={{ maxWidth: '480px' }}>
             <div className="modal-header">
-              <h3 className="modal-title">Initiate Expenditure Authorization Request</h3>
+              <h3 className="modal-title">{t('internal_controls.modal_init_req')}</h3>
               <button className="modal-close-btn" onClick={() => setIsNewRequestModalOpen(false)}>
                 <X size={16} />
               </button>
@@ -580,7 +582,7 @@ function InternalControlsView() {
             <form onSubmit={handleCreateRequestSubmit}>
               <div className="modal-body" style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                 <div className="form-group">
-                  <label>Request Title / Narrative</label>
+                  <label>{t('internal_controls.lbl_req_title')}</label>
                   <input
                     type="text"
                     className="form-control"
@@ -593,7 +595,7 @@ function InternalControlsView() {
 
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                   <div className="form-group">
-                    <label>Expenditure Type</label>
+                    <label>{t('internal_controls.lbl_exp_type')}</label>
                     <select
                       className="form-control"
                       value={formType}
@@ -608,7 +610,7 @@ function InternalControlsView() {
                   </div>
 
                   <div className="form-group">
-                    <label>Amount (JOD)</label>
+                    <label>{t('internal_controls.lbl_amount')}</label>
                     <input
                       type="number"
                       step="0.01"
@@ -622,7 +624,7 @@ function InternalControlsView() {
 
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                   <div className="form-group">
-                    <label>Cost Center</label>
+                    <label>{t('internal_controls.lbl_cost_center')}</label>
                     <select
                       className="form-control"
                       value={formCostCenter}
@@ -638,21 +640,21 @@ function InternalControlsView() {
                   </div>
 
                   <div className="form-group">
-                    <label>Urgency Level</label>
+                    <label>{t('internal_controls.lbl_urgency')}</label>
                     <select
                       className="form-control"
                       value={formUrgency}
                       onChange={(e) => setFormUrgency(e.target.value)}
                     >
-                      <option value="Normal">Normal</option>
-                      <option value="High">High Priority</option>
-                      <option value="Critical">Critical Emergency</option>
+                      <option value="Normal">{t('internal_controls.opt_normal')}</option>
+                      <option value="High">{t('internal_controls.opt_high')}</option>
+                      <option value="Critical">{t('internal_controls.opt_critical')}</option>
                     </select>
                   </div>
                 </div>
 
                 <div className="form-group">
-                  <label>Requester Name</label>
+                  <label>{t('internal_controls.lbl_req_name')}</label>
                   <input
                     type="text"
                     className="form-control"
@@ -663,7 +665,7 @@ function InternalControlsView() {
                 </div>
 
                 <div className="form-group">
-                  <label>Business Justification</label>
+                  <label>{t('internal_controls.lbl_business_just')}</label>
                   <textarea
                     className="form-control"
                     rows="2"

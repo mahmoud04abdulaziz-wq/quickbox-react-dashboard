@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useFinance } from '../../context/FinanceContext';
 import {
   UsersThree,
@@ -14,6 +15,7 @@ import {
 } from '@phosphor-icons/react';
 
 function PartyDirectoryView() {
+  const { t } = useTranslation(['finance', 'common']);
   const { parties, createParty, metrics, invoices, bills } = useFinance();
 
   const [roleFilter, setRoleFilter] = useState('ALL');
@@ -85,17 +87,17 @@ function PartyDirectoryView() {
       {/* Title Header */}
       <div className="page-header" style={{ marginBottom: '18px' }}>
         <div>
-          <h1 style={{ fontSize: '18px', fontWeight: 700, margin: 0 }}>Master Party Directory</h1>
-          <div style={{ fontSize: '11.5px', color: 'var(--text-muted)', fontFamily: 'monospace', marginTop: '2px' }}>
-            / finance / shared counter-parties (customers &amp; vendors)
+          <h1 style={{ fontSize: '18px', fontWeight: 700, margin: 0 }}>{t('finance:party_directory.title', 'Master Party Directory')}</h1>
+          <div style={{ fontSize: '11.5px', color: 'var(--text-muted)', fontFamily: 'monospace', marginTop: '2px' }} dir="ltr">
+            {t('finance:party_directory.breadcrumb', '/ finance / shared counter-parties (customers & vendors)')}
           </div>
         </div>
         <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
           <span className="badge ok">
-            <span className="d"></span> Single Master Entity Store
+            <span className="d"></span> {t('finance:party_directory.badge_single_master', 'Single Master Entity Store')}
           </span>
           <span className="badge ok">
-            <span className="d"></span> Dual-Role AR/AP Offsetting Active
+            <span className="d"></span> {t('finance:party_directory.badge_dual_role', 'Dual-Role AR/AP Offsetting Active')}
           </span>
         </div>
       </div>
@@ -104,50 +106,50 @@ function PartyDirectoryView() {
       <div className="metrics-4">
         <div className="card metric-card">
           <div className="metric-top">
-            <span className="metric-label">Master Parties</span>
+            <span className="metric-label">{t('finance:party_directory.kpi_master_parties', 'Master Parties')}</span>
             <div className="metric-icon" style={{ background: '#f8fafc', color: '#475569' }}>
               <UsersThree size={16} weight="bold" />
             </div>
           </div>
-          <div className="metric-value">128</div>
-          <div className="metric-delta">Zero duplicate records</div>
+          <div className="metric-value" dir="ltr">128</div>
+          <div className="metric-delta">{t('finance:party_directory.kpi_master_parties_delta', 'Zero duplicate records')}</div>
         </div>
 
         <div className="card metric-card">
           <div className="metric-top">
-            <span className="metric-label">Dual-Role</span>
+            <span className="metric-label">{t('finance:party_directory.kpi_dual_role', 'Dual-Role')}</span>
             <div className="metric-icon" style={{ background: '#eff6ff', color: '#2563eb' }}>
               <ArrowsLeftRight size={16} weight="bold" />
             </div>
           </div>
-          <div className="metric-value">14</div>
-          <div className="metric-delta up" style={{ color: '#2563eb', fontWeight: 600 }}>Customer &amp; Vendor</div>
+          <div className="metric-value" dir="ltr">14</div>
+          <div className="metric-delta up" style={{ color: '#2563eb', fontWeight: 600 }}>{t('finance:party_directory.kpi_dual_role_delta', 'Customer & Vendor')}</div>
         </div>
 
         <div className="card metric-card">
           <div className="metric-top">
-            <span className="metric-label">Open AR</span>
+            <span className="metric-label">{t('finance:party_directory.kpi_open_ar', 'Open AR')}</span>
             <div className="metric-icon" style={{ background: '#fef9c3', color: '#a16207' }}>
               <Receipt size={16} weight="bold" />
             </div>
           </div>
-          <div className="metric-value">
+          <div className="metric-value" dir="ltr">
             ${(metrics?.totalAR || 84120).toLocaleString('en-US', { minimumFractionDigits: 0 })}
           </div>
-          <div className="metric-delta">68 active customers</div>
+          <div className="metric-delta">{t('finance:party_directory.kpi_open_ar_delta', '68 active customers')}</div>
         </div>
 
         <div className="card metric-card">
           <div className="metric-top">
-            <span className="metric-label">Open AP</span>
+            <span className="metric-label">{t('finance:party_directory.kpi_open_ap', 'Open AP')}</span>
             <div className="metric-icon" style={{ background: '#eff6ff', color: '#2563eb' }}>
               <CreditCard size={16} weight="bold" />
             </div>
           </div>
-          <div className="metric-value">
+          <div className="metric-value" dir="ltr">
             ${(metrics?.totalAP || 36890).toLocaleString('en-US', { minimumFractionDigits: 0 })}
           </div>
-          <div className="metric-delta">46 active vendors</div>
+          <div className="metric-delta">{t('finance:party_directory.kpi_open_ap_delta', '46 active vendors')}</div>
         </div>
       </div>
 
@@ -159,23 +161,24 @@ function PartyDirectoryView() {
             value={roleFilter}
             onChange={(e) => setRoleFilter(e.target.value)}
           >
-            <option value="ALL">All Parties ({(parties || []).length})</option>
-            <option value="CUSTOMER">Customers ({(parties || []).filter(p => (p.roles || []).includes('Customer')).length})</option>
-            <option value="VENDOR">Vendors ({(parties || []).filter(p => (p.roles || []).includes('Vendor')).length})</option>
-            <option value="DUAL">Dual-Role ({(parties || []).filter(p => (p.roles || []).includes('Customer') && (p.roles || []).includes('Vendor')).length})</option>
+            <option value="ALL">{t('finance:party_directory.filter_all', { count: (parties || []).length, defaultValue: `All Parties (${(parties || []).length})` })}</option>
+            <option value="CUSTOMER">{t('finance:party_directory.filter_customers', 'Customers Only')}</option>
+            <option value="VENDOR">{t('finance:party_directory.filter_vendors', 'Vendors Only')}</option>
+            <option value="DUAL">{t('finance:party_directory.filter_dual', 'Dual-Role (Customer & Vendor)')}</option>
           </select>
 
           <div style={{ position: 'relative' }}>
             <input
               className="input"
-              placeholder="Search parties by name, code, TRN…"
-              style={{ width: '260px', paddingLeft: '30px' }}
+              dir="ltr"
+              placeholder={t('common:actions.search', 'Search parties by name, code, TRN…')}
+              style={{ width: '260px', paddingInlineStart: '30px' }}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
             <MagnifyingGlass
               size={14}
-              style={{ position: 'absolute', left: '10px', top: '10px', color: 'var(--text-muted)' }}
+              style={{ position: 'absolute', insetInlineStart: '10px', top: '10px', color: 'var(--text-muted)' }}
             />
           </div>
         </div>
@@ -186,7 +189,7 @@ function PartyDirectoryView() {
           style={{ display: 'flex', alignItems: 'center', gap: '6px' }}
         >
           <Plus size={14} weight="bold" />
-          <span>+ Add Master Party</span>
+          <span>{t('finance:party_directory.btn_add_party', '+ Add Master Party')}</span>
         </button>
       </div>
 
@@ -195,14 +198,14 @@ function PartyDirectoryView() {
         <table>
           <thead>
             <tr>
-              <th>Party Code</th>
-              <th>Legal Name</th>
-              <th>Roles</th>
-              <th>Payment Terms</th>
-              <th>AR Balance</th>
-              <th>AP Balance</th>
-              <th>Net Position</th>
-              <th>Action</th>
+              <th>{t('finance:party_directory.th_code', 'Party Code')}</th>
+              <th>{t('finance:party_directory.th_legal_name', 'Legal Name')}</th>
+              <th>{t('finance:party_directory.th_roles', 'Roles')}</th>
+              <th>{t('finance:party_directory.th_terms', 'Payment Terms')}</th>
+              <th>{t('finance:party_directory.th_ar_balance', 'AR Balance')}</th>
+              <th>{t('finance:party_directory.th_ap_balance', 'AP Balance')}</th>
+              <th>{t('finance:party_directory.th_net_exposure', 'Net Position')}</th>
+              <th>{t('common:actions.action', 'Action')}</th>
             </tr>
           </thead>
           <tbody>
@@ -213,7 +216,7 @@ function PartyDirectoryView() {
 
               return (
                 <tr key={party.party_id || party.id}>
-                  <td className="mono cell-strong">{party.party_code || party.party_id}</td>
+                  <td className="mono cell-strong" dir="ltr">{party.party_code || party.party_id}</td>
                   <td>
                     <div style={{ fontWeight: 600, color: 'var(--text-main)' }}>{party.name}</div>
                     <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{party.legal_name}</div>
@@ -227,13 +230,13 @@ function PartyDirectoryView() {
                   <td>
                     <span className="tag-pill">{party.payment_terms || 'Net 30'}</span>
                   </td>
-                  <td className="mono" style={{ color: (party.ar_balance || 0) > 0 ? '#15803d' : 'var(--text-muted)' }}>
+                  <td className="mono" dir="ltr" style={{ color: (party.ar_balance || 0) > 0 ? '#15803d' : 'var(--text-muted)' }}>
                     ${(party.ar_balance || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}
                   </td>
-                  <td className="mono" style={{ color: (party.ap_balance || 0) > 0 ? '#b91c1c' : 'var(--text-muted)' }}>
+                  <td className="mono" dir="ltr" style={{ color: (party.ap_balance || 0) > 0 ? '#b91c1c' : 'var(--text-muted)' }}>
                     ${(party.ap_balance || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}
                   </td>
-                  <td className="mono cell-strong" style={{ color: netPos > 0 ? '#15803d' : netPos < 0 ? '#b91c1c' : 'var(--text-muted)' }}>
+                  <td className="mono cell-strong" dir="ltr" style={{ color: netPos > 0 ? '#15803d' : netPos < 0 ? '#b91c1c' : 'var(--text-muted)' }}>
                     {netPos > 0 ? `+$${netPos.toLocaleString('en-US', { minimumFractionDigits: 2 })}` : netPos < 0 ? `-$${Math.abs(netPos).toLocaleString('en-US', { minimumFractionDigits: 2 })}` : '$0.00'}
                   </td>
                   <td>
@@ -241,7 +244,7 @@ function PartyDirectoryView() {
                       className="link-action"
                       onClick={() => setSelectedPartyProfile(party)}
                     >
-                      Profile
+                      {t('common:actions.view', 'Profile')}
                     </span>
                   </td>
                 </tr>
@@ -258,7 +261,7 @@ function PartyDirectoryView() {
             <div className="modal-header">
               <div className="modal-title" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <Buildings size={18} weight="bold" />
-                <span>360° Party Statement — {selectedPartyProfile.name}</span>
+                <span>{t('finance:party_directory.drawer_title', '360° Party Statement')} — {selectedPartyProfile.name}</span>
               </div>
               <button className="modal-close-btn" onClick={() => setSelectedPartyProfile(null)}>
                 <X size={16} />
@@ -269,50 +272,50 @@ function PartyDirectoryView() {
               {/* Top Overview Box */}
               <div style={{ background: '#f8fafc', padding: '16px', borderRadius: '8px', border: '1px solid var(--border-color)', marginBottom: '16px' }}>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', fontSize: '12px' }}>
-                  <div>Legal Entity: <b>{selectedPartyProfile.legal_name}</b></div>
-                  <div>Tax TRN: <b className="mono">{selectedPartyProfile.tax_number || 'TRN-100293849'}</b></div>
-                  <div>Contact: {selectedPartyProfile.contact_email || 'accounts@party.example'}</div>
-                  <div>Phone: {selectedPartyProfile.phone || '+1 (555) 0100'}</div>
-                  <div>Default Terms: <b>{selectedPartyProfile.payment_terms}</b></div>
-                  <div>Status: <span className="badge ok"><span className="d"></span>Active Master</span></div>
+                  <div>{t('finance:party_directory.th_legal_name', 'Legal Entity Name')}: <b>{selectedPartyProfile.legal_name}</b></div>
+                  <div>{t('finance:party_directory.th_trn', 'Tax Registration (TRN)')}: <b className="mono" dir="ltr">{selectedPartyProfile.tax_number || 'TRN-100293849'}</b></div>
+                  <div>{t('finance:party_directory.form_contact_email', 'Accounts Contact Email')}: <span dir="ltr">{selectedPartyProfile.contact_email || 'accounts@party.example'}</span></div>
+                  <div>{t('finance:party_directory.form_phone', 'Phone Number')}: <span dir="ltr">{selectedPartyProfile.phone || '+1 (555) 0100'}</span></div>
+                  <div>{t('finance:party_directory.th_terms', 'Terms')}: <b>{selectedPartyProfile.payment_terms}</b></div>
+                  <div>{t('common:status.label', 'Status')}: <span className="badge ok"><span className="d"></span>{t('common:status.active', 'Active')} Master</span></div>
                 </div>
 
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '14px', paddingTop: '12px', borderTop: '1px solid #e5e7eb', fontSize: '13px' }}>
-                  <div>AR Exposure: <b className="mono" style={{ color: '#15803d' }}>${(selectedPartyProfile.ar_balance || 0).toFixed(2)}</b></div>
-                  <div>AP Exposure: <b className="mono" style={{ color: '#b91c1c' }}>${(selectedPartyProfile.ap_balance || 0).toFixed(2)}</b></div>
-                  <div>Net Liquidity: <b className="mono">${((selectedPartyProfile.ar_balance || 0) - (selectedPartyProfile.ap_balance || 0)).toFixed(2)}</b></div>
+                  <div>{t('finance:party_directory.th_ar_balance', 'AR Balance')}: <b className="mono" dir="ltr" style={{ color: '#15803d' }}>${(selectedPartyProfile.ar_balance || 0).toFixed(2)}</b></div>
+                  <div>{t('finance:party_directory.th_ap_balance', 'AP Balance')}: <b className="mono" dir="ltr" style={{ color: '#b91c1c' }}>${(selectedPartyProfile.ap_balance || 0).toFixed(2)}</b></div>
+                  <div>{t('finance:party_directory.th_net_exposure', 'Net Exposure')}: <b className="mono" dir="ltr">${((selectedPartyProfile.ar_balance || 0) - (selectedPartyProfile.ap_balance || 0)).toFixed(2)}</b></div>
                 </div>
               </div>
 
               {/* Transactions Section */}
-              <div className="section-label" style={{ marginBottom: '8px' }}>Active Open Ledger Items</div>
+              <div className="section-label" style={{ marginBottom: '8px' }}>{t('finance:party_directory.active_open_ledger', 'Active Open Ledger Items')}</div>
               <div style={{ border: '1px solid var(--border-color)', borderRadius: '8px', overflow: 'hidden' }}>
                 <table>
                   <thead>
                     <tr>
-                      <th>Doc Type</th>
-                      <th>Reference #</th>
-                      <th>Due Date</th>
-                      <th>Amount</th>
-                      <th>Status</th>
+                      <th>{t('finance:party_directory.th_doc_type', 'Doc Type')}</th>
+                      <th>{t('common:table.reference', 'Reference #')}</th>
+                      <th>{t('finance:accounts_payable.th_due_date', 'Due Date')}</th>
+                      <th>{t('common:table.amount', 'Amount')}</th>
+                      <th>{t('finance:general_ledger.th_status', 'Status')}</th>
                     </tr>
                   </thead>
                   <tbody>
                     {(invoices || []).filter(i => i.customer_name === selectedPartyProfile.name).map(inv => (
                       <tr key={inv.invoice_id || inv.id}>
-                        <td><span className="tag-pill solid">AR Invoice</span></td>
-                        <td className="mono">{inv.invoice_number || inv.invoice_id}</td>
-                        <td className="mono">{inv.due_date}</td>
-                        <td className="mono">${(inv.total_amount || 0).toFixed(2)}</td>
+                        <td><span className="tag-pill solid">{t('finance:party_directory.tag_ar_invoice', 'AR Invoice')}</span></td>
+                        <td className="mono" dir="ltr">{inv.invoice_number || inv.invoice_id}</td>
+                        <td className="mono" dir="ltr">{inv.due_date}</td>
+                        <td className="mono" dir="ltr">${(inv.total_amount || 0).toFixed(2)}</td>
                         <td><span className="badge ok"><span className="d"></span>{inv.status}</span></td>
                       </tr>
                     ))}
                     {(bills || []).filter(b => b.vendor_name === selectedPartyProfile.name).map(b => (
                       <tr key={b.bill_id || b.id}>
-                        <td><span className="tag-pill">AP Bill</span></td>
-                        <td className="mono">{b.bill_number || b.bill_id}</td>
-                        <td className="mono">{b.due_date}</td>
-                        <td className="mono">${(b.total_amount || 0).toFixed(2)}</td>
+                        <td><span className="tag-pill">{t('finance:party_directory.tag_ap_bill', 'AP Bill')}</span></td>
+                        <td className="mono" dir="ltr">{b.bill_number || b.bill_id}</td>
+                        <td className="mono" dir="ltr">{b.due_date}</td>
+                        <td className="mono" dir="ltr">${(b.total_amount || 0).toFixed(2)}</td>
                         <td><span className="badge ok"><span className="d"></span>{b.payment_status}</span></td>
                       </tr>
                     ))}
@@ -320,7 +323,7 @@ function PartyDirectoryView() {
                      (bills || []).filter(b => b.vendor_name === selectedPartyProfile.name).length === 0 && (
                       <tr>
                         <td colSpan={5} style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '16px' }}>
-                          No active open documents. All accounts settled.
+                          {t('finance:party_directory.empty_docs', 'No active open documents. All accounts settled.')}
                         </td>
                       </tr>
                     )}
@@ -331,7 +334,7 @@ function PartyDirectoryView() {
 
             <div className="modal-footer">
               <button className="btn btn-ghost" onClick={() => setSelectedPartyProfile(null)}>
-                Close Profile
+                {t('common:actions.close', 'Close Profile')}
               </button>
             </div>
           </div>
@@ -343,7 +346,7 @@ function PartyDirectoryView() {
         <div className="modal-overlay" onClick={() => setIsAddModalOpen(false)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '580px' }}>
             <div className="modal-header">
-              <div className="modal-title">Register Master Counter-Party</div>
+              <div className="modal-title">{t('finance:party_directory.modal_add_party_title', 'Add New Master Counter-Party')}</div>
               <button className="modal-close-btn" onClick={() => setIsAddModalOpen(false)}>
                 <X size={16} />
               </button>
@@ -352,7 +355,7 @@ function PartyDirectoryView() {
             <form onSubmit={handleAddParty}>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '14px' }}>
                 <div>
-                  <label className="form-label">Operating Trade Name</label>
+                  <label className="form-label">{t('finance:party_directory.form_party_name', 'Trade / Common Name')}</label>
                   <input
                     className="input input-full"
                     placeholder="e.g. Apex Technologies"
@@ -362,7 +365,7 @@ function PartyDirectoryView() {
                   />
                 </div>
                 <div>
-                  <label className="form-label">Legal Registered Entity</label>
+                  <label className="form-label">{t('finance:party_directory.form_legal_name', 'Registered Legal Name')}</label>
                   <input
                     className="input input-full"
                     placeholder="e.g. Apex Tech LLC"
@@ -373,7 +376,7 @@ function PartyDirectoryView() {
               </div>
 
               <div style={{ marginBottom: '14px' }}>
-                <label className="form-label">Entity Master Roles</label>
+                <label className="form-label">{t('finance:party_directory.form_roles', 'Entity Roles')}</label>
                 <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
                   <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px', cursor: 'pointer' }}>
                     <input
@@ -381,7 +384,7 @@ function PartyDirectoryView() {
                       checked={newRoleCustomer}
                       onChange={(e) => setNewRoleCustomer(e.target.checked)}
                     />
-                    Customer (AR)
+                    {t('finance:party_directory.filter_customers', 'Customer (AR)')}
                   </label>
                   <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px', cursor: 'pointer' }}>
                     <input
@@ -389,23 +392,24 @@ function PartyDirectoryView() {
                       checked={newRoleVendor}
                       onChange={(e) => setNewRoleVendor(e.target.checked)}
                     />
-                    Vendor / Supplier (AP)
+                    {t('finance:party_directory.filter_vendors', 'Vendor / Supplier (AP)')}
                   </label>
                 </div>
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '14px' }}>
                 <div>
-                  <label className="form-label">TRN / Tax Registration Number</label>
+                  <label className="form-label">{t('finance:party_directory.form_trn', 'VAT Tax Registration Number (TRN)')}</label>
                   <input
                     className="input input-full mono"
+                    dir="ltr"
                     placeholder="TRN-100485920"
                     value={newTaxNumber}
                     onChange={(e) => setNewTaxNumber(e.target.value)}
                   />
                 </div>
                 <div>
-                  <label className="form-label">Payment Terms</label>
+                  <label className="form-label">{t('finance:accounts_payable.form_terms', 'Payment Terms')}</label>
                   <select
                     className="select"
                     style={{ width: '100%' }}
@@ -422,9 +426,10 @@ function PartyDirectoryView() {
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '16px' }}>
                 <div>
-                  <label className="form-label">Contact Email</label>
+                  <label className="form-label">{t('finance:party_directory.form_contact_email', 'Accounts Contact Email')}</label>
                   <input
                     type="email"
+                    dir="ltr"
                     className="input input-full"
                     placeholder="finance@party.com"
                     value={newEmail}
@@ -432,8 +437,9 @@ function PartyDirectoryView() {
                   />
                 </div>
                 <div>
-                  <label className="form-label">Phone Number</label>
+                  <label className="form-label">{t('finance:party_directory.form_phone', 'Phone Number')}</label>
                   <input
+                    dir="ltr"
                     className="input input-full"
                     placeholder="+1 (555) 0199"
                     value={newPhone}
@@ -444,10 +450,10 @@ function PartyDirectoryView() {
 
               <div className="modal-footer">
                 <button type="button" className="btn btn-ghost" onClick={() => setIsAddModalOpen(false)}>
-                  Cancel
+                  {t('common:actions.cancel', 'Cancel')}
                 </button>
                 <button type="submit" className="btn btn-primary">
-                  Save Master Party
+                  {t('common:actions.save', 'Save Master Party')}
                 </button>
               </div>
             </form>
