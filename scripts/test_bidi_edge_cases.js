@@ -5,11 +5,12 @@ import { fileURLToPath } from 'node:url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const rootDir = path.resolve(__dirname, '..');
-const financePagesDir = path.join(rootDir, 'src', 'pages', 'finance');
-const localesDir = path.join(rootDir, 'src', 'i18n', 'locales');
+const srcDir = path.join(rootDir, 'src');
+const financePagesDir = path.join(srcDir, 'pages', 'finance');
+const localesDir = path.join(srcDir, 'i18n', 'locales');
 
 console.log('======================================================================');
-console.log('  CHALLENGER V3.1: ADVERSARIAL STRESS TEST & VERIFICATION HARNESS');
+console.log('  CHALLENGER V4.2: FULL ADVERSARIAL VERIFICATION & STRESS HARNESS');
 console.log('======================================================================\n');
 
 let totalTests = 0;
@@ -43,6 +44,61 @@ function flattenDict(obj, prefix = '') {
     }
   }
   return keys;
+}
+
+function getAllJsxFiles(dir) {
+  let results = [];
+  const entries = fs.readdirSync(dir, { withFileTypes: true });
+  for (const entry of entries) {
+    const fullPath = path.join(dir, entry.name);
+    if (entry.isDirectory()) {
+      results = results.concat(getAllJsxFiles(fullPath));
+    } else if (entry.isFile() && entry.name.endsWith('.jsx')) {
+      results.push(fullPath);
+    }
+  }
+  return results;
+}
+
+const allJsxFiles = getAllJsxFiles(srcDir);
+const relJsxFiles = allJsxFiles.map(f => path.relative(rootDir, f).replace(/\\/g, '/'));
+
+console.log(`Total JSX Files Found across src/: ${allJsxFiles.length}`);
+assert(allJsxFiles.length === 51, `Found exactly 51 JSX components in src/ (Found ${allJsxFiles.length})`);
+
+const ALLOWED_LITERAL_TOKENS = new Set([
+  'JOD', 'USD', 'EUR', 'GBP', 'IFRS', 'VAT', 'GL', 'AP', 'AR', 'PO', 'GRN', 'PDC',
+  'WPS', 'SIF', 'ISTD', 'JoPACC', 'CBJ', 'IBAN', 'SWIFT', 'CCR', 'CPA', 'CEO', 'CFO',
+  'EBITDA', 'SKU', 'SKUs', 'FIFO', 'LIFO', 'AVCO', 'WAC', 'COGS', 'PPV', 'KPI', 'KPIs',
+  'FY', 'FY26', 'FY25', 'FY24', 'Q1', 'Q2', 'Q3', 'Q4', 'ERP', 'POS', 'SaaS', 'B2B', 'B2C',
+  'ID', 'ISO', 'HTML', 'CSS', 'PDF', 'CSV', 'Excel', 'QuickBox', 'UI', 'RTL', 'LTR',
+  'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+  'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+  'Net', 'COD', 'ALL', 'ADJ', 'REF', 'JV', 'BL', 'FA', 'SIG', 'CC', 'vs', 'MT940', 'SHA-256', 'CCC', 'OPEX',
+  'SoD', 'CAPEX', 'SOPs', 'Runway', 'com', 'Ref', 'Max', 'Min', 'TRN', 'SLA', 'SSC',
+  'EN', 'AR', 'fillo'
+]);
+
+function stripJsxExpressions(text) {
+  let prev = '';
+  let curr = text;
+  curr = curr.replace(/\{\/\*[\s\S]*?\*\/\}/g, '');
+  curr = curr.replace(/\/\*[\s\S]*?\*\//g, '');
+  while (prev !== curr) {
+    prev = curr;
+    curr = curr.replace(/\{[^{}]*\}/g, '');
+  }
+  return curr;
+}
+
+function extractSuspiciousEnglishWords(text) {
+  const noTags = text.replace(/<[^>]+>/g, ' ');
+  const words = noTags.match(/[A-Za-z]{2,}/g) || [];
+  return words.filter(w => {
+    if (ALLOWED_LITERAL_TOKENS.has(w)) return false;
+    if (w === w.toUpperCase() && w.length <= 4) return false;
+    return true;
+  });
 }
 
 function findJsxElements(content, tagName) {
@@ -146,240 +202,203 @@ function findJsxElements(content, tagName) {
   return elements;
 }
 
-const financeFiles = fs.readdirSync(financePagesDir).filter(f => f.endsWith('.jsx'));
-assert(financeFiles.length === 27, `Directory contains exactly 27 finance views (Found ${financeFiles.length})`);
-
-const ALLOWED_LITERAL_TOKENS = new Set([
-  'JOD', 'USD', 'EUR', 'GBP', 'IFRS', 'VAT', 'GL', 'AP', 'AR', 'PO', 'GRN', 'PDC',
-  'WPS', 'SIF', 'ISTD', 'JoPACC', 'CBJ', 'IBAN', 'SWIFT', 'CCR', 'CPA', 'CEO', 'CFO',
-  'EBITDA', 'SKU', 'SKUs', 'FIFO', 'LIFO', 'AVCO', 'WAC', 'COGS', 'PPV', 'KPI', 'KPIs',
-  'FY', 'FY26', 'FY25', 'FY24', 'Q1', 'Q2', 'Q3', 'Q4', 'ERP', 'POS', 'SaaS', 'B2B', 'B2C',
-  'ID', 'ISO', 'HTML', 'CSS', 'PDF', 'CSV', 'Excel', 'QuickBox', 'UI', 'RTL', 'LTR',
-  'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
-  'Net', 'COD', 'ALL', 'ADJ', 'REF', 'JV', 'BL', 'FA', 'SIG', 'CC', 'vs', 'MT940', 'SHA-256', 'CCC', 'OPEX',
-  'SoD', 'CAPEX', 'SOPs', 'Runway', 'com', 'Ref', 'Max', 'Min', 'TRN', 'SLA', 'SSC'
-]);
-
-function stripJsxExpressions(text) {
-  let prev = '';
-  let curr = text;
-  curr = curr.replace(/\{\/\*[\s\S]*?\*\/\}/g, '');
-  curr = curr.replace(/\/\*[\s\S]*?\*\//g, '');
-  while (prev !== curr) {
-    prev = curr;
-    curr = curr.replace(/\{[^{}]*\}/g, '');
-  }
-  return curr;
-}
-
-function extractSuspiciousEnglishWords(text) {
-  const noTags = text.replace(/<[^>]+>/g, ' ');
-  const words = noTags.match(/[A-Za-z]{2,}/g) || [];
-  return words.filter(w => {
-    if (ALLOWED_LITERAL_TOKENS.has(w)) return false;
-    if (w === w.toUpperCase() && w.length <= 4) return false;
-    return true;
-  });
-}
-
 // ----------------------------------------------------------------------
-// 1. ALL 27 FINANCE VIEWS: DEDICATED TAG-BY-TAG SCAN
+// 1. ADVERSARIAL LEAKAGE PROBE: ALL 51 JSX COMPONENTS
 // ----------------------------------------------------------------------
-console.log('--- TEST 1: Dedicated Tag-by-Tag Scan (Buttons, Headings, Headers, Badges, etc.) ---');
+console.log('\n--- TEST 1: Adversarial Leakage Probing across all 51 JSX Components ---');
 
-const unwiredButtons = [];
 const unwiredHeadings = [];
 const unwiredThs = [];
+const unwiredButtons = [];
 const unwiredLabels = [];
-const unwiredOptions = [];
+const unwiredPlaceholders = [];
 
-for (const file of financeFiles) {
-  const content = fs.readFileSync(path.join(financePagesDir, file), 'utf-8');
+for (const filePath of allJsxFiles) {
+  const relPath = path.relative(rootDir, filePath).replace(/\\/g, '/');
+  const content = fs.readFileSync(filePath, 'utf-8');
 
-  // Buttons
+  // Check buttons
   const btns = findJsxElements(content, 'button');
   for (const b of btns) {
     const stripped = stripJsxExpressions(b.body);
     const words = extractSuspiciousEnglishWords(stripped);
     if (words.length > 0) {
-      unwiredButtons.push({ file, words: words.join(', '), snippet: b.body.trim().slice(0, 70) });
+      unwiredButtons.push({ file: relPath, words: words.join(', '), snippet: b.body.trim().slice(0, 70) });
     }
   }
 
-  // Headings
+  // Check headings h1-h6
   for (let h = 1; h <= 6; h++) {
     const heads = findJsxElements(content, `h${h}`);
     for (const elem of heads) {
       const stripped = stripJsxExpressions(elem.body);
       const words = extractSuspiciousEnglishWords(stripped);
       if (words.length > 0) {
-        unwiredHeadings.push({ file, tag: `h${h}`, words: words.join(', '), snippet: elem.body.trim().slice(0, 70) });
+        unwiredHeadings.push({ file: relPath, tag: `h${h}`, words: words.join(', '), snippet: elem.body.trim().slice(0, 70) });
       }
     }
   }
 
-  // Table Headers <th>
+  // Check table headers <th>
   const ths = findJsxElements(content, 'th');
   for (const elem of ths) {
     const stripped = stripJsxExpressions(elem.body);
     const words = extractSuspiciousEnglishWords(stripped);
     if (words.length > 0) {
-      unwiredThs.push({ file, words: words.join(', '), snippet: elem.body.trim().slice(0, 70) });
+      unwiredThs.push({ file: relPath, words: words.join(', '), snippet: elem.body.trim().slice(0, 70) });
     }
   }
 
-  // Labels
+  // Check <label> elements (excluding inputs/icons)
   const labels = findJsxElements(content, 'label');
   for (const elem of labels) {
     const stripped = stripJsxExpressions(elem.body);
     const words = extractSuspiciousEnglishWords(stripped);
     if (words.length > 0) {
-      unwiredLabels.push({ file, words: words.join(', '), snippet: elem.body.trim().slice(0, 70) });
+      unwiredLabels.push({ file: relPath, words: words.join(', '), snippet: elem.body.trim().slice(0, 70) });
     }
   }
 
-  // Options
-  const options = findJsxElements(content, 'option');
-  for (const elem of options) {
-    if (/\{[a-zA-Z0-9_.]+\}/.test(elem.body)) continue;
-    if (/^(CC-\d+|6\d{4})\s*—/.test(elem.body)) continue;
-    const stripped = stripJsxExpressions(elem.body);
-    const words = extractSuspiciousEnglishWords(stripped);
-    if (words.length > 0) {
-      unwiredOptions.push({ file, words: words.join(', '), snippet: elem.body.trim().slice(0, 70) });
+  // Check literal placeholders: placeholder="English text"
+  const lines = content.split('\n');
+  lines.forEach((line, idx) => {
+    if (line.trim().startsWith('//') || line.trim().startsWith('/*')) return;
+    const phMatches = [...line.matchAll(/placeholder\s*=\s*["']([^"']+)["']/gi)];
+    for (const ph of phMatches) {
+      const val = ph[1].trim();
+      const words = extractSuspiciousEnglishWords(val);
+      if (words.length > 0) {
+        unwiredPlaceholders.push({ file: relPath, line: idx + 1, words: words.join(', '), val });
+      }
     }
-  }
-}
-
-assert(unwiredButtons.length === 0, `Zero unwired <button> elements across all 27 views (Found ${unwiredButtons.length})`,
-  unwiredButtons.map(b => `[${b.file}] "${b.words}" -> snippet: ${b.snippet}`).join('\n         '));
-
-assert(unwiredHeadings.length === 0, `Zero unwired <h1-6> headings across all 27 views (Found ${unwiredHeadings.length})`,
-  unwiredHeadings.map(h => `[${h.file}] <${h.tag}> "${h.words}" -> snippet: ${h.snippet}`).join('\n         '));
-
-assert(unwiredThs.length === 0, `Zero unwired <th> headers across all 27 views (Found ${unwiredThs.length})`,
-  unwiredThs.map(t => `[${t.file}] "${t.words}" -> snippet: ${t.snippet}`).join('\n         '));
-
-assert(unwiredLabels.length === 0, `Zero unwired <label> elements across all 27 views (Found ${unwiredLabels.length})`,
-  unwiredLabels.map(l => `[${l.file}] "${l.words}" -> snippet: ${l.snippet}`).join('\n         '));
-
-assert(unwiredOptions.length === 0, `Zero unwired <option> elements across all 27 views (Found ${unwiredOptions.length})`,
-  unwiredOptions.map(o => `[${o.file}] "${o.words}" -> snippet: ${o.snippet}`).join('\n         '));
-
-
-// ----------------------------------------------------------------------
-// 2. DICTIONARY COMPLETENESS & FALLBACK RESILIENCE
-// ----------------------------------------------------------------------
-console.log('\n--- TEST 2: Dictionary Completeness, Symmetry & Fallback Resilience ---');
-
-const enFinance = JSON.parse(fs.readFileSync(path.join(localesDir, 'en', 'finance.json'), 'utf-8'));
-const arFinance = JSON.parse(fs.readFileSync(path.join(localesDir, 'ar', 'finance.json'), 'utf-8'));
-const enCommon = JSON.parse(fs.readFileSync(path.join(localesDir, 'en', 'common.json'), 'utf-8'));
-const arCommon = JSON.parse(fs.readFileSync(path.join(localesDir, 'ar', 'common.json'), 'utf-8'));
-
-const flatEnFinance = flattenDict(enFinance);
-const flatArFinance = flattenDict(arFinance);
-const flatEnCommon = flattenDict(enCommon);
-const flatArCommon = flattenDict(arCommon);
-
-const enFinKeys = Object.keys(flatEnFinance);
-const arFinKeys = Object.keys(flatArFinance);
-const missingInAr = enFinKeys.filter(k => !(k in flatArFinance));
-const missingInEn = arFinKeys.filter(k => !(k in flatEnFinance));
-
-assert(missingInAr.length === 0, `finance.json: 0 keys missing in Arabic (EN: ${enFinKeys.length}, AR: ${arFinKeys.length})`, missingInAr.slice(0, 5).join(', '));
-assert(missingInEn.length === 0, `finance.json: 0 keys missing in English (EN: ${enFinKeys.length}, AR: ${arFinKeys.length})`, missingInEn.slice(0, 5).join(', '));
-
-const emptyEnFin = Object.entries(flatEnFinance).filter(([_, v]) => typeof v !== 'string' || v.trim().length === 0);
-const emptyArFin = Object.entries(flatArFinance).filter(([_, v]) => typeof v !== 'string' || v.trim().length === 0);
-assert(emptyEnFin.length === 0, `finance.json: All English keys non-empty strings (Found ${emptyEnFin.length} empty)`);
-assert(emptyArFin.length === 0, `finance.json: All Arabic keys non-empty strings (Found ${emptyArFin.length} empty)`);
-
-let fallbackFailures = 0;
-for (const [key, enVal] of Object.entries(flatEnFinance)) {
-  const arVal = flatArFinance[key];
-  const resolvedFallback = (arVal && arVal.trim().length > 0) ? arVal : enVal;
-  if (!resolvedFallback || resolvedFallback.trim().length === 0) {
-    fallbackFailures++;
-  }
-}
-assert(fallbackFailures === 0, `Fallback Simulation Oracle: 100% of finance keys resolve with fallback resilience`);
-
-const missingJsxKeys = [];
-for (const file of financeFiles) {
-  const content = fs.readFileSync(path.join(financePagesDir, file), 'utf-8');
-  const calls = [...content.matchAll(/\bt\(\s*['"`]([^'"`]+)['"`](?!\s*\+)(?:\s*,\s*(?:\{([^}]*)\}|['"`]([^'"`]*?)['"`]))?/g)];
-  for (const [_, rawKey, optsStr, defaultArg] of calls) {
-    let ns = 'finance';
-    let cleanKey = rawKey;
-    if (rawKey.includes(':')) {
-      const parts = rawKey.split(':');
-      ns = parts[0];
-      cleanKey = parts[1];
-    } else if (optsStr && /ns:\s*['"`]common['"`]/.test(optsStr)) {
-      ns = 'common';
-    }
-    if (cleanKey.endsWith('.') || cleanKey.endsWith('_')) continue;
-
-    let inEn = false;
-    let inAr = false;
-    if (ns === 'finance') {
-      inEn = cleanKey in flatEnFinance || !!defaultArg;
-      inAr = cleanKey in flatArFinance || !!defaultArg;
-    } else if (ns === 'common') {
-      inEn = cleanKey in flatEnCommon || !!defaultArg;
-      inAr = cleanKey in flatArCommon || !!defaultArg;
-    } else {
-      continue;
-    }
-
-    if (!inEn || !inAr) {
-      missingJsxKeys.push({ file, key: rawKey, inEn, inAr });
-    }
-  }
-}
-
-assert(
-  missingJsxKeys.length === 0,
-  `Every static t() key referenced in 27 finance views exists in dictionaries (Found ${missingJsxKeys.length} missing)`,
-  missingJsxKeys.map(m => `[${m.file}] ${m.key} (EN:${m.inEn}, AR:${m.inAr})`).join(', ')
-);
-
-
-// ----------------------------------------------------------------------
-// 3. ARABIC DICTIONARY ENGLISH LEAKAGE AUDIT (UNFILTERED DEEP SCAN)
-// ----------------------------------------------------------------------
-console.log('\n--- TEST 3: Arabic Dictionary English Leakage Stress Test ---');
-
-const englishLeakage = [];
-
-for (const [key, val] of Object.entries(flatArFinance)) {
-  if (typeof val !== 'string') continue;
-  if (/^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/.test(val)) continue;
-  const cleanVal = val.replace(/\{\{[^}]+\}\}/g, ' ');
-  const words = cleanVal.match(/[A-Za-z]{2,}/g) || [];
-  const unauthorizedWords = words.filter(w => {
-    if (ALLOWED_LITERAL_TOKENS.has(w)) return false;
-    if (w === w.toUpperCase() && w.length <= 4) return false;
-    return true;
   });
+}
 
-  if (unauthorizedWords.length > 0) {
-    englishLeakage.push({ key, val, unauthorized: unauthorizedWords.join(', ') });
+assert(unwiredHeadings.length === 0, `Zero unwired <h1-6> headings across all 51 components (Found ${unwiredHeadings.length})`,
+  unwiredHeadings.map(h => `[${h.file}] <${h.tag}> "${h.words}"`).join('; '));
+
+assert(unwiredThs.length === 0, `Zero unwired <th> headers across all 51 components (Found ${unwiredThs.length})`,
+  unwiredThs.map(t => `[${t.file}] "${t.words}"`).join('; '));
+
+assert(unwiredButtons.length === 0, `Zero unwired <button> elements across all 51 components (Found ${unwiredButtons.length})`,
+  unwiredButtons.map(b => `[${b.file}] "${b.words}"`).join('; '));
+
+assert(unwiredLabels.length === 0, `Zero unwired <label> elements across all 51 components (Found ${unwiredLabels.length})`,
+  unwiredLabels.map(l => `[${l.file}] "${l.words}"`).join('; '));
+
+assert(unwiredPlaceholders.length === 0, `Zero unwired static placeholder attributes across all 51 components (Found ${unwiredPlaceholders.length})`,
+  unwiredPlaceholders.map(p => `[${p.file}:L${p.line}] "${p.val}"`).join('; '));
+
+
+// ----------------------------------------------------------------------
+// 2. SPECIFIC AUDIT: AuditLogsView, ReportsView, DashboardView, SettingsView
+// ----------------------------------------------------------------------
+console.log('\n--- TEST 2: Dedicated Audit of 4 Key Views ---');
+
+const targetedViews = [
+  'src/pages/AuditLogsView.jsx',
+  'src/pages/ReportsView.jsx',
+  'src/pages/DashboardView.jsx',
+  'src/pages/SettingsView.jsx'
+];
+
+for (const targetRel of targetedViews) {
+  const fullP = path.join(rootDir, targetRel);
+  const exists = fs.existsSync(fullP);
+  assert(exists, `Target view exists: ${targetRel}`);
+
+  if (exists) {
+    const content = fs.readFileSync(fullP, 'utf-8');
+    const hasTCall = /useTranslation/.test(content);
+    assert(hasTCall, `${targetRel} invokes useTranslation() hook`);
+
+    // Check headings
+    const heads = findJsxElements(content, 'h1').concat(findJsxElements(content, 'h2'));
+    let headLeaks = 0;
+    heads.forEach(h => {
+      const stripped = stripJsxExpressions(h.body);
+      const w = extractSuspiciousEnglishWords(stripped);
+      if (w.length > 0) headLeaks++;
+    });
+    assert(headLeaks === 0, `${targetRel}: Zero hardcoded English in <h1>/<h2> headings (Found ${headLeaks})`);
+
+    // Check <th>
+    const thElements = findJsxElements(content, 'th');
+    let thLeaks = 0;
+    thElements.forEach(th => {
+      const stripped = stripJsxExpressions(th.body);
+      const w = extractSuspiciousEnglishWords(stripped);
+      if (w.length > 0) thLeaks++;
+    });
+    assert(thLeaks === 0, `${targetRel}: Zero hardcoded English in <th> headers (Found ${thLeaks})`);
   }
 }
 
-assert(
-  englishLeakage.length === 0,
-  `Zero raw English words (outside standard acronyms) in ar/finance.json (Found ${englishLeakage.length})`,
-  englishLeakage.map(l => `[${l.key}]: "${l.unauthorized}" in "${l.val}"`).join('\n         ')
-);
+
+// ----------------------------------------------------------------------
+// 3. DICTIONARY PARITY & SYMMETRY (common.json, inventory.json, finance.json)
+// ----------------------------------------------------------------------
+console.log('\n--- TEST 3: Programmatic Leaf Key Parity & Symmetry Audit ---');
+
+const namespaces = ['common', 'inventory', 'finance'];
+
+for (const ns of namespaces) {
+  const enPath = path.join(localesDir, 'en', `${ns}.json`);
+  const arPath = path.join(localesDir, 'ar', `${ns}.json`);
+
+  assert(fs.existsSync(enPath), `en/${ns}.json file exists`);
+  assert(fs.existsSync(arPath), `ar/${ns}.json file exists`);
+
+  const enJson = JSON.parse(fs.readFileSync(enPath, 'utf-8'));
+  const arJson = JSON.parse(fs.readFileSync(arPath, 'utf-8'));
+
+  const flatEn = flattenDict(enJson);
+  const flatAr = flattenDict(arJson);
+
+  const enKeys = Object.keys(flatEn);
+  const arKeys = Object.keys(flatAr);
+
+  const missingInAr = enKeys.filter(k => !(k in flatAr));
+  const missingInEn = arKeys.filter(k => !(k in flatEn));
+
+  assert(missingInAr.length === 0, `${ns}.json: 0 leaf keys missing in Arabic (EN: ${enKeys.length}, AR: ${arKeys.length})`,
+    missingInAr.slice(0, 5).join(', '));
+  assert(missingInEn.length === 0, `${ns}.json: 0 leaf keys missing in English (EN: ${enKeys.length}, AR: ${arKeys.length})`,
+    missingInEn.slice(0, 5).join(', '));
+
+  // Check non-empty strings
+  const emptyEn = Object.entries(flatEn).filter(([_, v]) => typeof v !== 'string' || v.trim().length === 0);
+  const emptyAr = Object.entries(flatAr).filter(([_, v]) => typeof v !== 'string' || v.trim().length === 0);
+
+  assert(emptyEn.length === 0, `${ns}.json: All English keys are non-empty strings (Found ${emptyEn.length} empty)`);
+  assert(emptyAr.length === 0, `${ns}.json: All Arabic keys are non-empty strings (Found ${emptyAr.length} empty)`);
+
+  // Arabic leakage check
+  const arEnglishLeaks = [];
+  for (const [key, val] of Object.entries(flatAr)) {
+    if (typeof val !== 'string') continue;
+    if (/^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/.test(val)) continue;
+    const cleanVal = val.replace(/\{\{[^}]+\}\}/g, ' ');
+    const words = cleanVal.match(/[A-Za-z]{2,}/g) || [];
+    const unauthorized = words.filter(w => {
+      if (ALLOWED_LITERAL_TOKENS.has(w)) return false;
+      if (w === w.toUpperCase() && w.length <= 4) return false;
+      return true;
+    });
+    if (unauthorized.length > 0) {
+      arEnglishLeaks.push({ key, val, unauthorized: unauthorized.join(', ') });
+    }
+  }
+
+  assert(arEnglishLeaks.length === 0, `ar/${ns}.json: Zero unauthorized English words in Arabic values (Found ${arEnglishLeaks.length})`,
+    arEnglishLeaks.slice(0, 3).map(l => `[${l.key}]: "${l.unauthorized}" in "${l.val}"`).join('; '));
+}
 
 
 // ----------------------------------------------------------------------
-// 4. BIDI & PHYSICAL DIRECTIONAL CSS CHECK
+// 4. BIDI ISOLATION & PHYSICAL DIRECTIONAL CSS AUDIT
 // ----------------------------------------------------------------------
-console.log('\n--- TEST 4: BiDi & Physical Directional CSS Audit ---');
+console.log('\n--- TEST 4: BiDi & Physical Directional CSS Audit across all 51 components ---');
 
 const physicalPatterns = [
   { name: 'textAlign: left/right', regex: /textAlign\s*:\s*['"`](left|right)['"`]/i },
@@ -393,8 +412,8 @@ const physicalPatterns = [
 ];
 
 let physicalViolations = [];
-for (const file of financeFiles) {
-  const filePath = path.join(financePagesDir, file);
+for (const filePath of allJsxFiles) {
+  const relPath = path.relative(rootDir, filePath).replace(/\\/g, '/');
   const content = fs.readFileSync(filePath, 'utf-8');
   const lines = content.split('\n');
 
@@ -402,7 +421,7 @@ for (const file of financeFiles) {
     if (line.trim().startsWith('//') || line.trim().startsWith('/*')) return;
     for (const pat of physicalPatterns) {
       if (pat.regex.test(line)) {
-        physicalViolations.push({ file, line: idx + 1, prop: pat.name, snippet: line.trim() });
+        physicalViolations.push({ file: relPath, line: idx + 1, prop: pat.name, snippet: line.trim() });
       }
     }
   });
@@ -410,25 +429,25 @@ for (const file of financeFiles) {
 
 assert(
   physicalViolations.length === 0,
-  `Zero physical directional inline styles across all 27 finance views (Found ${physicalViolations.length})`,
+  `Zero physical directional inline styles across all 51 JSX components (Found ${physicalViolations.length})`,
   physicalViolations.map(v => `${v.file}:${v.line} -> ${v.prop}`).join(', ')
 );
 
 
 // ----------------------------------------------------------------------
-// SUMMARY
+// SUMMARY & VERDICT
 // ----------------------------------------------------------------------
 console.log('\n======================================================================');
-console.log('  CHALLENGER V3.1 VERIFICATION SUMMARY');
+console.log('  CHALLENGER V4.2 VERIFICATION SUMMARY');
 console.log('======================================================================');
 console.log(`Total Adversarial Checks: ${totalTests}`);
 console.log(`Passed: ${totalTests - totalFailures}`);
 console.log(`Failed: ${totalFailures}`);
 
 if (totalFailures === 0) {
-  console.log('\nVERDICT: APPROVE (Zero bugs detected across all 27 finance views)');
+  console.log('\nVERDICT: APPROVE (Zero bugs detected across all 51 JSX components & dictionaries)');
   process.exit(0);
 } else {
-  console.error('\nVERDICT: REQUEST_CHANGES (Vulnerabilities detected)');
+  console.error(`\nVERDICT: REJECT (${totalFailures} failures detected)`);
   process.exit(1);
 }

@@ -136,7 +136,7 @@ function ReportsView() {
             <thead>
               <tr style={{ backgroundColor: '#f8fafc' }}>
                 <th style={thStyle}>{t('common:labels.category')}</th>
-                <th style={{ ...thStyle, textAlign: 'center' }}>SKU Count</th>
+                <th style={{ ...thStyle, textAlign: 'center' }}>{t('reports.th_sku_count')}</th>
                 <th style={{ ...thStyle, textAlign: 'end' }}>{t('reports.total_units_in_stock')}</th>
                 <th style={{ ...thStyle, textAlign: 'end' }}>{t('reports.currently_in_use')}</th>
                 <th style={{ ...thStyle, textAlign: 'end' }}>{t('reports.total_inventory_value')}</th>
@@ -205,13 +205,13 @@ function ReportsView() {
             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
               <thead>
                 <tr>
-                  <th style={thStyle}>Transaction ID</th>
+                  <th style={thStyle}>{t('reports.th_tx_id')}</th>
                   <th style={thStyle}>{t('common:labels.date')}</th>
-                  <th style={thStyle}>Type</th>
+                  <th style={thStyle}>{t('reports.th_type')}</th>
                   <th style={thStyle}>{t('common:labels.staff')}</th>
-                  <th style={{ ...thStyle, textAlign: 'center' }}>Items</th>
-                  <th style={thStyle}>From</th>
-                  <th style={thStyle}>To</th>
+                  <th style={{ ...thStyle, textAlign: 'center' }}>{t('reports.th_items')}</th>
+                  <th style={thStyle}>{t('reports.th_from')}</th>
+                  <th style={thStyle}>{t('reports.th_to')}</th>
                 </tr>
               </thead>
               <tbody>

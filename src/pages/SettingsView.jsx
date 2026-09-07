@@ -20,7 +20,7 @@ function SettingsView() {
           </div>
           <div className="form-group">
             <label>{t('common:settings.email_address')}</label>
-            <input type="email" className="form-control" defaultValue="washim@hotel.com" dir="ltr" className="bidi-ltr" />
+            <input type="email" className="form-control bidi-ltr" defaultValue="washim@hotel.com" dir="ltr" />
           </div>
           <div className="form-group">
             <label>{t('common:settings.role')}</label>
@@ -28,7 +28,7 @@ function SettingsView() {
           </div>
           <div className="form-group">
             <label>{t('common:settings.phone')}</label>
-            <input type="tel" className="form-control" defaultValue="+971 50 123 4567" dir="ltr" className="bidi-ltr" />
+            <input type="tel" className="form-control bidi-ltr" defaultValue="+962 79 123 4567" dir="ltr" />
           </div>
         </div>
 
@@ -38,19 +38,19 @@ function SettingsView() {
           <div className="form-group">
             <label>{t('common:settings.default_currency')}</label>
             <select className="form-control">
-              <option>AED (د.إ)</option>
+              <option>JOD (د.أ)</option>
               <option>USD ($)</option>
               <option>EUR (€)</option>
             </select>
           </div>
           <div className="form-group">
             <label>{t('common:settings.low_stock_threshold')}</label>
-            <input type="number" className="form-control" defaultValue="20" dir="ltr" className="bidi-ltr" />
+            <input type="number" className="form-control bidi-ltr" defaultValue="20" dir="ltr" />
           </div>
           <div className="form-group">
             <label>{t('common:settings.auto_generate_pos')}</label>
             <div style={{ marginTop: '8px' }}>
-              <input type="checkbox" id="autoPo" defaultChecked style={{ marginRight: '8px' }} />
+              <input type="checkbox" id="autoPo" defaultChecked style={{ marginInlineEnd: '8px' }} />
               <label htmlFor="autoPo" style={{ display: 'inline', fontWeight: 500 }}>{t('common:settings.enable_auto_po')}</label>
             </div>
           </div>

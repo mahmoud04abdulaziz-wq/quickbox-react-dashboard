@@ -60,7 +60,7 @@ function TransactionRow({ log }) {
             <span style={{ fontWeight: 500 }}>{log.staff}</span>
           </div>
         </td>
-        <td style={{ fontWeight: 600 }}>
+        <td dir="ltr" className="bidi-ltr" style={{ fontWeight: 600 }}>
           {t('audit.skus_count', { count: uniqueSkus })}
           <div style={{ fontSize: '11px', color: '#6b7280', fontWeight: 'normal' }}>
             {t('audit.units_count', { count: totalItemsCount })}
@@ -114,6 +114,7 @@ function TransactionRow({ log }) {
 }
 
 function AuditLogsView() {
+  const { t } = useTranslation(['inventory', 'common']);
   const { logs } = useInventory();
   const [filterAction, setFilterAction] = useState('All');
   const [filterStaff, setFilterStaff] = useState('All');
@@ -179,21 +180,21 @@ function AuditLogsView() {
   return (
     <>
       <div className="page-header">
-        <h1>Audit Logs</h1>
+        <h1>{t('audit.title')}</h1>
         <button 
           className="btn-primary" 
           onClick={handleExportCSV}
           style={{ display: 'flex', alignItems: 'center', gap: '6px' }}
         >
-          <DownloadSimple weight="bold" /> Export CSV
+          <DownloadSimple weight="bold" /> {t('audit.btn_export_csv')}
         </button>
       </div>
 
       <div className="metric-grid metric-grid-4">
         <div className="metric-card">
           <div>
-            <div className="metric-label">Total Batches</div>
-            <div className="metric-value">{logs.length}</div>
+            <div className="metric-label">{t('audit.total_batches')}</div>
+            <div className="metric-value bidi-ltr" dir="ltr">{logs.length}</div>
           </div>
         </div>
         <div 
@@ -205,8 +206,8 @@ function AuditLogsView() {
             <ArrowDown size={16} weight="bold" />
           </div>
           <div>
-            <div className="metric-label">Received</div>
-            <div className="metric-value" style={{ color: '#16a34a' }}>{receiveCount}</div>
+            <div className="metric-label">{t('audit.received')}</div>
+            <div className="metric-value bidi-ltr" dir="ltr" style={{ color: '#16a34a' }}>{receiveCount}</div>
           </div>
         </div>
         <div 
@@ -218,8 +219,8 @@ function AuditLogsView() {
             <ArrowUp size={16} weight="bold" />
           </div>
           <div>
-            <div className="metric-label">Issued</div>
-            <div className="metric-value" style={{ color: '#ea580c' }}>{issueCount}</div>
+            <div className="metric-label">{t('audit.issued')}</div>
+            <div className="metric-value bidi-ltr" dir="ltr" style={{ color: '#ea580c' }}>{issueCount}</div>
           </div>
         </div>
         <div 
@@ -231,8 +232,8 @@ function AuditLogsView() {
             <ArrowsLeftRight size={16} weight="bold" />
           </div>
           <div>
-            <div className="metric-label">Transferred</div>
-            <div className="metric-value" style={{ color: '#4f46e5' }}>{transferCount}</div>
+            <div className="metric-label">{t('audit.transferred')}</div>
+            <div className="metric-value bidi-ltr" dir="ltr" style={{ color: '#4f46e5' }}>{transferCount}</div>
           </div>
         </div>
       </div>
@@ -241,7 +242,7 @@ function AuditLogsView() {
         <div className="search-filter">
           <input 
             type="text" 
-            placeholder="Search batches, items, staff..." 
+            placeholder={t('audit.search_placeholder')} 
             value={searchTerm}
             onChange={e => setSearchTerm(e.target.value)}
           />
@@ -253,9 +254,9 @@ function AuditLogsView() {
           value={filterDate}
           onChange={e => setFilterDate(e.target.value)}
         >
-          <option value="Last 7 Days">Date: Last 7 days</option>
-          <option value="Last 30 Days">Last 30 days</option>
-          <option value="All Time">All time</option>
+          <option value="Last 7 Days">{t('common:filters.date_last_7')}</option>
+          <option value="Last 30 Days">{t('common:filters.date_last_30')}</option>
+          <option value="All Time">{t('common:filters.date_all_time')}</option>
         </select>
 
         <select 
@@ -264,7 +265,7 @@ function AuditLogsView() {
           value={filterStaff}
           onChange={e => setFilterStaff(e.target.value)}
         >
-          <option value="All">Staff: All</option>
+          <option value="All">{t('common:filters.staff_all')}</option>
           {staffList.map(staff => (
             <option key={staff} value={staff}>{staff}</option>
           ))}
@@ -276,28 +277,28 @@ function AuditLogsView() {
           value={filterAction}
           onChange={e => setFilterAction(e.target.value)}
         >
-          <option value="All">Action: All</option>
-          <option value="Receive">Receive</option>
-          <option value="Issue">Issue</option>
-          <option value="Transfer">Transfer</option>
-          <option value="Checkout">Checkout</option>
-          <option value="Return">Return</option>
+          <option value="All">{t('common:filters.action_all')}</option>
+          <option value="Receive">{t('stock_ops.movement_receive_short')}</option>
+          <option value="Issue">{t('stock_ops.movement_issue_short')}</option>
+          <option value="Transfer">{t('stock_ops.movement_transfer_short')}</option>
+          <option value="Checkout">{t('stock_ops.movement_checkout_short')}</option>
+          <option value="Return">{t('stock_ops.movement_return_short')}</option>
         </select>
       </div>
 
-      <div style={{ fontSize: '11px', color: '#9ca3af', marginBottom: '8px', paddingLeft: '2px' }}>
-        Showing {filteredLogs.length} of {logs.length} transactions
+      <div style={{ fontSize: '11px', color: '#9ca3af', marginBottom: '8px', paddingInlineStart: '2px' }}>
+        {t('audit.showing_transactions', { filtered: filteredLogs.length, total: logs.length })}
       </div>
 
       <div className="table-container">
         <table>
           <thead>
             <tr>
-              <th>Transaction ID / Date</th>
-              <th>Action</th>
-              <th>Location / Details</th>
-              <th>Staff</th>
-              <th>Batch Size</th>
+              <th>{t('audit.th_tx_id_date')}</th>
+              <th>{t('audit.th_action')}</th>
+              <th>{t('audit.th_location_details')}</th>
+              <th>{t('audit.th_staff')}</th>
+              <th>{t('audit.th_batch_size')}</th>
               <th></th>
             </tr>
           </thead>
@@ -308,7 +309,7 @@ function AuditLogsView() {
             {filteredLogs.length === 0 && (
               <tr>
                 <td colSpan="6" style={{ textAlign: 'center', color: '#9ca3af', padding: '30px' }}>
-                  No transaction logs match your filters.
+                  {t('audit.empty_logs')}
                 </td>
               </tr>
             )}

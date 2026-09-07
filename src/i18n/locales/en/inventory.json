@@ -23,7 +23,14 @@
     "th_stock": "Stock",
     "th_threshold": "Threshold",
     "th_level": "Level",
-    "th_status": "Status"
+    "th_status": "Status",
+    "cat_housekeeping": "Housekeeping",
+    "cat_linen": "Linen",
+    "cat_toiletries": "Toiletries",
+    "cat_paper_goods": "Paper Goods",
+    "cat_fb": "F&B",
+    "cat_maintenance": "Maintenance",
+    "alerts_count": "{{count}} alerts"
   },
   "master": {
     "title": "Inventory Master Grid",
@@ -190,6 +197,12 @@
     "th_available": "Available",
     "th_in_use": "In Use",
     "th_total_owned": "Total Owned",
+    "th_sku_count": "SKU Count",
+    "th_tx_id": "Transaction ID",
+    "th_type": "Type",
+    "th_items": "Items",
+    "th_from": "From",
+    "th_to": "To",
     "empty_inuse": "No items are currently checked out."
   },
   "purchase_orders": {

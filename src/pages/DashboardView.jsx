@@ -49,7 +49,15 @@ function DashboardView() {
   const areaPoints = `20,130 ${points} 480,130`;
 
   // Relative timestamps for activity feed
-  const relativeTimes = ['4 min ago', '22 min ago', '1 hr ago', '2 hr ago', '3 hr ago', '5 hr ago', '1 day ago'];
+  const relativeTimes = [
+    t('common:relative_time.minutes_ago', { count: 4 }),
+    t('common:relative_time.minutes_ago', { count: 22 }),
+    t('common:relative_time.hours_ago', { count: 1 }),
+    t('common:relative_time.hours_ago', { count: 2 }),
+    t('common:relative_time.hours_ago', { count: 3 }),
+    t('common:relative_time.hours_ago', { count: 5 }),
+    t('common:relative_time.days_ago', { count: 1 }),
+  ];
 
   return (
     <>
@@ -137,12 +145,12 @@ function DashboardView() {
                 color: '#374151'
               }}
             >
-              <option value="Housekeeping">Housekeeping ▾</option>
-              <option value="Linen">Linen ▾</option>
-              <option value="Toiletries">Toiletries ▾</option>
-              <option value="Paper Goods">Paper Goods ▾</option>
-              <option value="F&B">F&B ▾</option>
-              <option value="Maintenance">Maintenance ▾</option>
+              <option value="Housekeeping">{t('dashboard.cat_housekeeping')} ▾</option>
+              <option value="Linen">{t('dashboard.cat_linen')} ▾</option>
+              <option value="Toiletries">{t('dashboard.cat_toiletries')} ▾</option>
+              <option value="Paper Goods">{t('dashboard.cat_paper_goods')} ▾</option>
+              <option value="F&B">{t('dashboard.cat_fb')} ▾</option>
+              <option value="Maintenance">{t('dashboard.cat_maintenance')} ▾</option>
             </select>
           </div>
 
@@ -218,7 +226,7 @@ function DashboardView() {
                     <td dir="ltr" className="bidi-ltr">{cat.units.toLocaleString()}</td>
                     <td>
                       {cat.alerts > 0 ? (
-                        <span className="status low-stock">{cat.alerts} alert{cat.alerts > 1 ? 's' : ''}</span>
+                        <span className="status low-stock">{t('dashboard.alerts_count', { count: cat.alerts })}</span>
                       ) : (
                         <span className="status in-stock">{t('common:status.ok')}</span>
                       )}

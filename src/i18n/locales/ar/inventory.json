@@ -23,7 +23,14 @@
     "th_stock": "المخزون الحالي",
     "th_threshold": "الحد الأدنى",
     "th_level": "مستوى التوفر",
-    "th_status": "الحالة"
+    "th_status": "الحالة",
+    "cat_housekeeping": "التدبير الفندقي",
+    "cat_linen": "المفروشات والكتان",
+    "cat_toiletries": "مستلزمات النظافة",
+    "cat_paper_goods": "المنتجات الورقية",
+    "cat_fb": "الأغذية والمشروبات",
+    "cat_maintenance": "الصيانة العامة",
+    "alerts_count": "{{count}} تنبيه"
   },
   "master": {
     "title": "سجل المخزون العام",
@@ -190,6 +197,12 @@
     "th_available": "المتوفر بالمخزن",
     "th_in_use": "قيد الاستخدام",
     "th_total_owned": "إجمالي الأصول المملوكة",
+    "th_sku_count": "عدد الأصناف (SKU)",
+    "th_tx_id": "معرف الحركة",
+    "th_type": "النوع",
+    "th_items": "الأصناف",
+    "th_from": "من",
+    "th_to": "إلى",
     "empty_inuse": "لا توجد معدات أو أدوات مصروفة حالياً كعهدة."
   },
   "purchase_orders": {
