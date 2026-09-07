@@ -57,11 +57,11 @@ function TenderBidAuditingView() {
   const [bidDeliveryDays, setBidDeliveryDays] = useState(14);
   const [bidWarrantyMonths, setBidWarrantyMonths] = useState(12);
 
-  const selectedTender = tenders.find(t => t.tender_id === selectedTenderId) || tenders[0];
+  const selectedTender = tenders.find(tndr => tndr.tender_id === selectedTenderId) || tenders[0];
 
   // Calculated Summary Metrics
-  const totalTenderVolume = tenders.reduce((sum, t) => sum + t.budget_amount, 0);
-  const totalBidsCount = tenders.reduce((sum, t) => sum + (t.bids?.length || 0), 0);
+  const totalTenderVolume = tenders.reduce((sum, tndr) => sum + tndr.budget_amount, 0);
+  const totalBidsCount = tenders.reduce((sum, tndr) => sum + (tndr.bids?.length || 0), 0);
   const totalGuaranteesHeld = (bankGuarantees || []).reduce((sum, bg) => sum + bg.amount, 0);
 
   const handleCreateTenderSubmit = (e) => {
@@ -253,27 +253,27 @@ function TenderBidAuditingView() {
                   </tr>
                 </thead>
                 <tbody>
-                  {tenders.map((t) => (
+                  {tenders.map((tender) => (
                     <tr
-                      key={t.tender_id}
-                      style={{ background: selectedTenderId === t.tender_id ? '#f0fdf4' : 'transparent', cursor: 'pointer' }}
-                      onClick={() => setSelectedTenderId(t.tender_id)}
+                      key={tender.tender_id}
+                      style={{ background: selectedTenderId === tender.tender_id ? '#f0fdf4' : 'transparent', cursor: 'pointer' }}
+                      onClick={() => setSelectedTenderId(tender.tender_id)}
                     >
-                      <td className="mono bidi-ltr" dir="ltr" style={{ fontWeight: 700 }}>{t.reference_code}</td>
-                      <td style={{ fontWeight: 600 }}>{t.title}</td>
-                      <td><span className="tag-pill solid">{t.category}</span></td>
-                      <td style={{ fontSize: '11.5px', color: 'var(--text-muted)' }}>{t.procurement_method}</td>
+                      <td className="mono bidi-ltr" dir="ltr" style={{ fontWeight: 700 }}>{tender.reference_code}</td>
+                      <td style={{ fontWeight: 600 }}>{tender.title}</td>
+                      <td><span className="tag-pill solid">{tender.category}</span></td>
+                      <td style={{ fontSize: '11.5px', color: 'var(--text-muted)' }}>{tender.procurement_method}</td>
                       <td style={{ textAlign: 'end', fontWeight: 700 }} className="mono bidi-ltr" dir="ltr">
-                        JOD <span className="bidi-ltr" dir="ltr">{t.budget_amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
+                        JOD <span className="bidi-ltr" dir="ltr">{tender.budget_amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
                       </td>
-                      <td className="mono bidi-ltr" dir="ltr" style={{ fontSize: '11.5px' }}>{t.submission_deadline}</td>
-                      <td style={{ textAlign: 'center', fontWeight: 600 }} className="mono bidi-ltr" dir="ltr">{t.bids?.length || 0}</td>
+                      <td className="mono bidi-ltr" dir="ltr" style={{ fontSize: '11.5px' }}>{tender.submission_deadline}</td>
+                      <td style={{ textAlign: 'center', fontWeight: 600 }} className="mono bidi-ltr" dir="ltr">{tender.bids?.length || 0}</td>
                       <td style={{ textAlign: 'center' }}>
-                        <span className="badge ok"><span className="bidi-ltr" dir="ltr">{t.audit_compliance_score}%</span></span>
+                        <span className="badge ok"><span className="bidi-ltr" dir="ltr">{tender.audit_compliance_score}%</span></span>
                       </td>
                       <td style={{ textAlign: 'center' }}>
-                        <span className={`badge ${t.status === 'Awarded' ? 'ok' : t.status === 'Under_Evaluation' ? 'warn' : 'ok'}`}>
-                          <span className="d"></span> {t.status.replace(/_/g, ' ')}
+                        <span className={`badge ${tender.status === 'Awarded' ? 'ok' : tender.status === 'Under_Evaluation' ? 'warn' : 'ok'}`}>
+                          <span className="d"></span> {tender.status.replace(/_/g, ' ')}
                         </span>
                       </td>
                       <td style={{ textAlign: 'center' }}>
@@ -281,7 +281,7 @@ function TenderBidAuditingView() {
                           className="btn-secondary"
                           onClick={(e) => {
                             e.stopPropagation();
-                            setSelectedTenderId(t.tender_id);
+                            setSelectedTenderId(tender.tender_id);
                             setActiveTab('bid-evaluation');
                           }}
                           style={{ fontSize: '11px', padding: '3px 8px' }}
