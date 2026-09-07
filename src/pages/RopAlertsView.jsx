@@ -134,7 +134,7 @@ function RopAlertsView() {
                 {isEditingDraft ? t('rop_alerts.btn_done_editing') : t('rop_alerts.btn_edit_draft')}
               </button>
               {requestSent && (
-                <span style={{ fontSize: '12px', color: '#16a34a', fontWeight: 600, marginLeft: '8px' }}>
+                <span style={{ fontSize: '12px', color: '#16a34a', fontWeight: 600, marginInlineStart: '8px' }}>
                   {t('rop_alerts.toast_transmitted')}
                 </span>
               )}
@@ -166,12 +166,12 @@ function RopAlertsView() {
                     : <WarningCircle size={22} color="#f59e0b" weight="bold" />
                   }
                   <h3>{item.name}</h3>
-                  <span className={`status ${item.statusClass}`} style={{ marginLeft: 'auto' }}>
+                  <span className={`status ${item.statusClass}`} style={{ marginInlineStart: 'auto' }}>
                     {t(`common:status.${item.status.toLowerCase().replace(/ /g, '_')}`, { defaultValue: item.status })}
                   </span>
                 </div>
                 <div className="alert-card-meta">
-                  SKU: <span dir="ltr" className="bidi-ltr">{item.sku}</span> &bull; Location: {item.location} &bull; Category: {item.category}
+                  {t('common:labels.sku')}: <span dir="ltr" className="bidi-ltr">{item.sku}</span> &bull; {t('rop_alerts.lbl_location')}: {item.location} &bull; {t('rop_alerts.lbl_category')}: {item.category}
                 </div>
                 
                 <div className="alert-stats">

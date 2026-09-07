@@ -88,7 +88,8 @@ function StockOpsView() {
     const destination = (movementType === 'Receive' || movementType === 'Return') ? warehouse : referenceNo || 'Consumed/User';
 
     processBatchTransaction(movementType, cart, source, destination);
-    showToast(t('stock_ops.toast_processed', { type: movementType, count: cart.length }));
+    const movementTypeLabel = t('stock_ops.movement_' + movementType.toLowerCase(), { defaultValue: movementType });
+    showToast(t('stock_ops.toast_processed', { type: movementTypeLabel, count: cart.length }));
     
     // Reset transaction
     setCart([]);
@@ -344,10 +345,10 @@ function StockOpsView() {
                     {showPrice && (
                       <>
                         <td dir="ltr" className="bidi-ltr" style={{ padding: '16px 16px', textAlign: 'end', color: '#475569' }}>
-                          ${(item.unitCost || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                          JOD {(item.unitCost || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </td>
                         <td dir="ltr" className="bidi-ltr" style={{ padding: '16px 16px', textAlign: 'end', color: '#1e293b', fontWeight: 600 }}>
-                          ${(item.qty * (item.unitCost || 0)).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                          JOD {(item.qty * (item.unitCost || 0)).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </td>
                       </>
                     )}
@@ -395,7 +396,8 @@ function StockOpsView() {
                         type="button" 
                         style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer', padding: '4px' }}
                         onClick={() => handleRemoveFromCart(item.sku)}
-                        title="Remove Item"
+                        title={t('common:actions.delete', { defaultValue: 'Remove Item' })}
+                        aria-label={t('common:actions.delete', { defaultValue: 'Remove Item' })}
                       >
                         ✕
                       </button>
@@ -443,7 +445,7 @@ function StockOpsView() {
           )}
 
           {/* Right Panel Footer */}
-          <div style={{ padding: '24px', borderTop: '1px solid #e2e8f0', display: 'flex', justifyContent: 'flex-end', backgroundColor: '#f8fafc', borderBottomLeftRadius: '12px', borderBottomRightRadius: '12px' }}>
+          <div style={{ padding: '24px', borderTop: '1px solid #e2e8f0', display: 'flex', justifyContent: 'flex-end', backgroundColor: '#f8fafc', borderEndStartRadius: '12px', borderEndEndRadius: '12px' }}>
             <button 
               type="button" 
               style={{ 

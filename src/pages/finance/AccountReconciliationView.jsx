@@ -2,31 +2,29 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFinance } from '../../context/FinanceContext';
 import {
+  Scales,
   ArrowsClockwise,
-  Bank,
   CheckCircle,
   Warning,
   Plus,
   X,
-  FileText,
   Lock,
-  ArrowRight,
-  Receipt,
-  Scales,
-  ShieldCheck,
-  TrendUp
+  ArrowUpRight,
+  ArrowDownLeft,
+  Calendar,
+  Bank,
+  FileText
 } from '@phosphor-icons/react';
 
 function AccountReconciliationView() {
-  const { t } = useTranslation('finance');
+  const { t } = useTranslation(['finance', 'common']);
   const {
-    bankAccounts,
-    bankTransactions,
     reconciliations,
+    bankTransactions,
     unmatchedBankTransactions,
     reconciliationLogs,
-    reconcileAccount,
-    addReconciliationAdjustment,
+    postBankAdjustmentVoucher,
+    certifyReconciliationPeriod,
     matchTransaction,
     journalEntries
   } = useFinance();
@@ -35,66 +33,60 @@ function AccountReconciliationView() {
   const [selectedBankId, setSelectedBankId] = useState('BANK-01');
   const [isAdjModalOpen, setIsAdjModalOpen] = useState(false);
   const [isSignOffModalOpen, setIsSignOffModalOpen] = useState(false);
-  const [adjSuccess, setAdjSuccess] = useState(null);
 
-  // Form State for Adjustment Voucher
-  const [adjAmount, setAdjAmount] = useState(-54.00);
+  // Adjustment Modal Form State
+  const [adjMemo, setAdjMemo] = useState('Bank routine maintenance charge');
+  const [adjRef, setAdjRef] = useState(`ADJ-${Date.now().toString().slice(-4)}`);
+  const [adjAmount, setAdjAmount] = useState(-50.00);
   const [adjGlAccount, setAdjGlAccount] = useState('66100');
-  const [adjMemo, setAdjMemo] = useState('POS Merchant settlement discount fee (1.2%)');
-  const [adjRef, setAdjRef] = useState('POS-ARB-4412');
-  const [adjItemId, setAdjItemId] = useState('UNM-003');
+  const [adjItemId, setAdjItemId] = useState(null);
 
-  // Form State for Period Sign-off
-  const [signOffReviewer, setSignOffReviewer] = useState('Layla Salem (Certified Auditor)');
-  const [signOffNotes, setSignOffNotes] = useState('Monthly account reconciliation verified with Jordan Central Bank JoPACC statement feed. Equilibrium confirmed.');
+  // Sign-off Modal Form State
+  const [signOffReviewer, setSignOffReviewer] = useState('Sarah Nasser (CFO)');
+  const [signOffNotes, setSignOffNotes] = useState('Certified reconciliation without outstanding unexplained variances.');
 
-  // Current selected reconciliation object
+  // Current selected bank reconciliation
   const currentRecon = reconciliations.find(r => r.bank_account_id === selectedBankId) || reconciliations[0];
-  const currentBankAccount = bankAccounts.find(b => b.bank_account_id === selectedBankId) || bankAccounts[0];
+
+  // Book transactions (from GL journalEntries linked to this account)
+  const bookTxns = journalEntries.filter(jv =>
+    (jv.lines || []).some(l => l.account_code === currentRecon?.gl_account_code)
+  );
 
   // Calculated Metrics
-  const totalReconciledCash = reconciliations.reduce((sum, r) => sum + r.adjusted_book_balance, 0);
-  const totalUnreconciledDiff = reconciliations.reduce((sum, r) => sum + Math.abs(r.unreconciled_difference), 0);
+  const totalUnreconciledDiff = reconciliations.reduce((sum, r) => sum + Math.abs(r.unreconciled_difference || 0), 0);
   const pendingUnmatchedCount = unmatchedBankTransactions.filter(u => u.status === 'Unmatched' || u.status === 'Deposit_In_Transit').length;
-  const matchRate = 98.6;
-
-  // Filter book transactions vs bank statement
-  const bookTxns = journalEntries.filter(jv =>
-    jv.lines.some(l => l.account_code === currentRecon?.gl_account_code)
-  ).slice(0, 8);
+  const matchRate = 98.4;
 
   const handlePostAdjustment = (e) => {
     e.preventDefault();
-    const res = addReconciliationAdjustment({
-      bank_account_id: selectedBankId,
-      gl_account_code: adjGlAccount,
-      amount: adjAmount,
-      description: adjMemo,
-      reference: adjRef,
-      item_id: adjItemId
-    });
-    setAdjSuccess(`Posted Adjustment Voucher ${res.voucherNum} (JOD ${res.adjAmount.toFixed(2)})`);
+    if (postBankAdjustmentVoucher) {
+      postBankAdjustmentVoucher({
+        memo: adjMemo,
+        reference: adjRef,
+        amount: parseFloat(adjAmount) || 0,
+        gl_account_code: adjGlAccount,
+        bank_account_id: selectedBankId,
+        item_id: adjItemId
+      });
+    }
     setIsAdjModalOpen(false);
-    setTimeout(() => setAdjSuccess(null), 5000);
   };
 
   const handleSignOffSubmit = (e) => {
     e.preventDefault();
-    if (currentRecon) {
-      reconcileAccount(currentRecon.reconciliation_id, {
-        reviewer: signOffReviewer,
-        notes: signOffNotes
-      });
+    if (certifyReconciliationPeriod) {
+      certifyReconciliationPeriod(selectedBankId, signOffReviewer, signOffNotes);
     }
     setIsSignOffModalOpen(false);
   };
 
   const handleQuickAdjustItem = (item) => {
+    setAdjItemId(item.item_id);
+    setAdjMemo(`Reconciliation Adj: ${item.description}`);
+    setAdjRef(item.reference || `ADJ-${item.item_id}`);
     setAdjAmount(item.amount);
     setAdjGlAccount(item.suggested_gl_account || '66100');
-    setAdjMemo(item.description);
-    setAdjRef(item.reference);
-    setAdjItemId(item.item_id);
     setIsAdjModalOpen(true);
   };
 
@@ -110,40 +102,24 @@ function AccountReconciliationView() {
         </div>
         <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
           <span className="badge ok">
-            <span className="d"></span> {t('reconciliation.badge_cbj')}
+            <span className="d"></span> {t('reconciliation.badge_realtime_feed')}
+          </span>
+          <span className="badge ok">
+            <span className="d"></span> {t('reconciliation.badge_hash_verified')}
           </span>
           <button
             className="btn-primary"
             onClick={() => setIsSignOffModalOpen(true)}
             style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', padding: '6px 12px' }}
           >
-            <ShieldCheck size={14} weight="bold" />
-            <span>{t('reconciliation.btn_sign_off')}</span>
+            <Lock size={14} weight="bold" />
+            <span>{t('reconciliation.btn_certify_lock')}</span>
           </button>
         </div>
       </div>
 
-      {/* Success Notification Alert */}
-      {adjSuccess && (
-        <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', padding: '10px 14px', borderRadius: '6px', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px', color: '#15803d', fontSize: '12px' }}>
-          <CheckCircle size={16} weight="bold" />
-          <span>{adjSuccess}</span>
-        </div>
-      )}
-
-      {/* 4 KPI Summary Cards */}
-      <div className="metrics-4" style={{ marginBottom: '20px' }}>
-        <div className="card metric-card">
-          <div className="metric-top">
-            <span className="metric-label">{t('reconciliation.kpi_reconciled_cash')}</span>
-            <div className="metric-icon" style={{ background: '#f0fdf4', color: '#15803d' }}>
-              <Bank size={16} weight="bold" />
-            </div>
-          </div>
-          <div className="metric-value bidi-ltr" dir="ltr">JOD {totalReconciledCash.toLocaleString(undefined, { minimumFractionDigits: 2 })}</div>
-          <div className="metric-delta">{t('reconciliation.kpi_reconciled_cash_delta')}</div>
-        </div>
-
+      {/* 3 KPI Cards */}
+      <div className="metrics-3" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px', marginBottom: '20px' }}>
         <div className="card metric-card">
           <div className="metric-top">
             <span className="metric-label">{t('reconciliation.kpi_variance')}</span>
@@ -208,7 +184,7 @@ function AccountReconciliationView() {
           {/* Account Selector Bar */}
           <div className="card" style={{ padding: '12px 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-muted)' }}>Select Bank Account:</span>
+              <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-muted)' }}>{t('reconciliation.lbl_select_bank')}</span>
               <div style={{ display: 'flex', gap: '8px' }}>
                 {reconciliations.map((r) => (
                   <button
@@ -225,16 +201,16 @@ function AccountReconciliationView() {
 
             <div style={{ display: 'flex', gap: '16px', fontSize: '12px' }}>
               <div>
-                <span style={{ color: 'var(--text-muted)' }}>Statement Ending Balance: </span>
-                <span className="mono" style={{ fontWeight: 700 }}>JOD {currentRecon?.statement_ending_balance.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
+                <span style={{ color: 'var(--text-muted)' }}>{t('reconciliation.lbl_statement_ending_bal')} </span>
+                <span className="mono bidi-ltr" dir="ltr" style={{ fontWeight: 700 }}>JOD {currentRecon?.statement_ending_balance.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
               </div>
               <div>
-                <span style={{ color: 'var(--text-muted)' }}>Book Balance: </span>
-                <span className="mono" style={{ fontWeight: 700 }}>JOD {currentRecon?.book_ending_balance.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
+                <span style={{ color: 'var(--text-muted)' }}>{t('reconciliation.lbl_book_bal')} </span>
+                <span className="mono bidi-ltr" dir="ltr" style={{ fontWeight: 700 }}>JOD {currentRecon?.book_ending_balance.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
               </div>
               <div>
-                <span style={{ color: 'var(--text-muted)' }}>Difference: </span>
-                <span className="mono" style={{ fontWeight: 700, color: 'var(--primary-green)' }}>JOD {currentRecon?.unreconciled_difference.toFixed(2)}</span>
+                <span style={{ color: 'var(--text-muted)' }}>{t('reconciliation.lbl_diff')} </span>
+                <span className="mono bidi-ltr" dir="ltr" style={{ fontWeight: 700, color: 'var(--primary-green)' }}>JOD {currentRecon?.unreconciled_difference.toFixed(2)}</span>
               </div>
             </div>
           </div>
@@ -245,10 +221,10 @@ function AccountReconciliationView() {
             <div className="card" style={{ padding: '16px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
                 <div>
-                  <h4 style={{ margin: 0, fontSize: '13px', fontWeight: 700 }}>General Ledger Book Records (GL {currentRecon?.gl_account_code})</h4>
-                  <div style={{ fontSize: '11.5px', color: 'var(--text-muted)' }}>ERP Double-Entry Journal Vouchers</div>
+                  <h4 style={{ margin: 0, fontSize: '13px', fontWeight: 700 }}>{t('reconciliation.h_gl_records', { code: currentRecon?.gl_account_code })}</h4>
+                  <div style={{ fontSize: '11.5px', color: 'var(--text-muted)' }}>{t('reconciliation.h_gl_records_sub')}</div>
                 </div>
-                <span className="badge ok"><span className="d"></span> GL Linked</span>
+                <span className="badge ok"><span className="d"></span> {t('reconciliation.badge_gl_linked')}</span>
               </div>
 
               <div className="table-responsive">
@@ -256,11 +232,11 @@ function AccountReconciliationView() {
                   <thead>
                     <tr>
                       <th>{t('common:th_date', { defaultValue: 'Date' })}</th>
-                      <th>JV Ref</th>
+                      <th>{t('reconciliation.th_jv_ref')}</th>
                       <th>{t('common:th_description', { defaultValue: 'Description' })}</th>
-                      <th style={{ textAlign: 'end' }}>Debit (In)</th>
-                      <th style={{ textAlign: 'end' }}>Credit (Out)</th>
-                      <th style={{ textAlign: 'center' }}>Cleared</th>
+                      <th style={{ textAlign: 'end' }}>{t('reconciliation.th_debit_in')}</th>
+                      <th style={{ textAlign: 'end' }}>{t('reconciliation.th_credit_out')}</th>
+                      <th style={{ textAlign: 'center' }}>{t('reconciliation.th_cleared')}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -268,15 +244,15 @@ function AccountReconciliationView() {
                       const line = jv.lines.find(l => l.account_code === currentRecon?.gl_account_code);
                       return (
                         <tr key={jv.journal_id}>
-                          <td className="mono">{jv.posting_date}</td>
-                          <td className="mono" style={{ fontWeight: 600 }}>{jv.voucher_number}</td>
+                          <td className="mono bidi-ltr" dir="ltr">{jv.posting_date}</td>
+                          <td className="mono bidi-ltr" dir="ltr" style={{ fontWeight: 600 }}>{jv.voucher_number}</td>
                           <td style={{ maxWidth: '160px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                             {jv.memo}
                           </td>
-                          <td style={{ textAlign: 'end', color: line?.debit_amount > 0 ? 'var(--primary-green)' : 'inherit' }} className="mono">
+                          <td style={{ textAlign: 'end', color: line?.debit_amount > 0 ? 'var(--primary-green)' : 'inherit' }} className="mono bidi-ltr" dir="ltr">
                             {line?.debit_amount > 0 ? `JOD ${line.debit_amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}` : '—'}
                           </td>
-                          <td style={{ textAlign: 'end', color: line?.credit_amount > 0 ? '#ef4444' : 'inherit' }} className="mono">
+                          <td style={{ textAlign: 'end', color: line?.credit_amount > 0 ? '#ef4444' : 'inherit' }} className="mono bidi-ltr" dir="ltr">
                             {line?.credit_amount > 0 ? `JOD ${line.credit_amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}` : '—'}
                           </td>
                           <td style={{ textAlign: 'center' }}>
@@ -294,34 +270,34 @@ function AccountReconciliationView() {
             <div className="card" style={{ padding: '16px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
                 <div>
-                  <h4 style={{ margin: 0, fontSize: '13px', fontWeight: 700 }}>Electronic Bank Feed ({currentRecon?.bank_name.split(' (')[0]})</h4>
-                  <div style={{ fontSize: '11.5px', color: 'var(--text-muted)' }}>JoPACC / SWIFT Direct Bank Statement</div>
+                  <h4 style={{ margin: 0, fontSize: '13px', fontWeight: 700 }}>{t('reconciliation.h_bank_feed', { name: currentRecon?.bank_name.split(' (')[0] })}</h4>
+                  <div style={{ fontSize: '11.5px', color: 'var(--text-muted)' }}>{t('reconciliation.h_bank_feed_sub')}</div>
                 </div>
-                <span className="badge ok"><span className="d"></span> MT940 Synced</span>
+                <span className="badge ok"><span className="d"></span> {t('reconciliation.badge_mt940_synced')}</span>
               </div>
 
               <div className="table-responsive">
                 <table className="table" style={{ width: '100%', fontSize: '11.5px' }}>
                   <thead>
                     <tr>
-                      <th>Txn Date</th>
-                      <th>Bank Ref</th>
-                      <th>Transaction Narrative</th>
-                      <th style={{ textAlign: 'end' }}>Amount (JOD)</th>
-                      <th style={{ textAlign: 'center' }}>Status</th>
+                      <th>{t('reconciliation.th_txn_date')}</th>
+                      <th>{t('reconciliation.th_bank_ref')}</th>
+                      <th>{t('reconciliation.th_txn_narrative')}</th>
+                      <th style={{ textAlign: 'end' }}>{t('reconciliation.th_amount_jod')}</th>
+                      <th style={{ textAlign: 'center' }}>{t('common:th_status', { defaultValue: 'Status' })}</th>
                     </tr>
                   </thead>
                   <tbody>
                     {bankTransactions.map((tx) => (
                       <tr key={tx.txn_id}>
-                        <td className="mono">{tx.date}</td>
-                        <td className="mono" style={{ fontWeight: 600 }}>{tx.reference}</td>
+                        <td className="mono bidi-ltr" dir="ltr">{tx.date}</td>
+                        <td className="mono bidi-ltr" dir="ltr" style={{ fontWeight: 600 }}>{tx.reference}</td>
                         <td>{tx.description}</td>
-                        <td style={{ textAlign: 'end', fontWeight: 600, color: tx.amount >= 0 ? 'var(--primary-green)' : '#ef4444' }} className="mono">
+                        <td style={{ textAlign: 'end', fontWeight: 600, color: tx.amount >= 0 ? 'var(--primary-green)' : '#ef4444' }} className="mono bidi-ltr" dir="ltr">
                           {tx.amount >= 0 ? `+JOD ${tx.amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}` : `-JOD ${Math.abs(tx.amount).toLocaleString(undefined, { minimumFractionDigits: 2 })}`}
                         </td>
                         <td style={{ textAlign: 'center' }}>
-                          <span className="badge ok"><span className="d"></span> {tx.status}</span>
+                          <span className="badge ok"><span className="d"></span> {t('reconciliation.status_' + tx.status.toLowerCase().replace(/ /g, '_'), { defaultValue: tx.status })}</span>
                         </td>
                       </tr>
                     ))}
@@ -339,9 +315,9 @@ function AccountReconciliationView() {
           <div className="card" style={{ padding: '16px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
               <div>
-                <h3 style={{ margin: 0, fontSize: '14px', fontWeight: 600 }}>Discrepancy Investigation &amp; Adjustment Queue</h3>
+                <h3 style={{ margin: 0, fontSize: '14px', fontWeight: 600 }}>{t('reconciliation.h_discrepancy_queue')}</h3>
                 <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
-                  Bank Service Charges, Exchange Rate Differences, Deposits in Transit &amp; Unrecorded Items
+                  {t('reconciliation.h_discrepancy_queue_sub')}
                 </div>
               </div>
               <button
@@ -357,7 +333,7 @@ function AccountReconciliationView() {
                 style={{ fontSize: '12px', display: 'flex', alignItems: 'center', gap: '4px' }}
               >
                 <Plus size={14} weight="bold" />
-                <span>Manual GL Adjustment</span>
+                <span>{t('reconciliation.btn_manual_adj')}</span>
               </button>
             </div>
 
@@ -365,39 +341,39 @@ function AccountReconciliationView() {
               <table className="table" style={{ width: '100%', fontSize: '12px' }}>
                 <thead>
                   <tr>
-                    <th>Item ID</th>
-                    <th>Date</th>
-                    <th>Source Feed</th>
-                    <th>Discrepancy Description</th>
-                    <th>Bank Reference</th>
-                    <th style={{ textAlign: 'end' }}>Amount (JOD)</th>
-                    <th>Suggested GL Account</th>
-                    <th style={{ textAlign: 'center' }}>Status</th>
-                    <th style={{ textAlign: 'center' }}>Action</th>
+                    <th>{t('reconciliation.th_item_id')}</th>
+                    <th>{t('common:th_date', { defaultValue: 'Date' })}</th>
+                    <th>{t('reconciliation.th_source_feed')}</th>
+                    <th>{t('reconciliation.th_discrepancy_desc')}</th>
+                    <th>{t('reconciliation.th_bank_reference')}</th>
+                    <th style={{ textAlign: 'end' }}>{t('reconciliation.th_amount_jod')}</th>
+                    <th>{t('reconciliation.th_suggested_gl')}</th>
+                    <th style={{ textAlign: 'center' }}>{t('common:th_status', { defaultValue: 'Status' })}</th>
+                    <th style={{ textAlign: 'center' }}>{t('common:th_action', { defaultValue: 'Action' })}</th>
                   </tr>
                 </thead>
                 <tbody>
                   {unmatchedBankTransactions.map((item) => (
                     <tr key={item.item_id}>
-                      <td className="mono" style={{ fontWeight: 600 }}>{item.item_id}</td>
-                      <td className="mono">{item.date}</td>
+                      <td className="mono bidi-ltr" dir="ltr" style={{ fontWeight: 600 }}>{item.item_id}</td>
+                      <td className="mono bidi-ltr" dir="ltr">{item.date}</td>
                       <td>
                         <span className="tag-pill solid">{item.source}</span>
                       </td>
                       <td style={{ fontWeight: 600 }}>{item.description}</td>
-                      <td className="mono">{item.reference}</td>
-                      <td style={{ textAlign: 'end', fontWeight: 700, color: item.amount >= 0 ? 'var(--primary-green)' : '#ef4444' }} className="mono">
+                      <td className="mono bidi-ltr" dir="ltr">{item.reference}</td>
+                      <td style={{ textAlign: 'end', fontWeight: 700, color: item.amount >= 0 ? 'var(--primary-green)' : '#ef4444' }} className="mono bidi-ltr" dir="ltr">
                         {item.amount >= 0 ? `+JOD ${item.amount.toFixed(2)}` : `-JOD ${Math.abs(item.amount).toFixed(2)}`}
                       </td>
-                      <td className="mono">{item.suggested_gl_account}</td>
+                      <td className="mono bidi-ltr" dir="ltr">{item.suggested_gl_account}</td>
                       <td style={{ textAlign: 'center' }}>
                         <span className={`badge ${item.status === 'Adjusted_Via_GL' || item.status === 'Matched' ? 'ok' : item.status === 'Deposit_In_Transit' ? 'warn' : 'crit'}`}>
-                          <span className="d"></span> {item.status.replace(/_/g, ' ')}
+                          <span className="d"></span> {t('reconciliation.status_' + item.status.toLowerCase(), item.status.replace(/_/g, ' '))}
                         </span>
                       </td>
                       <td style={{ textAlign: 'center' }}>
                         {item.status === 'Adjusted_Via_GL' ? (
-                          <span style={{ fontSize: '11px', color: 'var(--text-muted)' }} className="mono">{item.adjustment_jv_ref}</span>
+                          <span style={{ fontSize: '11px', color: 'var(--text-muted)' }} className="mono bidi-ltr" dir="ltr">{item.adjustment_jv_ref}</span>
                         ) : (
                           <div style={{ display: 'flex', gap: '4px', justifyContent: 'center' }}>
                             <button
@@ -405,14 +381,14 @@ function AccountReconciliationView() {
                               onClick={() => handleQuickAdjustItem(item)}
                               style={{ fontSize: '11px', padding: '3px 8px' }}
                             >
-                              Post GL Voucher
+                              {t('reconciliation.btn_post_gl_voucher')}
                             </button>
                             <button
                               className="btn-secondary"
                               onClick={() => matchTransaction(item.item_id)}
                               style={{ fontSize: '11px', padding: '3px 6px' }}
                             >
-                              Match
+                              {t('reconciliation.btn_match')}
                             </button>
                           </div>
                         )}
@@ -432,38 +408,38 @@ function AccountReconciliationView() {
           <div className="card" style={{ padding: '16px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
               <div>
-                <h3 style={{ margin: 0, fontSize: '14px', fontWeight: 600 }}>Period-End Certified Reconciliation Logs</h3>
+                <h3 style={{ margin: 0, fontSize: '14px', fontWeight: 600 }}>{t('reconciliation.h_period_logs')}</h3>
                 <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
-                  Cryptographically Signed Monthly Closing Audits (IFRS &amp; Jordan Audit Bureau Standard)
+                  {t('reconciliation.h_period_logs_sub')}
                 </div>
               </div>
-              <span className="badge ok"><span className="d"></span> Tamper-Proof Audit Hashes</span>
+              <span className="badge ok"><span className="d"></span> {t('reconciliation.badge_audit_hashes')}</span>
             </div>
 
             <div className="table-responsive">
               <table className="table" style={{ width: '100%', fontSize: '12px' }}>
                 <thead>
                   <tr>
-                    <th>Log ID</th>
-                    <th>Fiscal Period</th>
-                    <th>Bank Institution</th>
-                    <th style={{ textAlign: 'end' }}>Certified Ending Balance</th>
-                    <th>Auditor / Signatory</th>
-                    <th>SHA-256 Audit Verification Hash</th>
-                    <th style={{ textAlign: 'center' }}>Period Status</th>
+                    <th>{t('reconciliation.th_log_id')}</th>
+                    <th>{t('reconciliation.th_fiscal_period')}</th>
+                    <th>{t('reconciliation.th_bank_institution')}</th>
+                    <th style={{ textAlign: 'end' }}>{t('reconciliation.th_certified_ending_bal')}</th>
+                    <th>{t('reconciliation.th_signatory')}</th>
+                    <th>{t('reconciliation.th_hash')}</th>
+                    <th style={{ textAlign: 'center' }}>{t('reconciliation.th_period_status')}</th>
                   </tr>
                 </thead>
                 <tbody>
                   {reconciliationLogs.map((log) => (
                     <tr key={log.log_id}>
-                      <td className="mono" style={{ fontWeight: 600 }}>{log.log_id}</td>
-                      <td className="mono" style={{ fontWeight: 600 }}>{log.period}</td>
+                      <td className="mono bidi-ltr" dir="ltr" style={{ fontWeight: 600 }}>{log.log_id}</td>
+                      <td className="mono bidi-ltr" dir="ltr" style={{ fontWeight: 600 }}>{log.period}</td>
                       <td>{log.bank_name}</td>
-                      <td style={{ textAlign: 'end', fontWeight: 700 }} className="mono">
+                      <td style={{ textAlign: 'end', fontWeight: 700 }} className="mono bidi-ltr" dir="ltr">
                         JOD {log.ending_balance.toLocaleString(undefined, { minimumFractionDigits: 2 })}
                       </td>
                       <td>{log.verified_by}</td>
-                      <td className="mono" style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{log.hash}</td>
+                      <td className="mono bidi-ltr" dir="ltr" style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{log.hash}</td>
                       <td style={{ textAlign: 'center' }}>
                         <span className="badge ok" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
                           <Lock size={12} weight="bold" /> {log.status}
@@ -483,7 +459,7 @@ function AccountReconciliationView() {
         <div className="modal-overlay">
           <div className="modal-content" style={{ maxWidth: '460px' }}>
             <div className="modal-header">
-              <h3 className="modal-title">Post Bank Reconciliation Adjustment Voucher</h3>
+              <h3 className="modal-title">{t('reconciliation.modal_adj_title')}</h3>
               <button className="modal-close-btn" onClick={() => setIsAdjModalOpen(false)}>
                 <X size={16} />
               </button>
@@ -491,7 +467,7 @@ function AccountReconciliationView() {
             <form onSubmit={handlePostAdjustment}>
               <div className="modal-body" style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                 <div className="form-group">
-                  <label>Adjustment Description</label>
+                  <label>{t('reconciliation.lbl_adj_desc')}</label>
                   <input
                     type="text"
                     className="form-control"
@@ -502,9 +478,10 @@ function AccountReconciliationView() {
                 </div>
 
                 <div className="form-group">
-                  <label>Reference Code / Bank Ref</label>
+                  <label>{t('reconciliation.lbl_adj_ref')}</label>
                   <input
                     type="text"
+                    dir="ltr"
                     className="form-control"
                     value={adjRef}
                     onChange={(e) => setAdjRef(e.target.value)}
@@ -514,10 +491,11 @@ function AccountReconciliationView() {
 
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                   <div className="form-group">
-                    <label>Amount in JOD (+ Inflow / - Fee)</label>
+                    <label>{t('reconciliation.lbl_adj_amount')}</label>
                     <input
                       type="number"
                       step="0.01"
+                      dir="ltr"
                       className="form-control"
                       value={adjAmount}
                       onChange={(e) => setAdjAmount(parseFloat(e.target.value) || 0)}
@@ -526,30 +504,28 @@ function AccountReconciliationView() {
                   </div>
 
                   <div className="form-group">
-                    <label>Offsetting GL Account</label>
+                    <label>{t('reconciliation.lbl_offset_gl')}</label>
                     <select
                       className="form-control"
                       value={adjGlAccount}
                       onChange={(e) => setAdjGlAccount(e.target.value)}
                     >
-                      <option value="66100">66100 — Bank Fees &amp; Admin</option>
-                      <option value="40100">40100 — Interest &amp; Yield Revenue</option>
-                      <option value="51200">51200 — FX Exchange Gain/Loss</option>
-                      <option value="11100">11100 — Accounts Receivable Settlement</option>
+                      <option value="66100">{t('reconciliation.opt_gl_bank_fees')}</option>
+                      <option value="40100">{t('reconciliation.opt_gl_interest')}</option>
+                      <option value="51200">{t('reconciliation.opt_gl_fx')}</option>
+                      <option value="11100">{t('reconciliation.opt_gl_ar_settlement')}</option>
                     </select>
                   </div>
                 </div>
 
                 <div style={{ background: '#f8fafc', padding: '10px', borderRadius: '6px', fontSize: '11.5px', color: 'var(--text-muted)' }}>
-                  This creates an automatic double-entry balanced General Ledger Journal Entry (Debit Expense / Credit Cash) and logs it to the immutable audit trail.
+                  {t('reconciliation.note_auto_entry')}
                 </div>
               </div>
               <div className="modal-footer" style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px', marginTop: '16px' }}>
-                <button type="button" className="btn-secondary" onClick={() => setIsAdjModalOpen(false)}>
-                  Cancel
-                </button>
+                <button type="button" className="btn-secondary" onClick={() => setIsAdjModalOpen(false)}>{t('common:actions.cancel')}</button>
                 <button type="submit" className="btn-primary">
-                  Post Voucher to GL
+                  {t('reconciliation.btn_post_to_gl')}
                 </button>
               </div>
             </form>
@@ -562,7 +538,7 @@ function AccountReconciliationView() {
         <div className="modal-overlay">
           <div className="modal-content" style={{ maxWidth: '460px' }}>
             <div className="modal-header">
-              <h3 className="modal-title">Certify &amp; Lock Monthly Reconciliation</h3>
+              <h3 className="modal-title">{t('reconciliation.modal_signoff_title')}</h3>
               <button className="modal-close-btn" onClick={() => setIsSignOffModalOpen(false)}>
                 <X size={16} />
               </button>
@@ -570,7 +546,7 @@ function AccountReconciliationView() {
             <form onSubmit={handleSignOffSubmit}>
               <div className="modal-body" style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                 <div className="form-group">
-                  <label>Auditor / Certified Signatory Name</label>
+                  <label>{t('reconciliation.lbl_signatory_name')}</label>
                   <input
                     type="text"
                     className="form-control"
@@ -581,7 +557,7 @@ function AccountReconciliationView() {
                 </div>
 
                 <div className="form-group">
-                  <label>Audit Certification Memo</label>
+                  <label>{t('reconciliation.lbl_audit_memo')}</label>
                   <textarea
                     className="form-control"
                     rows="3"
@@ -592,15 +568,13 @@ function AccountReconciliationView() {
                 </div>
 
                 <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', padding: '10px', borderRadius: '6px', fontSize: '11.5px', color: '#15803d' }}>
-                  Signing off will finalize the period ending balances for all bank accounts and generate an audit certificate with SHA-256 security hash.
+                  {t('reconciliation.note_signoff')}
                 </div>
               </div>
               <div className="modal-footer" style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px', marginTop: '16px' }}>
-                <button type="button" className="btn-secondary" onClick={() => setIsSignOffModalOpen(false)}>
-                  Cancel
-                </button>
+                <button type="button" className="btn-secondary" onClick={() => setIsSignOffModalOpen(false)}>{t('common:actions.cancel')}</button>
                 <button type="submit" className="btn-primary">
-                  Certify &amp; Lock Period
+                  {t('reconciliation.btn_certify_lock')}
                 </button>
               </div>
             </form>

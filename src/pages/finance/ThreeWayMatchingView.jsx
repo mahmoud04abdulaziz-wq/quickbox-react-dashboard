@@ -95,7 +95,7 @@ function ThreeWayMatchingView() {
               <CheckCircle size={16} weight="bold" />
             </div>
           </div>
-          <div className="metric-value" dir="ltr">$184,250</div>
+          <div className="metric-value bidi-ltr" dir="ltr">$184,250</div>
           <div className="metric-delta up" style={{ color: '#15803d', fontWeight: 600 }}>{t('finance:matching.kpi_fully_matched_delta', '42 POs cleared')}</div>
         </div>
 
@@ -106,7 +106,7 @@ function ThreeWayMatchingView() {
               <WarningCircle size={16} weight="bold" />
             </div>
           </div>
-          <div className="metric-value" dir="ltr">$8,420</div>
+          <div className="metric-value bidi-ltr" dir="ltr">$8,420</div>
           <div className="metric-delta" style={{ color: '#ca8a04', fontWeight: 600 }}>{t('finance:matching.kpi_ppv_delta', '5 bills > 2.0%')}</div>
         </div>
 
@@ -117,7 +117,7 @@ function ThreeWayMatchingView() {
               <XCircle size={16} weight="bold" />
             </div>
           </div>
-          <div className="metric-value" dir="ltr">$12,100</div>
+          <div className="metric-value bidi-ltr" dir="ltr">$12,100</div>
           <div className="metric-delta" style={{ color: '#dc2626', fontWeight: 600 }}>{t('finance:matching.kpi_qty_discrepancy_delta', '3 bills on hold')}</div>
         </div>
 
@@ -128,7 +128,7 @@ function ThreeWayMatchingView() {
               <Clock size={16} weight="bold" />
             </div>
           </div>
-          <div className="metric-value" dir="ltr">$18,000</div>
+          <div className="metric-value bidi-ltr" dir="ltr">$18,000</div>
           <div className="metric-delta">{t('finance:matching.kpi_grir_clearing_delta', '8 unbilled receipts')}</div>
         </div>
       </div>
@@ -191,7 +191,13 @@ function ThreeWayMatchingView() {
               const isPpv = m.status === 'PPV_HOLD' || m.status === 'PPV';
               const isQty = m.status === 'QTY_HOLD';
               const badgeClass = isOk ? 'ok' : isPpv ? 'warn' : 'crit';
-              const badgeLabel = isOk ? 'Perfect' : isPpv ? 'PPV' : isQty ? 'Qty Hold' : 'Unbilled';
+              const badgeLabel = isOk
+                ? t('matching.badge_perfect', 'Perfect')
+                : isPpv
+                ? t('matching.badge_ppv', 'PPV')
+                : isQty
+                ? t('matching.badge_qty_hold', 'Qty Hold')
+                : t('matching.badge_unbilled', 'Unbilled');
 
               return (
                 <tr key={m.match_id || m.id}>
@@ -201,18 +207,18 @@ function ThreeWayMatchingView() {
                       {badgeLabel}
                     </span>
                   </td>
-                  <td className="mono cell-strong" dir="ltr">{m.po_ref}</td>
-                  <td className="mono" dir="ltr">{m.grn_ref}</td>
-                  <td className="mono" dir="ltr">{m.bill_ref || '—'}</td>
+                  <td className="mono cell-strong bidi-ltr" dir="ltr">{m.po_ref}</td>
+                  <td className="mono bidi-ltr" dir="ltr">{m.grn_ref}</td>
+                  <td className="mono bidi-ltr" dir="ltr">{m.bill_ref || '—'}</td>
                   <td>{m.vendor_name}</td>
-                  <td dir="ltr">{m.sku || 'General Supply'}</td>
-                  <td className="mono cell-strong" dir="ltr">
+                  <td className="bidi-ltr" dir="ltr">{m.sku || 'General Supply'}</td>
+                  <td className="mono cell-strong bidi-ltr" dir="ltr">
                     {m.ppv_amount > 0 ? `+$${m.ppv_amount.toFixed(2)}` : '$0.00'}
                   </td>
                   <td>
                     <span className={`badge ${badgeClass}`}>
                       <span className="d"></span>
-                      {m.tolerance_percent ? `Within ${m.tolerance_percent}%` : m.action_required || 'Standard'}
+                      {m.tolerance_percent ? <>Within <span className="mono bidi-ltr" dir="ltr">{m.tolerance_percent}%</span></> : m.action_required || 'Standard'}
                     </span>
                   </td>
                   <td>
@@ -237,7 +243,7 @@ function ThreeWayMatchingView() {
             <div className="modal-header">
               <div className="modal-title" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <ArrowsLeftRight size={18} weight="bold" />
-                <span>{t('finance:matching.modal_override_title', '3-Way Matching Inspection Audit')} — <span dir="ltr">{selectedMatch.po_ref}</span></span>
+                <span>{t('finance:matching.modal_override_title', '3-Way Matching Inspection Audit')} — <span className="bidi-ltr" dir="ltr">{selectedMatch.po_ref}</span></span>
               </div>
               <button className="modal-close-btn" onClick={() => setSelectedMatch(null)}>
                 <X size={16} />
@@ -251,8 +257,8 @@ function ThreeWayMatchingView() {
                   <div style={{ fontSize: '13px', fontWeight: 700 }}>{selectedMatch.vendor_name}</div>
                 </div>
                 <div>
-                  <div style={{ fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 600 }}>Item SKU</div>
-                  <div className="mono" style={{ fontSize: '13px', fontWeight: 700 }} dir="ltr">{selectedMatch.sku}</div>
+                  <div style={{ fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 600 }}>{t('matching.lbl_item_sku', 'Item SKU')}</div>
+                  <div className="mono bidi-ltr" style={{ fontSize: '13px', fontWeight: 700 }} dir="ltr">{selectedMatch.sku}</div>
                 </div>
                 <div>
                   <div style={{ fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 600 }}>{t('common:status.status', 'Match Status')}</div>
@@ -268,20 +274,20 @@ function ThreeWayMatchingView() {
                 <div style={{ border: '1px solid var(--border-color)', borderRadius: '8px', padding: '14px', background: '#ffffff' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '10px', color: 'var(--text-main)' }}>
                     <FileText size={16} weight="bold" />
-                    <span style={{ fontSize: '12px', fontWeight: 700 }}>{t('finance:matching.field_po', '1. Purchase Order')}</span>
+                    <span style={{ fontSize: '12px', fontWeight: 700 }}>{t('matching.field_po', '1. Purchase Order')}</span>
                   </div>
-                  <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '4px' }}>Ref: <b className="mono" dir="ltr">{selectedMatch.po_ref}</b></div>
+                  <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '4px' }}>Ref: <b className="mono bidi-ltr" dir="ltr">{selectedMatch.po_ref}</b></div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0', borderBottom: '1px solid #f3f4f6', fontSize: '12px' }}>
-                    <span>Ordered Qty:</span>
-                    <span className="mono" style={{ fontWeight: 600 }} dir="ltr">{selectedMatch.po_qty || 100}</span>
+                    <span>{t('matching.lbl_ordered_qty')}</span>
+                    <span className="mono bidi-ltr" style={{ fontWeight: 600 }} dir="ltr">{selectedMatch.po_qty || 100}</span>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0', borderBottom: '1px solid #f3f4f6', fontSize: '12px' }}>
-                    <span>Unit Price:</span>
-                    <span className="mono" style={{ fontWeight: 600 }} dir="ltr">${(selectedMatch.po_unit_price || 12.50).toFixed(2)}</span>
+                    <span>{t('matching.lbl_unit_price')}</span>
+                    <span className="mono bidi-ltr" style={{ fontWeight: 600 }} dir="ltr">${(selectedMatch.po_unit_price || 12.50).toFixed(2)}</span>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0 0', fontSize: '12px', fontWeight: 700 }}>
-                    <span>PO Total:</span>
-                    <span className="mono" dir="ltr">${((selectedMatch.po_qty || 100) * (selectedMatch.po_unit_price || 12.50)).toFixed(2)}</span>
+                    <span>{t('matching.lbl_po_total')}</span>
+                    <span className="mono bidi-ltr" dir="ltr">${((selectedMatch.po_qty || 100) * (selectedMatch.po_unit_price || 12.50)).toFixed(2)}</span>
                   </div>
                 </div>
 
@@ -289,20 +295,20 @@ function ThreeWayMatchingView() {
                 <div style={{ border: '1px solid var(--border-color)', borderRadius: '8px', padding: '14px', background: '#ffffff' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '10px', color: '#15803d' }}>
                     <Package size={16} weight="bold" />
-                    <span style={{ fontSize: '12px', fontWeight: 700 }}>{t('finance:matching.field_grn', '2. Goods Receipt (GRN)')}</span>
+                    <span style={{ fontSize: '12px', fontWeight: 700 }}>{t('matching.field_grn', '2. Goods Receipt (GRN)')}</span>
                   </div>
-                  <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '4px' }}>Ref: <b className="mono" dir="ltr">{selectedMatch.grn_ref}</b></div>
+                  <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '4px' }}>Ref: <b className="mono bidi-ltr" dir="ltr">{selectedMatch.grn_ref}</b></div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0', borderBottom: '1px solid #f3f4f6', fontSize: '12px' }}>
-                    <span>Received Qty:</span>
-                    <span className="mono" style={{ fontWeight: 600 }} dir="ltr">{selectedMatch.grn_qty || 100}</span>
+                    <span>{t('matching.lbl_received_qty')}</span>
+                    <span className="mono bidi-ltr" style={{ fontWeight: 600 }} dir="ltr">{selectedMatch.grn_qty || 100}</span>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0', borderBottom: '1px solid #f3f4f6', fontSize: '12px' }}>
-                    <span>Valuation Rate:</span>
-                    <span className="mono" style={{ fontWeight: 600 }} dir="ltr">${(selectedMatch.po_unit_price || 12.50).toFixed(2)}</span>
+                    <span>{t('matching.lbl_valuation_rate')}</span>
+                    <span className="mono bidi-ltr" style={{ fontWeight: 600 }} dir="ltr">${(selectedMatch.po_unit_price || 12.50).toFixed(2)}</span>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0 0', fontSize: '12px', fontWeight: 700 }}>
-                    <span>GRN Asset:</span>
-                    <span className="mono" dir="ltr">${((selectedMatch.grn_qty || 100) * (selectedMatch.po_unit_price || 12.50)).toFixed(2)}</span>
+                    <span>{t('matching.lbl_grn_asset')}</span>
+                    <span className="mono bidi-ltr" dir="ltr">${((selectedMatch.grn_qty || 100) * (selectedMatch.po_unit_price || 12.50)).toFixed(2)}</span>
                   </div>
                 </div>
 
@@ -310,20 +316,20 @@ function ThreeWayMatchingView() {
                 <div style={{ border: `1px solid ${selectedMatch.ppv_amount > 0 ? '#f59e0b' : 'var(--border-color)'}`, borderRadius: '8px', padding: '14px', background: '#ffffff' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '10px', color: selectedMatch.ppv_amount > 0 ? '#ca8a04' : '#2563eb' }}>
                     <Receipt size={16} weight="bold" />
-                    <span style={{ fontSize: '12px', fontWeight: 700 }}>{t('finance:matching.field_bill', '3. Vendor Invoice')}</span>
+                    <span style={{ fontSize: '12px', fontWeight: 700 }}>{t('matching.field_bill', '3. Vendor Invoice')}</span>
                   </div>
-                  <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '4px' }}>Ref: <b className="mono" dir="ltr">{selectedMatch.bill_ref || '—'}</b></div>
+                  <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '4px' }}>Ref: <b className="mono bidi-ltr" dir="ltr">{selectedMatch.bill_ref || '—'}</b></div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0', borderBottom: '1px solid #f3f4f6', fontSize: '12px' }}>
-                    <span>Billed Qty:</span>
-                    <span className="mono" style={{ fontWeight: 600 }} dir="ltr">{selectedMatch.bill_qty || 100}</span>
+                    <span>{t('matching.lbl_billed_qty')}</span>
+                    <span className="mono bidi-ltr" style={{ fontWeight: 600 }} dir="ltr">{selectedMatch.bill_qty || 100}</span>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0', borderBottom: '1px solid #f3f4f6', fontSize: '12px' }}>
-                    <span>Billed Unit Price:</span>
-                    <span className="mono" style={{ fontWeight: 600 }} dir="ltr">${(selectedMatch.bill_unit_price || 13.00).toFixed(2)}</span>
+                    <span>{t('matching.lbl_billed_unit_price')}</span>
+                    <span className="mono bidi-ltr" style={{ fontWeight: 600 }} dir="ltr">${(selectedMatch.bill_unit_price || 13.00).toFixed(2)}</span>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0 0', fontSize: '12px', fontWeight: 700 }}>
-                    <span>Billed Total:</span>
-                    <span className="mono" dir="ltr">${((selectedMatch.bill_qty || 100) * (selectedMatch.bill_unit_price || 13.00)).toFixed(2)}</span>
+                    <span>{t('matching.lbl_billed_total')}</span>
+                    <span className="mono bidi-ltr" dir="ltr">${((selectedMatch.bill_qty || 100) * (selectedMatch.bill_unit_price || 13.00)).toFixed(2)}</span>
                   </div>
                 </div>
               </div>
@@ -331,20 +337,20 @@ function ThreeWayMatchingView() {
               {/* Variance & Automated PPV Allocation breakdown */}
               <div style={{ background: '#f8fafc', padding: '14px 16px', borderRadius: '8px', border: '1px solid var(--border-color)' }}>
                 <div style={{ fontSize: '12px', fontWeight: 700, marginBottom: '6px' }}>
-                  Variance Audit & Automated GL Account Allocation
+                  {t('matching.lbl_variance_audit', 'Variance Audit & Automated GL Account Allocation')}
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', padding: '3px 0' }}>
-                  <span>Price Variance (PPV Amount):</span>
-                  <span className="mono" style={{ fontWeight: 700, color: selectedMatch.ppv_amount > 0 ? '#b91c1c' : '#15803d' }} dir="ltr">
+                  <span>{t('matching.lbl_ppv_amount')}</span>
+                  <span className="mono bidi-ltr" style={{ fontWeight: 700, color: selectedMatch.ppv_amount > 0 ? '#b91c1c' : '#15803d' }} dir="ltr">
                     ${(selectedMatch.ppv_amount || 0).toFixed(2)} ({selectedMatch.ppv_variance_percent || 0}%)
                   </span>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', padding: '3px 0' }}>
-                  <span>Automated GL Variance Account:</span>
-                  <span className="mono" dir="ltr"><b>51200</b> (Purchase Price Variance)</span>
+                  <span>{t('matching.lbl_gl_variance_acct')}</span>
+                  <span className="mono bidi-ltr" dir="ltr"><b>51200</b> (Purchase Price Variance)</span>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', padding: '3px 0' }}>
-                  <span>Audit Verdict:</span>
+                  <span>{t('matching.lbl_audit_verdict', 'Audit Verdict:')}</span>
                   <span style={{ fontWeight: 600 }}>{selectedMatch.action_required || 'Audit cleared'}</span>
                 </div>
               </div>
@@ -386,7 +392,7 @@ function ThreeWayMatchingView() {
                   dir="ltr"
                   value={overridePo}
                   onChange={(e) => setOverridePo(e.target.value)}
-                  placeholder="PO-2026-001"
+                  placeholder={t('matching.placeholder_po')}
                   required
                 />
               </div>
@@ -398,7 +404,7 @@ function ThreeWayMatchingView() {
                   dir="ltr"
                   value={overrideGrn}
                   onChange={(e) => setOverrideGrn(e.target.value)}
-                  placeholder="GRN-2026-004"
+                  placeholder={t('matching.placeholder_grn')}
                   required
                 />
               </div>
@@ -410,7 +416,7 @@ function ThreeWayMatchingView() {
                   dir="ltr"
                   value={overrideBill}
                   onChange={(e) => setOverrideBill(e.target.value)}
-                  placeholder="BILL-2026-089"
+                  placeholder={t('matching.placeholder_bill')}
                   required
                 />
               </div>

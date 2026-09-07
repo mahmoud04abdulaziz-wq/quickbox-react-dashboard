@@ -223,7 +223,7 @@ function PayrollVatView() {
                     <td>
                       <span className={`badge ${emp.wpsStatus}`}>
                         <span className="d"></span>
-                        {emp.wpsStatus === 'ok' ? 'WPS Verified' : 'Pending'}
+                        {emp.wpsStatus === 'ok' ? t('payroll_vat.badge_wps_verified', 'WPS Verified') : t('payroll_vat.badge_wps_pending', 'Pending')}
                       </span>
                     </td>
                     <td>
@@ -231,7 +231,7 @@ function PayrollVatView() {
                         className="link-action"
                         onClick={() => setSelectedPayslip(emp)}
                       >
-                        Payslip
+                        {t('payroll_vat.th_payslip', 'Payslip')}
                       </span>
                     </td>
                   </tr>
@@ -389,9 +389,7 @@ function PayrollVatView() {
             </div>
 
             <div className="modal-footer">
-              <button className="btn btn-ghost" onClick={() => setSelectedPayslip(null)}>
-                Close
-              </button>
+              <button className="btn btn-ghost" onClick={() => setSelectedPayslip(null)}>{t('common:actions.close')}</button>
             </div>
           </div>
         </div>

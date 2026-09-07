@@ -28,9 +28,12 @@ function ToastNotification() {
 
   return (
     <div className="floating-toast-overlay">
-      <div className="floating-toast-card">
-        <div style={{ color: '#f59e0b', marginTop: '2px' }}>
+      <div className="floating-toast-card" role="alert" aria-live="polite">
+        <div style={{ color: '#f59e0b', marginTop: '2px', position: 'relative', display: 'inline-flex', flexShrink: 0 }}>
           <WarningCircle size={20} weight="fill" />
+          <span className="pulse-badge bidi-ltr" dir="ltr">
+            {lowStockItems.length}
+          </span>
         </div>
         <div style={{ flex: 1 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
@@ -40,7 +43,7 @@ function ToastNotification() {
             <button
               onClick={() => setDismissed(true)}
               style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#9ca3af', padding: 0 }}
-              aria-label={t('toast.dismiss')}
+              aria-label={t('toast.close')}
             >
               <X size={14} weight="bold" />
             </button>

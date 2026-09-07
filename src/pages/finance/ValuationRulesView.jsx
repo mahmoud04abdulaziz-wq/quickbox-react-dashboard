@@ -180,7 +180,7 @@ function ValuationRulesView() {
                     className="link-action"
                     onClick={() => openEditModal(rule)}
                   >
-                    Edit
+                    {t('common:actions.edit', 'Edit')}
                   </span>
                 </td>
               </tr>
@@ -192,58 +192,60 @@ function ValuationRulesView() {
       {/* Section 2: Landed Cost & PPV Tolerance Configuration Card */}
       <div className="card form-card" style={{ maxWidth: 'none', borderRadius: '12px', background: '#ffffff' }}>
         <div className="section-label" style={{ fontSize: '13px', color: 'var(--text-main)', marginBottom: '14px' }}>
-          Landed Cost &amp; PPV Tolerance Configuration
+          {t('valuation_rules.h_landed_ppv', 'Landed Cost & PPV Tolerance Configuration')}
         </div>
 
         <div className="form-row">
-          <label className="form-label">Landed Cost Allocation Basis</label>
+          <label className="form-label">{t('valuation_rules.lbl_landed_alloc_basis', 'Landed Cost Allocation Basis')}</label>
           <div className="radio-group">
             <div
               className={`radio-opt ${landedCostBasis === 'Value' ? 'selected' : ''}`}
               onClick={() => setLandedCostBasis('Value')}
             >
-              Allocate Pro-Rata by Item Value ($)
+              {t('valuation_rules.opt_by_value', 'Allocate Pro-Rata by Item Value (JOD)')}
             </div>
             <div
               className={`radio-opt ${landedCostBasis === 'Weight_Qty' ? 'selected' : ''}`}
               onClick={() => setLandedCostBasis('Weight_Qty')}
             >
-              Allocate Pro-Rata by Item Weight / Units Qty
+              {t('valuation_rules.opt_by_weight', 'Allocate Pro-Rata by Item Weight / Units Qty')}
             </div>
           </div>
           <div className="form-hint">
-            Controls how inbound freight, customs tariff, and insurance fees are capitalized into perpetual inventory valuation.
+            {t('valuation_rules.desc_landed_hint', 'Controls how inbound freight, customs tariff, and insurance fees are capitalized into perpetual inventory valuation.')}
           </div>
         </div>
 
         <div className="form-row" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
           <div>
-            <label className="form-label">Global PPV Variance Tolerance</label>
+            <label className="form-label">{t('valuation_rules.lbl_ppv_tolerance', 'Global PPV Variance Tolerance')}</label>
             <input
               className="input input-full mono"
+              dir="ltr"
               value={ppvTolerance}
               onChange={(e) => setPpvTolerance(e.target.value)}
             />
-            <div className="form-hint">Discrepancies within this threshold bypass manual managerial hold.</div>
+            <div className="form-hint">{t('valuation_rules.desc_ppv_hint', 'Discrepancies within this threshold bypass manual managerial hold.')}</div>
           </div>
           <div>
-            <label className="form-label">Absolute Dollar Cap</label>
+            <label className="form-label">{t('valuation_rules.lbl_absolute_cap', 'Absolute JOD Cap')}</label>
             <input
               className="input input-full mono"
+              dir="ltr"
               value={absoluteCap}
               onChange={(e) => setAbsoluteCap(e.target.value)}
             />
-            <div className="form-hint">Variance exceeding this absolute amount requires CPA review.</div>
+            <div className="form-hint">{t('valuation_rules.desc_cap_hint', 'Variance exceeding this absolute amount requires CPA review.')}</div>
           </div>
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginTop: '14px' }}>
           <button className="btn btn-primary" onClick={handleSaveGlobalConfig}>
-            Save Configuration
+            {t('valuation_rules.btn_save_config')}
           </button>
           {saveToast && (
             <span style={{ fontSize: '12px', color: '#15803d', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}>
-              <CheckCircle size={14} weight="bold" /> Configuration saved successfully!
+              <CheckCircle size={14} weight="bold" /> {t('valuation_rules.msg_saved_success', 'Configuration saved successfully!')}
             </span>
           )}
         </div>
@@ -254,7 +256,7 @@ function ValuationRulesView() {
         <div className="modal-overlay" onClick={() => setEditingRule(null)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '580px' }}>
             <div className="modal-header">
-              <div className="modal-title">Configure Category Valuation &amp; GL Mapping</div>
+              <div className="modal-title">{t('valuation_rules.modal_configure_title', 'Configure Category Valuation & GL Mapping')}</div>
               <button className="modal-close-btn" onClick={() => setEditingRule(null)}>
                 <X size={16} />
               </button>
@@ -263,7 +265,7 @@ function ValuationRulesView() {
             <form onSubmit={handleSaveRule}>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '14px' }}>
                 <div>
-                  <label className="form-label">Category Name</label>
+                  <label className="form-label">{t('valuation_rules.lbl_category_name', 'Category Name')}</label>
                   <input
                     className="input input-full"
                     value={editCategory}
@@ -272,23 +274,23 @@ function ValuationRulesView() {
                   />
                 </div>
                 <div>
-                  <label className="form-label">Costing Valuation Policy</label>
+                  <label className="form-label">{t('valuation_rules.lbl_valuation_policy', 'Costing Valuation Policy')}</label>
                   <select
                     className="select"
                     style={{ width: '100%' }}
                     value={editPolicy}
                     onChange={(e) => setEditPolicy(e.target.value)}
                   >
-                    <option value="AVCO">AVCO (Weighted Average Cost)</option>
-                    <option value="FIFO">FIFO (First In First Out)</option>
-                    <option value="Standard Cost">Standard Cost</option>
+                    <option value="AVCO">{t('valuation_rules.opt_avco', 'AVCO (Weighted Average Cost)')}</option>
+                    <option value="FIFO">{t('valuation_rules.opt_fifo', 'FIFO (First In First Out)')}</option>
+                    <option value="Standard Cost">{t('valuation_rules.opt_standard_cost', 'Standard Cost')}</option>
                   </select>
                 </div>
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px', marginBottom: '16px' }}>
                 <div>
-                  <label className="form-label">Asset GL Account</label>
+                  <label className="form-label">{t('valuation_rules.lbl_asset_gl', 'Asset GL Account')}</label>
                   <select
                     className="select"
                     style={{ width: '100%' }}
@@ -301,7 +303,7 @@ function ValuationRulesView() {
                   </select>
                 </div>
                 <div>
-                  <label className="form-label">COGS GL Account</label>
+                  <label className="form-label">{t('valuation_rules.lbl_cogs_gl', 'COGS GL Account')}</label>
                   <select
                     className="select"
                     style={{ width: '100%' }}
@@ -314,7 +316,7 @@ function ValuationRulesView() {
                   </select>
                 </div>
                 <div>
-                  <label className="form-label">Variance GL</label>
+                  <label className="form-label">{t('valuation_rules.lbl_variance_gl', 'Variance GL')}</label>
                   <select
                     className="select"
                     style={{ width: '100%' }}
@@ -330,20 +332,22 @@ function ValuationRulesView() {
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '16px' }}>
                 <div>
-                  <label className="form-label">PPV Tolerance (%)</label>
+                  <label className="form-label">{t('valuation_rules.lbl_ppv_percent', 'PPV Tolerance (%)')}</label>
                   <input
                     type="number"
                     step="0.1"
+                    dir="ltr"
                     className="input input-full mono"
                     value={editPpvTolerance}
                     onChange={(e) => setEditPpvTolerance(e.target.value)}
                   />
                 </div>
                 <div>
-                  <label className="form-label">Absolute Dollar Cap ($)</label>
+                  <label className="form-label">{t('valuation_rules.lbl_absolute_cap_val', 'Absolute Cap (JOD)')}</label>
                   <input
                     type="number"
                     step="1"
+                    dir="ltr"
                     className="input input-full mono"
                     value={editCap}
                     onChange={(e) => setEditCap(e.target.value)}
@@ -352,11 +356,9 @@ function ValuationRulesView() {
               </div>
 
               <div className="modal-footer">
-                <button type="button" className="btn btn-ghost" onClick={() => setEditingRule(null)}>
-                  Cancel
-                </button>
+                <button type="button" className="btn btn-ghost" onClick={() => setEditingRule(null)}>{t('common:actions.cancel')}</button>
                 <button type="submit" className="btn btn-primary">
-                  Save Rule &amp; Apply to Engine
+                  {t('valuation_rules.btn_save_apply')}
                 </button>
               </div>
             </form>

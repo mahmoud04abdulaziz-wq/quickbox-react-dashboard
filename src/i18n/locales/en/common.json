@@ -26,9 +26,18 @@
     "search_placeholder": "Search inventory...",
     "audit_history": "Audit History",
     "alerts_tooltip": "{{count}} Low Stock Alerts",
-    "user_name": "Washim Chowdhury"
+    "user_name": "Washim Chowdhury",
+    "lang_toggle_to_en": "Switch to English",
+    "lang_toggle_to_ar": "Switch to Arabic",
+    "switch_to_en": "Switch to English",
+    "switch_to_ar": "Switch to Arabic",
+    "user_avatar_alt": "User Avatar",
+    "notifications": "Notifications",
+    "no_notifications": "No new notifications",
+    "view_all_alerts": "View All Alerts"
   },
   "actions": {
+    "action": "Action",
     "save": "Save",
     "save_changes": "Save Changes",
     "cancel": "Cancel",
@@ -45,6 +54,7 @@
     "export_pdf": "Export PDF",
     "print": "Print",
     "close": "Close",
+    "btn_close": "Close",
     "clear": "Clear",
     "acknowledge": "Acknowledge",
     "proceed": "Proceed",
@@ -58,6 +68,9 @@
     "return_to_dashboard": "Return to Dashboard"
   },
   "status": {
+    "Items": "Items",
+    "label": "Status",
+    "status": "Status",
     "active": "Active",
     "inactive": "Inactive",
     "pending": "Pending",
@@ -92,10 +105,18 @@
   },
   "toast": {
     "low_stock_title": "Low Stock Alert ({{count}} items)",
+    "low_stock_alert": "Low Stock Alert",
     "critical_description": "{{criticalCount}} item(s) out of stock and {{lowCount}} low on stock.",
     "threshold_description": "{{count}} item(s) have fallen below their reorder threshold.",
     "view_items": "View Items",
-    "dismiss": "Dismiss"
+    "dismiss": "Dismiss",
+    "close": "Close"
+  },
+  "relative_time": {
+    "just_now": "Just now",
+    "minutes_ago": "{{count}} min ago",
+    "hours_ago": "{{count}} hr ago",
+    "days_ago": "{{count}} day ago"
   },
   "filters": {
     "search_placeholder": "Filter by SKU or item...",
@@ -152,5 +173,18 @@
     "details": "Details",
     "staff": "Staff",
     "reference_no": "Reference No."
-  }
+  },
+  "table": {
+    "actions": "Actions",
+    "action": "Action",
+    "amount": "Amount",
+    "count": "Count",
+    "reference": "Reference #",
+    "date": "Date",
+    "status": "Status"
+  },
+  "th_date": "Date",
+  "th_description": "Description",
+  "th_status": "Status",
+  "th_action": "Action"
 }

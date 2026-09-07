@@ -15,7 +15,7 @@ import {
 } from '@phosphor-icons/react';
 
 function CostCentersView() {
-  const { t } = useTranslation('finance');
+  const { t } = useTranslation(['finance', 'common']);
   const { costCenters, requisitions, createRequisition } = useFinance();
   const { inventory } = useInventory();
 
@@ -91,14 +91,14 @@ function CostCentersView() {
       {/* Title Header */}
       <div className="page-header" style={{ marginBottom: '18px' }}>
         <div>
-          <h1 style={{ fontSize: '18px', fontWeight: 700, margin: 0 }}>Cost Centers &amp; Departmental Consumption</h1>
+          <h1 style={{ fontSize: '18px', fontWeight: 700, margin: 0 }}>{t('cost_centers.title')}</h1>
           <div style={{ fontSize: '11.5px', color: 'var(--text-muted)', fontFamily: 'monospace', marginTop: '2px' }}>
-            / finance / cost centers &amp; internal usage
+            {t('cost_centers.breadcrumb')}
           </div>
         </div>
         <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
           <span className="badge ok">
-            <span className="d"></span> Automated Inventory Relieve &amp; Expense Posting
+            <span className="d"></span> {t('cost_centers.badge_auto_relieve')}
           </span>
         </div>
       </div>
@@ -107,46 +107,46 @@ function CostCentersView() {
       <div className="metrics-4">
         <div className="card metric-card">
           <div className="metric-top">
-            <span className="metric-label">Consumption (MTD)</span>
+            <span className="metric-label">{t('cost_centers.kpi_consumption_mtd')}</span>
             <div className="metric-icon" style={{ background: '#f8fafc', color: '#475569' }}>
               <Buildings size={16} weight="bold" />
             </div>
           </div>
-          <div className="metric-value">$42,850</div>
-          <div className="metric-delta">58 requisitions</div>
+          <div className="metric-value mono bidi-ltr" dir="ltr">$42,850</div>
+          <div className="metric-delta">{t('cost_centers.kpi_consumption_mtd_delta')}</div>
         </div>
 
         <div className="card metric-card">
           <div className="metric-top">
-            <span className="metric-label">Active Cost Centers</span>
+            <span className="metric-label">{t('cost_centers.kpi_active_cc')}</span>
             <div className="metric-icon" style={{ background: '#eff6ff', color: '#2563eb' }}>
               <ChartPie size={16} weight="bold" />
             </div>
           </div>
-          <div className="metric-value">6</div>
-          <div className="metric-delta">CC-100 to CC-600</div>
+          <div className="metric-value mono bidi-ltr" dir="ltr">6</div>
+          <div className="metric-delta">{t('cost_centers.kpi_active_cc_delta')}</div>
         </div>
 
         <div className="card metric-card">
           <div className="metric-top">
-            <span className="metric-label">Budget Utilization</span>
+            <span className="metric-label">{t('cost_centers.kpi_budget_util')}</span>
             <div className="metric-icon" style={{ background: '#fef9c3', color: '#a16207' }}>
               <Percent size={16} weight="bold" />
             </div>
           </div>
-          <div className="metric-value">74.2%</div>
-          <div className="metric-delta" style={{ color: '#ca8a04', fontWeight: 600 }}>1 dept over target</div>
+          <div className="metric-value mono bidi-ltr" dir="ltr">74.2%</div>
+          <div className="metric-delta" style={{ color: '#ca8a04', fontWeight: 600 }}>{t('cost_centers.kpi_budget_util_delta')}</div>
         </div>
 
         <div className="card metric-card">
           <div className="metric-top">
-            <span className="metric-label">Avg Requisition</span>
+            <span className="metric-label">{t('cost_centers.kpi_avg_requisition')}</span>
             <div className="metric-icon" style={{ background: '#f0fdf4', color: '#15803d' }}>
               <Receipt size={16} weight="bold" />
             </div>
           </div>
-          <div className="metric-value">$738.80</div>
-          <div className="metric-delta up" style={{ color: '#15803d', fontWeight: 600 }}>1.2h avg turnaround</div>
+          <div className="metric-value mono bidi-ltr" dir="ltr">$738.80</div>
+          <div className="metric-delta up" style={{ color: '#15803d', fontWeight: 600 }}>{t('cost_centers.kpi_avg_requisition_delta')}</div>
         </div>
       </div>
 
@@ -160,7 +160,7 @@ function CostCentersView() {
             <div className="card budget-card" key={cc.cost_center_id || cc.code}>
               <div className="budget-top">
                 <span>{cc.name}</span>
-                <span className="mono" style={{ fontWeight: 600, color: 'var(--text-muted)' }}>{cc.code}</span>
+                <span className="mono bidi-ltr" dir="ltr" style={{ fontWeight: 600, color: 'var(--text-muted)' }}>{cc.code}</span>
               </div>
               <div className="progress-track">
                 <div
@@ -170,9 +170,9 @@ function CostCentersView() {
               </div>
               <div className="budget-meta">
                 <span style={{ color: isOver ? '#b91c1c' : 'var(--text-main)', fontWeight: 600 }}>
-                  {util.toFixed(1)}% used
+                  {t('cost_centers.lbl_used', { percent: util.toFixed(1) })}
                 </span>
-                <span>
+                <span className="mono bidi-ltr" dir="ltr">
                   ${(cc.actual_spent || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })} / ${(cc.monthly_budget || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}
                 </span>
               </div>
@@ -184,7 +184,7 @@ function CostCentersView() {
       {/* Section 2: Departmental Requisitions Table */}
       <div className="row-actions">
         <div className="section-label" style={{ margin: 0, fontSize: '13px', color: 'var(--text-main)' }}>
-          Departmental Requisitions &amp; GL Expense Vouchers
+          {t('cost_centers.section_recent_reqs')}
         </div>
         <button
           className="btn btn-primary"
@@ -192,7 +192,7 @@ function CostCentersView() {
           style={{ display: 'flex', alignItems: 'center', gap: '6px' }}
         >
           <Plus size={14} weight="bold" />
-          <span>+ New Department Requisition</span>
+          <span>{t('cost_centers.btn_new_requisition')}</span>
         </button>
       </div>
 
@@ -200,32 +200,32 @@ function CostCentersView() {
         <table>
           <thead>
             <tr>
-              <th>Req ID</th>
-              <th>Date</th>
-              <th>Cost Center</th>
-              <th>Staff Requester</th>
-              <th>Total Cost</th>
-              <th>GL Voucher Ref</th>
-              <th>Status</th>
-              <th>Action</th>
+              <th>{t('cost_centers.th_req_id')}</th>
+              <th>{t('common:th_date', { defaultValue: 'Date' })}</th>
+              <th>{t('cost_centers.th_cost_center')}</th>
+              <th>{t('cost_centers.th_requester')}</th>
+              <th>{t('cost_centers.th_total_cost')}</th>
+              <th>{t('cost_centers.th_gl_voucher')}</th>
+              <th>{t('common:status.status', { defaultValue: 'Status' })}</th>
+              <th>{t('common:table.action', { defaultValue: 'Action' })}</th>
             </tr>
           </thead>
           <tbody>
             {(requisitions || []).map((req) => (
               <tr key={req.requisition_id || req.id}>
-                <td className="mono cell-strong">{req.requisition_id || req.id}</td>
-                <td className="mono">{req.date}</td>
+                <td className="mono cell-strong bidi-ltr" dir="ltr">{req.requisition_id || req.id}</td>
+                <td className="mono bidi-ltr" dir="ltr">{req.date}</td>
                 <td>
                   <span className="tag-pill solid">{req.cost_center_name || req.cost_center_code}</span>
                 </td>
                 <td>{req.staff_name}</td>
-                <td className="mono cell-strong">
+                <td className="mono cell-strong bidi-ltr" dir="ltr">
                   ${(req.total_cost || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}
                 </td>
-                <td className="mono">{req.journal_entry_id || 'JV-2026-00409'}</td>
+                <td className="mono bidi-ltr" dir="ltr">{req.journal_entry_id || 'JV-2026-00409'}</td>
                 <td>
                   <span className="badge ok">
-                    <span className="d"></span> Approved
+                    <span className="d"></span> {t('common:status.approved', { defaultValue: 'Approved' })}
                   </span>
                 </td>
                 <td>
@@ -233,7 +233,7 @@ function CostCentersView() {
                     className="link-action"
                     onClick={() => setSelectedReq(req)}
                   >
-                    View
+                    {t('common:actions.view', { defaultValue: 'View' })}
                   </span>
                 </td>
               </tr>
@@ -247,7 +247,7 @@ function CostCentersView() {
         <div className="modal-overlay" onClick={() => setSelectedReq(null)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '560px' }}>
             <div className="modal-header">
-              <div className="modal-title">Requisition Details — {selectedReq.requisition_id || selectedReq.id}</div>
+              <div className="modal-title">{t('cost_centers.modal_details_title', { id: selectedReq.requisition_id || selectedReq.id })}</div>
               <button className="modal-close-btn" onClick={() => setSelectedReq(null)}>
                 <X size={16} />
               </button>
@@ -255,31 +255,31 @@ function CostCentersView() {
 
             <div>
               <div style={{ background: '#f8fafc', padding: '12px 14px', borderRadius: '8px', border: '1px solid var(--border-color)', marginBottom: '14px', fontSize: '12px' }}>
-                <div>Department: <b>{selectedReq.cost_center_name || selectedReq.cost_center_code}</b></div>
-                <div>Staff: <b>{selectedReq.staff_name}</b> | Date: <b>{selectedReq.date}</b></div>
-                <div>Auto GL Voucher: <b className="mono">{selectedReq.journal_entry_id || 'JV-2026-00409'}</b></div>
+                <div>{t('cost_centers.lbl_dept')} <b>{selectedReq.cost_center_name || selectedReq.cost_center_code}</b></div>
+                <div>{t('cost_centers.lbl_staff')} <b>{selectedReq.staff_name}</b> | {t('common:th_date', { defaultValue: 'Date' })}: <b className="mono bidi-ltr" dir="ltr">{selectedReq.date}</b></div>
+                <div>{t('cost_centers.lbl_auto_gl')} <b className="mono bidi-ltr" dir="ltr">{selectedReq.journal_entry_id || 'JV-2026-00409'}</b></div>
               </div>
 
-              <div className="section-label" style={{ marginBottom: '8px' }}>Dispatched Stock Items</div>
+              <div className="section-label" style={{ marginBottom: '8px' }}>{t('cost_centers.h_dispatched_items')}</div>
               <div style={{ border: '1px solid var(--border-color)', borderRadius: '8px', overflow: 'hidden' }}>
                 <table>
                   <thead>
                     <tr>
-                      <th>SKU</th>
-                      <th>Item Description</th>
-                      <th>Qty</th>
-                      <th>Unit Cost</th>
-                      <th>Total</th>
+                      <th>{t('cost_centers.th_sku')}</th>
+                      <th>{t('cost_centers.th_item_desc')}</th>
+                      <th>{t('cost_centers.th_qty')}</th>
+                      <th>{t('cost_centers.th_unit_cost')}</th>
+                      <th>{t('cost_centers.th_total')}</th>
                     </tr>
                   </thead>
                   <tbody>
                     {(selectedReq.items || []).map((it, idx) => (
                       <tr key={idx}>
-                        <td className="mono">{it.sku}</td>
+                        <td className="mono bidi-ltr" dir="ltr">{it.sku}</td>
                         <td>{it.name}</td>
-                        <td className="mono">{it.qty}</td>
-                        <td className="mono">${(it.unitCost || 0).toFixed(2)}</td>
-                        <td className="mono cell-strong">${(it.total || it.qty * it.unitCost).toFixed(2)}</td>
+                        <td className="mono bidi-ltr" dir="ltr">{it.qty}</td>
+                        <td className="mono bidi-ltr" dir="ltr">${(it.unitCost || 0).toFixed(2)}</td>
+                        <td className="mono cell-strong bidi-ltr" dir="ltr">${(it.total || it.qty * it.unitCost).toFixed(2)}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -287,14 +287,14 @@ function CostCentersView() {
               </div>
 
               <div style={{ display: 'flex', justifyContent: 'space-between', padding: '12px 0 0', fontWeight: 700, fontSize: '13px' }}>
-                <span>Total Consumption Expense:</span>
-                <span className="mono">${(selectedReq.total_cost || 0).toFixed(2)}</span>
+                <span>{t('cost_centers.lbl_total_expense')}</span>
+                <span className="mono bidi-ltr" dir="ltr">${(selectedReq.total_cost || 0).toFixed(2)}</span>
               </div>
             </div>
 
             <div className="modal-footer">
               <button className="btn btn-ghost" onClick={() => setSelectedReq(null)}>
-                Close
+                {t('common:actions.close', { defaultValue: 'Close' })}
               </button>
             </div>
           </div>
@@ -306,7 +306,7 @@ function CostCentersView() {
         <div className="modal-overlay" onClick={() => setIsNewReqModalOpen(false)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '640px' }}>
             <div className="modal-header">
-              <div className="modal-title">New Department Stock Requisition</div>
+              <div className="modal-title">{t('cost_centers.modal_new_req_title')}</div>
               <button className="modal-close-btn" onClick={() => setIsNewReqModalOpen(false)}>
                 <X size={16} />
               </button>
@@ -315,7 +315,7 @@ function CostCentersView() {
             <form onSubmit={handleSubmitRequisition}>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '14px' }}>
                 <div>
-                  <label className="form-label">Cost Center / Department</label>
+                  <label className="form-label">{t('cost_centers.lbl_cc_dept')}</label>
                   <select
                     className="select"
                     style={{ width: '100%' }}
@@ -330,7 +330,7 @@ function CostCentersView() {
                   </select>
                 </div>
                 <div>
-                  <label className="form-label">Requester Staff Name</label>
+                  <label className="form-label">{t('cost_centers.lbl_staff_name')}</label>
                   <input
                     className="input input-full"
                     value={reqStaff}
@@ -343,13 +343,13 @@ function CostCentersView() {
               {/* Items Section */}
               <div style={{ marginBottom: '14px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
-                  <span className="section-label" style={{ margin: 0 }}>Requisition Items</span>
+                  <span className="section-label" style={{ margin: 0 }}>{t('cost_centers.lbl_req_items')}</span>
                   <button
                     type="button"
                     onClick={addReqLine}
                     style={{ background: 'none', border: 'none', color: 'var(--primary-green)', fontWeight: 600, fontSize: '11.5px', cursor: 'pointer' }}
                   >
-                    + Add Item
+                    {t('cost_centers.btn_add_item')}
                   </button>
                 </div>
 
@@ -357,10 +357,10 @@ function CostCentersView() {
                   <table>
                     <thead>
                       <tr>
-                        <th>Inventory SKU / Item</th>
-                        <th style={{ width: '80px' }}>Qty</th>
-                        <th style={{ width: '90px' }}>Unit Cost</th>
-                        <th style={{ width: '90px' }}>Total</th>
+                        <th>{t('cost_centers.th_item_desc')}</th>
+                        <th style={{ width: '80px' }}>{t('cost_centers.th_qty')}</th>
+                        <th style={{ width: '90px' }}>{t('cost_centers.th_unit_cost')}</th>
+                        <th style={{ width: '90px' }}>{t('cost_centers.th_total')}</th>
                         <th style={{ width: '40px' }}></th>
                       </tr>
                     </thead>
@@ -385,16 +385,17 @@ function CostCentersView() {
                             <input
                               type="number"
                               min="1"
-                              className="input mono"
+                              className="input mono bidi-ltr"
+                              dir="ltr"
                               style={{ width: '100%', fontSize: '11.5px' }}
                               value={item.qty}
                               onChange={(e) => updateReqQty(idx, e.target.value)}
                               required
                             />
                           </td>
-                          <td className="mono">${(item.unitCost || 0).toFixed(2)}</td>
-                          <td className="mono cell-strong">${(item.qty * item.unitCost).toFixed(2)}</td>
-                          <td style={{ textAlign: 'right' }}>
+                          <td className="mono bidi-ltr" dir="ltr">${(item.unitCost || 0).toFixed(2)}</td>
+                          <td className="mono cell-strong bidi-ltr" dir="ltr">${(item.qty * item.unitCost).toFixed(2)}</td>
+                          <td style={{ textAlign: 'end' }}>
                             {reqItems.length > 1 && (
                               <button
                                 type="button"
@@ -413,16 +414,16 @@ function CostCentersView() {
               </div>
 
               <div style={{ background: '#f8fafc', padding: '12px 14px', borderRadius: '6px', border: '1px solid var(--border-color)', marginBottom: '16px', display: 'flex', justifyContent: 'space-between', fontWeight: 700, fontSize: '13px' }}>
-                <span>Total Requisition Value:</span>
-                <span className="mono">${totalReqCost.toFixed(2)}</span>
+                <span>{t('cost_centers.lbl_total_req_val')}</span>
+                <span className="mono bidi-ltr" dir="ltr">${totalReqCost.toFixed(2)}</span>
               </div>
 
               <div className="modal-footer">
                 <button type="button" className="btn btn-ghost" onClick={() => setIsNewReqModalOpen(false)}>
-                  Cancel
+                  {t('common:actions.cancel', { defaultValue: 'Cancel' })}
                 </button>
                 <button type="submit" className="btn btn-primary">
-                  Approve Requisition &amp; Auto-Post Expense GL
+                  {t('cost_centers.btn_approve_post')}
                 </button>
               </div>
             </form>

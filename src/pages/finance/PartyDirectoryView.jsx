@@ -223,20 +223,20 @@ function PartyDirectoryView() {
                   </td>
                   <td>
                     <div className="badge-row">
-                      {isCust && <span className="tag-pill solid">Customer</span>}
-                      {isVend && <span className="tag-pill">Vendor</span>}
+                      {isCust && <span className="tag-pill solid">{t('party_directory.type_customer', 'Customer')}</span>}
+                      {isVend && <span className="tag-pill">{t('party_directory.type_vendor', 'Vendor')}</span>}
                     </div>
                   </td>
                   <td>
                     <span className="tag-pill">{party.payment_terms || 'Net 30'}</span>
                   </td>
-                  <td className="mono" dir="ltr" style={{ color: (party.ar_balance || 0) > 0 ? '#15803d' : 'var(--text-muted)' }}>
+                  <td className="mono bidi-ltr" dir="ltr" style={{ color: (party.ar_balance || 0) > 0 ? '#15803d' : 'var(--text-muted)' }}>
                     ${(party.ar_balance || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}
                   </td>
-                  <td className="mono" dir="ltr" style={{ color: (party.ap_balance || 0) > 0 ? '#b91c1c' : 'var(--text-muted)' }}>
+                  <td className="mono bidi-ltr" dir="ltr" style={{ color: (party.ap_balance || 0) > 0 ? '#b91c1c' : 'var(--text-muted)' }}>
                     ${(party.ap_balance || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}
                   </td>
-                  <td className="mono cell-strong" dir="ltr" style={{ color: netPos > 0 ? '#15803d' : netPos < 0 ? '#b91c1c' : 'var(--text-muted)' }}>
+                  <td className="mono cell-strong bidi-ltr" dir="ltr" style={{ color: netPos > 0 ? '#15803d' : netPos < 0 ? '#b91c1c' : 'var(--text-muted)' }}>
                     {netPos > 0 ? `+$${netPos.toLocaleString('en-US', { minimumFractionDigits: 2 })}` : netPos < 0 ? `-$${Math.abs(netPos).toLocaleString('en-US', { minimumFractionDigits: 2 })}` : '$0.00'}
                   </td>
                   <td>
@@ -277,7 +277,7 @@ function PartyDirectoryView() {
                   <div>{t('finance:party_directory.form_contact_email', 'Accounts Contact Email')}: <span dir="ltr">{selectedPartyProfile.contact_email || 'accounts@party.example'}</span></div>
                   <div>{t('finance:party_directory.form_phone', 'Phone Number')}: <span dir="ltr">{selectedPartyProfile.phone || '+1 (555) 0100'}</span></div>
                   <div>{t('finance:party_directory.th_terms', 'Terms')}: <b>{selectedPartyProfile.payment_terms}</b></div>
-                  <div>{t('common:status.label', 'Status')}: <span className="badge ok"><span className="d"></span>{t('common:status.active', 'Active')} Master</span></div>
+                  <div>{t('common:status.label', 'Status')}: <span className="badge ok"><span className="d"></span>{t('common:status.active', 'Active')}</span></div>
                 </div>
 
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '14px', paddingTop: '12px', borderTop: '1px solid #e5e7eb', fontSize: '13px' }}>
@@ -304,18 +304,18 @@ function PartyDirectoryView() {
                     {(invoices || []).filter(i => i.customer_name === selectedPartyProfile.name).map(inv => (
                       <tr key={inv.invoice_id || inv.id}>
                         <td><span className="tag-pill solid">{t('finance:party_directory.tag_ar_invoice', 'AR Invoice')}</span></td>
-                        <td className="mono" dir="ltr">{inv.invoice_number || inv.invoice_id}</td>
-                        <td className="mono" dir="ltr">{inv.due_date}</td>
-                        <td className="mono" dir="ltr">${(inv.total_amount || 0).toFixed(2)}</td>
+                        <td className="mono bidi-ltr" dir="ltr">{inv.invoice_number || inv.invoice_id}</td>
+                        <td className="mono bidi-ltr" dir="ltr">{inv.due_date}</td>
+                        <td className="mono bidi-ltr" dir="ltr">${(inv.total_amount || 0).toFixed(2)}</td>
                         <td><span className="badge ok"><span className="d"></span>{inv.status}</span></td>
                       </tr>
                     ))}
                     {(bills || []).filter(b => b.vendor_name === selectedPartyProfile.name).map(b => (
                       <tr key={b.bill_id || b.id}>
                         <td><span className="tag-pill">{t('finance:party_directory.tag_ap_bill', 'AP Bill')}</span></td>
-                        <td className="mono" dir="ltr">{b.bill_number || b.bill_id}</td>
-                        <td className="mono" dir="ltr">{b.due_date}</td>
-                        <td className="mono" dir="ltr">${(b.total_amount || 0).toFixed(2)}</td>
+                        <td className="mono bidi-ltr" dir="ltr">{b.bill_number || b.bill_id}</td>
+                        <td className="mono bidi-ltr" dir="ltr">{b.due_date}</td>
+                        <td className="mono bidi-ltr" dir="ltr">${(b.total_amount || 0).toFixed(2)}</td>
                         <td><span className="badge ok"><span className="d"></span>{b.payment_status}</span></td>
                       </tr>
                     ))}
@@ -358,7 +358,7 @@ function PartyDirectoryView() {
                   <label className="form-label">{t('finance:party_directory.form_party_name', 'Trade / Common Name')}</label>
                   <input
                     className="input input-full"
-                    placeholder="e.g. Apex Technologies"
+                    placeholder={t('party_directory.placeholder_name')}
                     value={newPartyName}
                     onChange={(e) => setNewPartyName(e.target.value)}
                     required
@@ -368,7 +368,7 @@ function PartyDirectoryView() {
                   <label className="form-label">{t('finance:party_directory.form_legal_name', 'Registered Legal Name')}</label>
                   <input
                     className="input input-full"
-                    placeholder="e.g. Apex Tech LLC"
+                    placeholder={t('party_directory.placeholder_legal')}
                     value={newLegalName}
                     onChange={(e) => setNewLegalName(e.target.value)}
                   />
@@ -403,7 +403,7 @@ function PartyDirectoryView() {
                   <input
                     className="input input-full mono"
                     dir="ltr"
-                    placeholder="TRN-100485920"
+                    placeholder={t('party_directory.placeholder_trn')}
                     value={newTaxNumber}
                     onChange={(e) => setNewTaxNumber(e.target.value)}
                   />
@@ -416,10 +416,10 @@ function PartyDirectoryView() {
                     value={newTerms}
                     onChange={(e) => setNewTerms(e.target.value)}
                   >
-                    <option value="Net 15">Net 15</option>
-                    <option value="Net 30">Net 30</option>
-                    <option value="Net 60">Net 60</option>
-                    <option value="COD">COD (Cash on Delivery)</option>
+                    <option value="Net 15">{t('party_directory.opt_terms_net15', 'Net 15')}</option>
+                    <option value="Net 30">{t('party_directory.opt_terms_net30', 'Net 30')}</option>
+                    <option value="Net 60">{t('party_directory.opt_terms_net60', 'Net 60')}</option>
+                    <option value="COD">{t('party_directory.opt_terms_cod', 'COD (Cash on Delivery)')}</option>
                   </select>
                 </div>
               </div>
@@ -431,7 +431,7 @@ function PartyDirectoryView() {
                     type="email"
                     dir="ltr"
                     className="input input-full"
-                    placeholder="finance@party.com"
+                    placeholder={t('party_directory.placeholder_email')}
                     value={newEmail}
                     onChange={(e) => setNewEmail(e.target.value)}
                   />

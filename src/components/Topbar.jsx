@@ -35,7 +35,7 @@ function Topbar() {
       {/* Global Search */}
       <div className="search-container">
         <MagnifyingGlass />
-        <input type="text" placeholder={t('topbar.search_placeholder')} />
+        <input type="text" placeholder={t('topbar.search_placeholder')} aria-label={t('topbar.search_placeholder')} />
       </div>
 
       {/* Right side actions */}
@@ -44,6 +44,7 @@ function Topbar() {
         <button 
           className="icon-btn topbar-icon-green" 
           title={t('topbar.audit_history')}
+          aria-label={t('topbar.audit_history')}
           onClick={() => navigate('/audit')}
         >
           <ClockCounterClockwise />
@@ -52,12 +53,13 @@ function Topbar() {
         <button 
           className="icon-btn topbar-icon-green" 
           title={t('topbar.alerts_tooltip', { count: alertCount })}
+          aria-label={t('topbar.alerts_tooltip', { count: alertCount })}
           onClick={() => navigate('/alerts')}
           style={{ position: 'relative' }}
         >
           <Bell />
           {alertCount > 0 && (
-            <span className="pulse-badge">
+            <span className="pulse-badge bidi-ltr" dir="ltr">
               {alertCount}
             </span>
           )}
@@ -68,7 +70,8 @@ function Topbar() {
           type="button"
           className="lang-toggle-btn"
           onClick={toggleLanguage}
-          title={currentLang === 'ar' ? 'Switch to English' : 'التحويل إلى العربية'}
+          title={currentLang === 'ar' ? t('topbar.switch_to_en') : t('topbar.switch_to_ar')}
+          aria-label={currentLang === 'ar' ? t('topbar.switch_to_en') : t('topbar.switch_to_ar')}
           style={{
             display: 'flex',
             alignItems: 'center',
@@ -92,7 +95,7 @@ function Topbar() {
         
         {/* User Dropdown */}
         <div className="user-dropdown">
-          <img src="https://i.pravatar.cc/150?img=11" alt="Washim Chowdhury" />
+          <img src="https://i.pravatar.cc/150?img=11" alt={t('topbar.user_name')} />
           <span>{t('topbar.user_name')}</span>
           <CaretDown />
         </div>

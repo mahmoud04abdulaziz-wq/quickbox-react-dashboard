@@ -83,7 +83,7 @@ function InventoryTable({ items, categories }) {
                 <td dir="ltr" className="bidi-ltr" style={{ fontFamily: 'monospace' }}>{item.threshold}</td>
                 <td dir="ltr" className="bidi-ltr" style={{ fontFamily: 'monospace' }}>${unitCost.toFixed(2)}</td>
                 <td dir="ltr" className="bidi-ltr" style={{ fontFamily: 'monospace', fontWeight: 600 }}>${totalValue.toFixed(2)}</td>
-                <td dir="ltr" style={{ fontSize: '11px', color: '#6b7280' }}>
+                <td dir="ltr" className="bidi-ltr" style={{ fontSize: '11px', color: '#6b7280' }}>
                   {leadTime} {leadTime > 1 ? t('table.days_other', { count: leadTime, defaultValue: 'days' }) : t('table.days_one', { count: leadTime, defaultValue: 'day' })}
                 </td>
                 <td>

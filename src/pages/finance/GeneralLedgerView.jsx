@@ -274,17 +274,17 @@ function GeneralLedgerView() {
                         {isExpanded ? <CaretDown size={14} weight="bold" /> : <CaretRight size={14} weight="bold" className="icon-rtl-flip" />}
                       </span>
                     </td>
-                    <td className="mono cell-strong" dir="ltr">{entry.voucher_number}</td>
-                    <td className="mono" dir="ltr">{entry.posting_date}</td>
+                    <td className="mono cell-strong bidi-ltr" dir="ltr">{entry.voucher_number}</td>
+                    <td className="mono bidi-ltr" dir="ltr">{entry.posting_date}</td>
                     <td>
                       <span className={`tag-pill ${entry.voucher_type === 'INVENTORY' ? 'solid' : ''}`}>
                         {entry.voucher_type}
                       </span>
                     </td>
-                    <td className="mono" dir="ltr">{entry.reference_number || '—'}</td>
+                    <td className="mono bidi-ltr" dir="ltr">{entry.reference_number || '—'}</td>
                     <td>{entry.memo}</td>
-                    <td className="mono cell-strong" dir="ltr">${(entry.total_debit || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
-                    <td className="mono cell-strong" dir="ltr">${(entry.total_credit || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
+                    <td className="mono cell-strong bidi-ltr" dir="ltr">${(entry.total_debit || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
+                    <td className="mono cell-strong bidi-ltr" dir="ltr">${(entry.total_credit || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
                     <td>
                       <span className={`badge ${isBalanced ? 'ok' : 'crit'}`}>
                         <span className="d"></span>
@@ -311,15 +311,15 @@ function GeneralLedgerView() {
                             <tbody>
                               {(entry.lines || []).map((line, lIdx) => (
                                 <tr key={line.line_id || lIdx}>
-                                  <td className="mono cell-strong" dir="ltr">{line.account_code}</td>
+                                  <td className="mono cell-strong bidi-ltr" dir="ltr">{line.account_code}</td>
                                   <td>{line.account_name}</td>
                                   <td style={{ color: 'var(--text-muted)', fontSize: '11px' }}>
                                     {line.description || entry.memo}
                                   </td>
-                                  <td className="mono" dir="ltr" style={{ color: line.debit_amount > 0 ? 'var(--text-main)' : 'var(--text-muted)' }}>
+                                  <td className="mono bidi-ltr" dir="ltr" style={{ color: line.debit_amount > 0 ? 'var(--text-main)' : 'var(--text-muted)' }}>
                                     ${(line.debit_amount || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}
                                   </td>
-                                  <td className="mono" dir="ltr" style={{ color: line.credit_amount > 0 ? 'var(--text-main)' : 'var(--text-muted)' }}>
+                                  <td className="mono bidi-ltr" dir="ltr" style={{ color: line.credit_amount > 0 ? 'var(--text-main)' : 'var(--text-muted)' }}>
                                     ${(line.credit_amount || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}
                                   </td>
                                 </tr>
@@ -374,11 +374,11 @@ function GeneralLedgerView() {
                     value={newVoucherModule}
                     onChange={(e) => setNewVoucherModule(e.target.value)}
                   >
-                    <option value="MANUAL">MANUAL</option>
-                    <option value="AP">ACCOUNTS PAYABLE</option>
-                    <option value="AR">ACCOUNTS RECEIVABLE</option>
-                    <option value="PAYROLL">PAYROLL</option>
-                    <option value="INVENTORY">INVENTORY</option>
+                    <option value="MANUAL">{t('general_ledger.mod_manual', 'MANUAL')}</option>
+                    <option value="AP">{t('general_ledger.mod_ap', 'ACCOUNTS PAYABLE')}</option>
+                    <option value="AR">{t('general_ledger.mod_ar', 'ACCOUNTS RECEIVABLE')}</option>
+                    <option value="PAYROLL">{t('general_ledger.mod_payroll', 'PAYROLL')}</option>
+                    <option value="INVENTORY">{t('general_ledger.mod_inventory', 'INVENTORY')}</option>
                   </select>
                 </div>
                 <div>
@@ -387,7 +387,7 @@ function GeneralLedgerView() {
                     type="text"
                     dir="ltr"
                     className="input input-full"
-                    placeholder="e.g. ADJ-0042"
+                    placeholder={t('general_ledger.placeholder_doc_ref')}
                     value={newVoucherRef}
                     onChange={(e) => setNewVoucherRef(e.target.value)}
                   />
@@ -399,7 +399,7 @@ function GeneralLedgerView() {
                 <input
                   type="text"
                   className="input input-full"
-                  placeholder="e.g. Month-end inventory shrinkage adjustment"
+                  placeholder={t('general_ledger.placeholder_memo')}
                   value={newVoucherMemo}
                   onChange={(e) => setNewVoucherMemo(e.target.value)}
                   required
@@ -424,8 +424,8 @@ function GeneralLedgerView() {
                     <thead>
                       <tr>
                         <th style={{ width: '40%' }}>{t('finance:general_ledger.th_account', 'Account')}</th>
-                        <th style={{ width: '25%' }}>{t('finance:general_ledger.th_debit', 'Debit')} ($)</th>
-                        <th style={{ width: '25%' }}>{t('finance:general_ledger.th_credit', 'Credit')} ($)</th>
+                        <th style={{ width: '25%' }}>{t('general_ledger.th_debit_curr', 'Debit (JOD)')}</th>
+                        <th style={{ width: '25%' }}>{t('general_ledger.th_credit_curr', 'Credit (JOD)')}</th>
                         <th style={{ width: '10%' }}></th>
                       </tr>
                     </thead>
@@ -493,10 +493,10 @@ function GeneralLedgerView() {
               {/* Total & Equilibrium Warning */}
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 14px', background: isModalBalanced ? '#f0fdf4' : '#fef2f2', border: `1px solid ${isModalBalanced ? '#bbf7d0' : '#fecaca'}`, borderRadius: '6px', fontSize: '11.5px' }}>
                 <span style={{ fontWeight: 600, color: isModalBalanced ? '#15803d' : '#b91c1c' }}>
-                  {isModalBalanced ? t('finance:general_ledger.balanced_entry', '✓ Balanced Entry') : t('finance:general_ledger.unbalanced_entry', { delta: modalDelta.toFixed(2), defaultValue: `⚠ Unbalanced: Δ $${modalDelta.toFixed(2)}` })}
+                  {isModalBalanced ? t('finance:general_ledger.balanced_entry', '✓ Balanced Entry') : t('finance:general_ledger.unbalanced_entry', { delta: modalDelta.toFixed(2), defaultValue: `⚠ Unbalanced: Δ JOD ${modalDelta.toFixed(2)}` })}
                 </span>
-                <span className="mono" style={{ color: 'var(--text-main)' }} dir="ltr">
-                  Total Debits: <b>${modalTotalDebit.toFixed(2)}</b> | Total Credits: <b>${modalTotalCredit.toFixed(2)}</b>
+                <span className="mono" style={{ color: 'var(--text-main)' }}>
+                  {t('general_ledger.lbl_total_debits', 'Total Debits:')} <b className="bidi-ltr" dir="ltr">{t('general_ledger.currency_prefix', 'JOD')} {modalTotalDebit.toFixed(2)}</b> | {t('general_ledger.lbl_total_credits', 'Total Credits:')} <b className="bidi-ltr" dir="ltr">{t('general_ledger.currency_prefix', 'JOD')} {modalTotalCredit.toFixed(2)}</b>
                 </span>
               </div>
 

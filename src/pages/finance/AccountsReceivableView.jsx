@@ -229,7 +229,8 @@ function AccountsReceivableView() {
               const isOverdue = inv.status === 'OVERDUE';
               const isReady = inv.status === 'READY_SO';
               const badgeClass = isPaid ? 'ok' : isOverdue ? 'crit' : isReady ? 'info' : 'warn';
-              const badgeText = isPaid ? 'Paid' : isOverdue ? 'Overdue' : isReady ? 'Ready from SO' : 'Pending';
+              const statusKey = isPaid ? 'paid' : inv.status ? inv.status.toLowerCase() : 'pending';
+              const badgeText = t('accounts_receivable.status_' + statusKey, isPaid ? 'Paid' : isOverdue ? 'Overdue' : isReady ? 'Ready from SO' : 'Pending');
 
               return (
                 <tr key={inv.invoice_id || inv.id} style={{ backgroundColor: isSelected ? '#f0fdf4' : undefined }}>
@@ -240,14 +241,14 @@ function AccountsReceivableView() {
                       onChange={() => toggleSelect(inv.invoice_id || inv.id)}
                     />
                   </td>
-                  <td className="mono cell-strong" dir="ltr">{inv.invoice_number || inv.invoice_id}</td>
-                  <td className="mono" dir="ltr">{inv.so_reference || 'Booking #2319'}</td>
+                  <td className="mono cell-strong bidi-ltr" dir="ltr">{inv.invoice_number || inv.invoice_id}</td>
+                  <td className="mono bidi-ltr" dir="ltr">{inv.so_reference || 'Booking #2319'}</td>
                   <td>{inv.customer_name}</td>
-                  <td className="mono" dir="ltr">{inv.due_date}</td>
-                  <td className="mono cell-strong" dir="ltr">
+                  <td className="mono bidi-ltr" dir="ltr">{inv.due_date}</td>
+                  <td className="mono cell-strong bidi-ltr" dir="ltr">
                     ${(inv.total_amount || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}
                   </td>
-                  <td className="mono" dir="ltr" style={{ color: isPaid ? 'var(--text-muted)' : '#b91c1c', fontWeight: 600 }}>
+                  <td className="mono bidi-ltr" dir="ltr" style={{ color: isPaid ? 'var(--text-muted)' : '#b91c1c', fontWeight: 600 }}>
                     ${(inv.balance_due !== undefined ? inv.balance_due : inv.total_amount).toLocaleString('en-US', { minimumFractionDigits: 2 })}
                   </td>
                   <td>

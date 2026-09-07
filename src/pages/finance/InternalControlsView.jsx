@@ -163,7 +163,7 @@ function InternalControlsView() {
               <Clock size={16} weight="bold" />
             </div>
           </div>
-          <div className="metric-value">{pendingRequests.length} Requests</div>
+          <div className="metric-value">{t('internal_controls.kpi_requests_count', { count: pendingRequests.length })}</div>
           <div className="metric-delta" style={{ color: '#a16207', fontWeight: 600 }}>
             JOD <span className="bidi-ltr" dir="ltr">{totalPendingAmount.toLocaleString()}</span> (<span className="bidi-ltr" dir="ltr">{criticalCount}</span> {t('internal_controls.filter_critical', { count: '' }).trim()})
           </div>
@@ -176,7 +176,7 @@ function InternalControlsView() {
               <ShieldCheck size={16} weight="bold" />
             </div>
           </div>
-          <div className="metric-value"><span className="bidi-ltr" dir="ltr">100%</span> Clean</div>
+          <div className="metric-value"><span className="bidi-ltr" dir="ltr">100%</span> {t('internal_controls.kpi_clean')}</div>
           <div className="metric-delta up" style={{ color: '#15803d' }}>{t('internal_controls.badge_zero_viol')}</div>
         </div>
 
@@ -187,8 +187,8 @@ function InternalControlsView() {
               <UserCheck size={16} weight="bold" />
             </div>
           </div>
-          <div className="metric-value">{approvedCount + 68} Actions</div>
-          <div className="metric-delta">Avg Turnaround: <span className="bidi-ltr" dir="ltr">1.4</span> Hours</div>
+          <div className="metric-value">{t('internal_controls.kpi_actions_count', { count: approvedCount + 68 })}</div>
+          <div className="metric-delta">{t('internal_controls.kpi_turnaround_val', { hours: '1.4' })}</div>
         </div>
 
         <div className="card metric-card">
@@ -198,8 +198,8 @@ function InternalControlsView() {
               <Scales size={16} weight="bold" />
             </div>
           </div>
-          <div className="metric-value">4 Tiers Matrix</div>
-          <div className="metric-delta">Dual Signatory &gt; JOD <span className="bidi-ltr" dir="ltr">10k</span></div>
+          <div className="metric-value">{t('internal_controls.kpi_matrix_tier_val', { count: 4 })}</div>
+          <div className="metric-delta">{t('internal_controls.kpi_dual_sig_val', { amount: '10k' })}</div>
         </div>
       </div>
 
@@ -278,7 +278,7 @@ function InternalControlsView() {
                 className="card"
                 style={{
                   padding: '16px',
-                  borderLeft: req.urgency === 'Critical' ? '4px solid #ef4444' : req.status === 'APPROVED' ? '4px solid var(--primary-green)' : '4px solid #f59e0b'
+                  borderInlineStart: req.urgency === 'Critical' ? '4px solid #ef4444' : req.status === 'APPROVED' ? '4px solid var(--primary-green)' : '4px solid #f59e0b'
                 }}
               >
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '10px' }}>
@@ -346,14 +346,14 @@ function InternalControlsView() {
                         onClick={() => handleOpenActionModal(req, 'REJECT')}
                         style={{ fontSize: '11.5px', padding: '5px 12px', color: '#b91c1c' }}
                       >
-                        Reject
+                        {t('internal_controls.btn_reject')}
                       </button>
                       <button
                         className="btn-primary"
                         onClick={() => handleOpenActionModal(req, 'APPROVE')}
                         style={{ fontSize: '11.5px', padding: '5px 14px' }}
                       >
-                        Approve Tier {req.current_tier}
+                        {t('internal_controls.btn_approve_tier', { tier: req.current_tier })}
                       </button>
                     </div>
                   ) : (
@@ -409,7 +409,7 @@ function InternalControlsView() {
                       <td style={{ textAlign: 'center', fontWeight: 700 }} className="mono bidi-ltr" dir="ltr">{ctrl.required_tiers} Tier(s)</td>
                       <td style={{ fontSize: '11.5px', color: 'var(--text-muted)' }}>{ctrl.description}</td>
                       <td style={{ textAlign: 'center' }}>
-                        <span className="badge ok"><span className="d"></span> Active</span>
+                        <span className="badge ok"><span className="d"></span> {t('common:status.active', 'Active')}</span>
                       </td>
                     </tr>
                   ))}
@@ -438,7 +438,7 @@ function InternalControlsView() {
               <table className="table" style={{ width: '100%', fontSize: '12px' }}>
                 <thead>
                   <tr>
-                    <th>Rule Code</th>
+                    <th>{t('internal_controls.th_rule_code')}</th>
                     <th>{t('internal_controls.th_incompat_roles')}</th>
                     <th>{t('internal_controls.th_enforce_mech')}</th>
                     <th>{t('internal_controls.th_desc_fraud')}</th>
@@ -553,9 +553,7 @@ function InternalControlsView() {
                 </div>
               </div>
               <div className="modal-footer" style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px', marginTop: '16px' }}>
-                <button type="button" className="btn-secondary" onClick={() => setIsActionModalOpen(false)}>
-                  Cancel
-                </button>
+                <button type="button" className="btn-secondary" onClick={() => setIsActionModalOpen(false)}>{t('common:actions.cancel')}</button>
                 <button
                   type="submit"
                   className={actionType === 'APPROVE' ? 'btn-primary' : 'btn-secondary'}
@@ -586,7 +584,7 @@ function InternalControlsView() {
                   <input
                     type="text"
                     className="form-control"
-                    placeholder="e.g. Commercial Kitchen Freezer Replacement"
+                    placeholder={t('internal_controls.placeholder_req_title')}
                     value={formTitle}
                     onChange={(e) => setFormTitle(e.target.value)}
                     required
@@ -601,11 +599,11 @@ function InternalControlsView() {
                       value={formType}
                       onChange={(e) => setFormType(e.target.value)}
                     >
-                      <option value="SUPPLIER_PAYMENT">Supplier Bill Payment</option>
-                      <option value="CAPEX_ACQUISITION">Capital Expenditure (CAPEX)</option>
-                      <option value="PAYROLL_OVERTIME">Payroll &amp; Overtime Accrual</option>
-                      <option value="IT_SUBSCRIPTION">IT Software &amp; Cloud Subscription</option>
-                      <option value="CONTRACT_DISBURSEMENT">Contractor Milestone Payment</option>
+                      <option value="SUPPLIER_PAYMENT">{t('internal_controls.opt_type_supplier', 'Supplier Bill Payment')}</option>
+                      <option value="CAPEX_ACQUISITION">{t('internal_controls.opt_type_capex', 'Capital Expenditure (CAPEX)')}</option>
+                      <option value="PAYROLL_OVERTIME">{t('internal_controls.opt_type_payroll', 'Payroll & Overtime Accrual')}</option>
+                      <option value="IT_SUBSCRIPTION">{t('internal_controls.opt_type_it', 'IT Software & Cloud Subscription')}</option>
+                      <option value="CONTRACT_DISBURSEMENT">{t('internal_controls.opt_type_contract', 'Contractor Milestone Payment')}</option>
                     </select>
                   </div>
 
@@ -614,6 +612,7 @@ function InternalControlsView() {
                     <input
                       type="number"
                       step="0.01"
+                      dir="ltr"
                       className="form-control"
                       value={formAmount}
                       onChange={(e) => setFormAmount(parseFloat(e.target.value) || 0)}
@@ -630,12 +629,12 @@ function InternalControlsView() {
                       value={formCostCenter}
                       onChange={(e) => setFormCostCenter(e.target.value)}
                     >
-                      <option value="CC-100">CC-100 — Housekeeping</option>
-                      <option value="CC-200">CC-200 — F&amp;B Kitchen</option>
-                      <option value="CC-300">CC-300 — Facilities &amp; Maintenance</option>
-                      <option value="CC-400">CC-400 — Front Office</option>
-                      <option value="CC-500">CC-500 — IT &amp; Security</option>
-                      <option value="CC-600">CC-600 — Administration &amp; Exec</option>
+                      <option value="CC-100">{t('internal_controls.opt_cc_100', 'CC-100 — Housekeeping')}</option>
+                      <option value="CC-200">{t('internal_controls.opt_cc_200', 'CC-200 — F&B Kitchen')}</option>
+                      <option value="CC-300">{t('internal_controls.opt_cc_300', 'CC-300 — Facilities & Maintenance')}</option>
+                      <option value="CC-400">{t('internal_controls.opt_cc_400', 'CC-400 — Front Office')}</option>
+                      <option value="CC-500">{t('internal_controls.opt_cc_500', 'CC-500 — IT & Security')}</option>
+                      <option value="CC-600">{t('internal_controls.opt_cc_600', 'CC-600 — Administration & Exec')}</option>
                     </select>
                   </div>
 
@@ -676,11 +675,9 @@ function InternalControlsView() {
                 </div>
               </div>
               <div className="modal-footer" style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px', marginTop: '16px' }}>
-                <button type="button" className="btn-secondary" onClick={() => setIsNewRequestModalOpen(false)}>
-                  Cancel
-                </button>
+                <button type="button" className="btn-secondary" onClick={() => setIsNewRequestModalOpen(false)}>{t('common:actions.cancel')}</button>
                 <button type="submit" className="btn-primary">
-                  Submit for Authorization
+                  {t('internal_controls.btn_submit_auth')}
                 </button>
               </div>
             </form>

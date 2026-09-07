@@ -26,9 +26,18 @@
     "search_placeholder": "البحث في المخزون...",
     "audit_history": "سجل تدقيق العمليات",
     "alerts_tooltip": "{{count}} تنبيه انخفاض المخزون",
-    "user_name": "واشم تشودري"
+    "user_name": "واشم تشودري",
+    "lang_toggle_to_en": "التحويل إلى الإنجليزية",
+    "lang_toggle_to_ar": "التحويل إلى العربية",
+    "switch_to_en": "التحويل إلى الإنجليزية",
+    "switch_to_ar": "التحويل إلى العربية",
+    "user_avatar_alt": "صورة المستخدم",
+    "notifications": "الإشعارات",
+    "no_notifications": "لا توجد إشعارات جديدة",
+    "view_all_alerts": "عرض كافة التنبيهات"
   },
   "actions": {
+    "action": "الإجراء",
     "save": "حفظ",
     "save_changes": "حفظ التغييرات",
     "cancel": "إلغاء",
@@ -45,6 +54,7 @@
     "export_pdf": "تصدير PDF",
     "print": "طباعة",
     "close": "إغلاق",
+    "btn_close": "إغلاق",
     "clear": "مسح",
     "acknowledge": "إقرار واستلام",
     "proceed": "متابعة",
@@ -58,6 +68,9 @@
     "return_to_dashboard": "العودة للوحة التحكم"
   },
   "status": {
+    "Items": "عناصر",
+    "label": "الحالة",
+    "status": "الحالة",
     "active": "نشط",
     "inactive": "غير نشط",
     "pending": "قيد الانتظار",
@@ -92,10 +105,18 @@
   },
   "toast": {
     "low_stock_title": "تنبيه انخفاض المخزون ({{count}} صنف)",
+    "low_stock_alert": "تنبيه انخفاض المخزون",
     "critical_description": "{{criticalCount}} صنف نفد من المخزون و {{lowCount}} قارب على النفاد.",
     "threshold_description": "{{count}} صنف وصل إلى ما دون حد إعادة الطلب.",
     "view_items": "عرض الأصناف",
-    "dismiss": "إغلاق"
+    "dismiss": "إغلاق",
+    "close": "إغلاق"
+  },
+  "relative_time": {
+    "just_now": "الآن",
+    "minutes_ago": "منذ {{count}} دقيقة",
+    "hours_ago": "منذ {{count}} ساعة",
+    "days_ago": "منذ {{count}} يوم"
   },
   "filters": {
     "search_placeholder": "تصفية حسب الرمز (SKU) أو الصنف...",
@@ -152,5 +173,18 @@
     "details": "التفاصيل",
     "staff": "الموظف المسؤول",
     "reference_no": "رقم المرجع"
-  }
+  },
+  "table": {
+    "actions": "الإجراءات",
+    "action": "الإجراء",
+    "amount": "المبلغ",
+    "count": "العدد",
+    "reference": "رقم المرجع",
+    "date": "التاريخ",
+    "status": "الحالة"
+  },
+  "th_date": "التاريخ",
+  "th_description": "الوصف",
+  "th_status": "الحالة",
+  "th_action": "الإجراء"
 }

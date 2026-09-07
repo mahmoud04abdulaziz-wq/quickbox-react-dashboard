@@ -2010,7 +2010,6 @@ td input[type='checkbox'] {
 .bidi-ltr {
   direction: ltr !important;
   unicode-bidi: isolate;
-  text-align: left;
 }
 
 [dir="rtl"] .icon-rtl-flip {

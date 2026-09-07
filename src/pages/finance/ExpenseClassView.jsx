@@ -139,7 +139,7 @@ function ExpenseClassView() {
               <CreditCard size={16} weight="bold" />
             </div>
           </div>
-          <div className="metric-value" dir="ltr">
+          <div className="metric-value bidi-ltr" dir="ltr">
             ${(metrics?.totalAP || 36890).toLocaleString('en-US', { minimumFractionDigits: 0 })}
           </div>
           <div className="metric-delta">{t('finance:accounts_payable.kpi_total_payable_delta', { count: (bills || []).filter(b => b.payment_status !== 'PAID').length || 12, defaultValue: `${(bills || []).filter(b => b.payment_status !== 'PAID').length || 12} open bills` })}</div>
@@ -152,7 +152,7 @@ function ExpenseClassView() {
               <CalendarBlank size={16} weight="bold" />
             </div>
           </div>
-          <div className="metric-value" dir="ltr">$14,200</div>
+          <div className="metric-value bidi-ltr" dir="ltr">$14,200</div>
           <div className="metric-delta" style={{ color: '#ca8a04', fontWeight: 600 }}>{t('finance:accounts_payable.kpi_due_week_delta', '6 disbursements')}</div>
         </div>
 
@@ -163,7 +163,7 @@ function ExpenseClassView() {
               <Truck size={16} weight="bold" />
             </div>
           </div>
-          <div className="metric-value" dir="ltr">$4,350</div>
+          <div className="metric-value bidi-ltr" dir="ltr">$4,350</div>
           <div className="metric-delta">{t('finance:accounts_payable.kpi_landed_costs_delta', 'Freight & customs')}</div>
         </div>
 
@@ -174,7 +174,7 @@ function ExpenseClassView() {
               <CheckCircle size={16} weight="bold" />
             </div>
           </div>
-          <div className="metric-value" dir="ltr">$92,100</div>
+          <div className="metric-value bidi-ltr" dir="ltr">$92,100</div>
           <div className="metric-delta up" style={{ color: '#15803d', fontWeight: 600 }}>{t('finance:accounts_payable.kpi_settled_delta', '18 payments · 0 late fees')}</div>
         </div>
       </div>
@@ -279,7 +279,7 @@ function ExpenseClassView() {
                   <td>
                     <span className={`badge ${matchOk ? 'ok' : matchPpv ? 'warn' : 'crit'}`}>
                       <span className="d"></span>
-                      {matchOk ? '3-Way Matched' : matchPpv ? 'PPV Approved' : 'Direct Opex'}
+                      {matchOk ? t('accounts_payable.badge_3way_matched', '3-Way Matched') : matchPpv ? t('accounts_payable.badge_ppv_approved', 'PPV Approved') : t('accounts_payable.badge_direct_opex', 'Direct Opex')}
                     </span>
                   </td>
                   <td>
@@ -318,12 +318,12 @@ function ExpenseClassView() {
             <form onSubmit={handleExecutePaymentRun}>
               <div style={{ background: '#f8fafc', padding: '14px 16px', borderRadius: '8px', border: '1px solid var(--border-color)', marginBottom: '16px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', fontSize: '12px' }}>
-                  <span>Disbursement Queue:</span>
-                  <b>{selectedBills.length > 0 ? `${selectedBills.length} Bills Selected` : 'All Open Bills'}</b>
+                  <span>{t('accounts_payable.lbl_disbursement_queue', 'Disbursement Queue:')}</span>
+                  <b>{selectedBills.length > 0 ? t('accounts_payable.lbl_bills_selected', { count: selectedBills.length, defaultValue: `${selectedBills.length} Bills Selected` }) : t('accounts_payable.lbl_all_open_bills', 'All Open Bills')}</b>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '14px', fontWeight: 700 }}>
-                  <span>Total Disbursement Amount:</span>
-                  <span className="mono" style={{ color: '#15803d' }} dir="ltr">
+                  <span>{t('accounts_payable.lbl_total_disbursement', 'Total Disbursement Amount:')}</span>
+                  <span className="mono bidi-ltr" style={{ color: '#15803d' }} dir="ltr">
                     ${(selectedBills.length > 0 ? selectedTotal : (metrics?.totalAP || 36890)).toFixed(2)}
                   </span>
                 </div>
@@ -346,11 +346,11 @@ function ExpenseClassView() {
               </div>
 
               <div style={{ marginBottom: '14px' }}>
-                <label className="form-label">Payment Method</label>
+                <label className="form-label">{t('accounts_payable.lbl_payment_method', 'Payment Method')}</label>
                 <div className="radio-group">
-                  <div className="radio-opt selected">Direct Bank Wire</div>
-                  <div className="radio-opt">WPS Automated</div>
-                  <div className="radio-opt">Corporate Cheque</div>
+                  <div className="radio-opt selected">{t('accounts_payable.opt_wire', 'Direct Bank Wire')}</div>
+                  <div className="radio-opt">{t('accounts_payable.opt_wps', 'WPS Automated')}</div>
+                  <div className="radio-opt">{t('accounts_payable.opt_cheque', 'Corporate Cheque')}</div>
                 </div>
               </div>
 

@@ -74,7 +74,7 @@ function TenderBidAuditingView() {
       submission_deadline: formTenderDeadline
     });
     setSelectedTenderId(newTnd.tender_id);
-    setAuditSuccess(`Created Tender ${newTnd.reference_code} — "${newTnd.title}"`);
+    setAuditSuccess(t('tenders.msg_created_tender', { ref: newTnd.reference_code, title: newTnd.title }));
     setIsNewTenderModalOpen(false);
     setTimeout(() => setAuditSuccess(null), 5000);
   };
@@ -98,7 +98,7 @@ function TenderBidAuditingView() {
       warranty_months: parseInt(bidWarrantyMonths) || 12
     });
 
-    setAuditSuccess(`Logged bid submission for "${bidVendorName}" (JOD ${parseFloat(bidPrice).toLocaleString()})`);
+    setAuditSuccess(t('tenders.msg_logged_bid', { vendor: bidVendorName, amount: parseFloat(bidPrice).toLocaleString() }));
     setIsNewBidModalOpen(false);
     setTimeout(() => setAuditSuccess(null), 5000);
   };
@@ -157,7 +157,7 @@ function TenderBidAuditingView() {
             </div>
           </div>
           <div className="metric-value">JOD <span className="bidi-ltr" dir="ltr">{totalTenderVolume.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span></div>
-          <div className="metric-delta">{tenders.length} Procurement Packages</div>
+          <div className="metric-delta">{t('tenders.kpi_packages_count', { count: tenders.length })}</div>
         </div>
 
         <div className="card metric-card">
@@ -167,8 +167,8 @@ function TenderBidAuditingView() {
               <FileText size={16} weight="bold" />
             </div>
           </div>
-          <div className="metric-value">{totalBidsCount} Submissions</div>
-          <div className="metric-delta">60/40 Tech &amp; Financial Ratio</div>
+          <div className="metric-value">{t('tenders.kpi_submissions_count', { count: totalBidsCount })}</div>
+          <div className="metric-delta">{t('tenders.kpi_ratio_desc')}</div>
         </div>
 
         <div className="card metric-card">
@@ -179,18 +179,18 @@ function TenderBidAuditingView() {
             </div>
           </div>
           <div className="metric-value">JOD <span className="bidi-ltr" dir="ltr">{totalGuaranteesHeld.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span></div>
-          <div className="metric-delta up" style={{ color: '#15803d' }}><span className="bidi-ltr" dir="ltr">100%</span> Bank Verified Bonds</div>
+          <div className="metric-delta up" style={{ color: '#15803d' }}><span className="bidi-ltr" dir="ltr">100%</span> {t('tenders.kpi_bonds_verified', 'Bank Verified Bonds')}</div>
         </div>
 
         <div className="card metric-card">
           <div className="metric-top">
-            <span className="metric-label">Procurement Compliance</span>
+            <span className="metric-label">{t('tenders.kpi_compliance_title', 'Procurement Compliance')}</span>
             <div className="metric-icon" style={{ background: '#fef9c3', color: '#a16207' }}>
               <ShieldCheck size={16} weight="bold" />
             </div>
           </div>
-          <div className="metric-value">96.5% Rating</div>
-          <div className="metric-delta">GTD By-Law 8/2022 Certified</div>
+          <div className="metric-value">{t('tenders.kpi_compliance_rating', '96.5% Rating')}</div>
+          <div className="metric-delta">{t('tenders.kpi_compliance_law', 'GTD By-Law 8/2022 Certified')}</div>
         </div>
       </div>
 
@@ -286,7 +286,7 @@ function TenderBidAuditingView() {
                           }}
                           style={{ fontSize: '11px', padding: '3px 8px' }}
                         >
-                          Audit Bids
+                          {t('tenders.btn_audit_bids')}
                         </button>
                       </td>
                     </tr>
@@ -330,7 +330,7 @@ function TenderBidAuditingView() {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
               <div>
                 <h4 style={{ margin: 0, fontSize: '13px', fontWeight: 700 }}>
-                  Competitive Evaluation Matrix (60% Technical / 40% Financial)
+                  {t('tenders.h_comp_eval')}
                 </h4>
                 <div style={{ fontSize: '11.5px', color: 'var(--text-muted)' }}>
                   {t('tenders.h_eval_sub')}
@@ -412,7 +412,7 @@ function TenderBidAuditingView() {
                               }}
                               style={{ fontSize: '11px', padding: '3px 8px' }}
                             >
-                              Award Contract
+                              {t('tenders.btn_award_contract')}
                             </button>
                           )}
                         </td>
@@ -445,7 +445,7 @@ function TenderBidAuditingView() {
                 <thead>
                   <tr>
                     <th>{t('tenders.th_guar_ref')}</th>
-                    <th>Tender Reference</th>
+                    <th>{t('tenders.th_tender_ref')}</th>
                     <th>{t('tenders.th_bond_class')}</th>
                     <th>{t('tenders.th_awarded_sup')}</th>
                     <th style={{ textAlign: 'end' }}>{t('tenders.th_guar_amount')}</th>
@@ -539,7 +539,7 @@ function TenderBidAuditingView() {
                   <input
                     type="text"
                     className="form-control"
-                    placeholder="e.g. Annual IT Hardware Maintenance Services"
+                    placeholder={t('tenders.placeholder_tender_title')}
                     value={formTenderTitle}
                     onChange={(e) => setFormTenderTitle(e.target.value)}
                     required
@@ -554,23 +554,23 @@ function TenderBidAuditingView() {
                       value={formTenderCategory}
                       onChange={(e) => setFormTenderCategory(e.target.value)}
                     >
-                      <option value="Supplies">Supplies &amp; Materials</option>
-                      <option value="Services">Services &amp; Maintenance</option>
-                      <option value="Works &amp; Infrastructure">Works &amp; Construction</option>
-                      <option value="Consulting">Advisory &amp; Consulting</option>
+                      <option value="Supplies">{t('tenders.opt_cat_supplies', 'Supplies & Materials')}</option>
+                      <option value="Services">{t('tenders.opt_cat_services', 'Services & Maintenance')}</option>
+                      <option value="Works &amp; Infrastructure">{t('tenders.opt_cat_works', 'Works & Construction')}</option>
+                      <option value="Consulting">{t('tenders.opt_cat_consulting', 'Advisory & Consulting')}</option>
                     </select>
                   </div>
 
                   <div className="form-group">
-                    <label>Procurement Method</label>
+                    <label>{t('tenders.lbl_proc_method_select', 'Procurement Method')}</label>
                     <select
                       className="form-control"
                       value={formTenderMethod}
                       onChange={(e) => setFormTenderMethod(e.target.value)}
                     >
-                      <option value="Public Tender (GTD Standard)">Public Tender (GTD Standard)</option>
-                      <option value="Solicited Quotations (RFQ)">Solicited Quotations (RFQ)</option>
-                      <option value="Direct Purchase">Direct Purchase</option>
+                      <option value="Public Tender (GTD Standard)">{t('tenders.opt_method_public', 'Public Tender (GTD Standard)')}</option>
+                      <option value="Solicited Quotations (RFQ)">{t('tenders.opt_method_rfq', 'Solicited Quotations (RFQ)')}</option>
+                      <option value="Direct Purchase">{t('tenders.opt_method_direct', 'Direct Purchase')}</option>
                     </select>
                   </div>
                 </div>
@@ -580,6 +580,7 @@ function TenderBidAuditingView() {
                     <label>{t('tenders.th_est_budget')}</label>
                     <input
                       type="number"
+                      dir="ltr"
                       className="form-control"
                       value={formTenderBudget}
                       onChange={(e) => setFormTenderBudget(parseFloat(e.target.value) || 0)}
@@ -604,11 +605,9 @@ function TenderBidAuditingView() {
                 </div>
               </div>
               <div className="modal-footer" style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px', marginTop: '16px' }}>
-                <button type="button" className="btn-secondary" onClick={() => setIsNewTenderModalOpen(false)}>
-                  Cancel
-                </button>
+                <button type="button" className="btn-secondary" onClick={() => setIsNewTenderModalOpen(false)}>{t('common:actions.cancel')}</button>
                 <button type="submit" className="btn-primary">
-                  Publish RFP Dossier
+                  {t('tenders.btn_publish_rfp_dossier')}
                 </button>
               </div>
             </form>
@@ -629,7 +628,7 @@ function TenderBidAuditingView() {
             <form onSubmit={handleSubmitBidSubmit}>
               <div className="modal-body" style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                 <div style={{ background: '#f8fafc', padding: '10px', borderRadius: '6px', fontSize: '12px' }}>
-                  Tender: <strong>{selectedTender.reference_code}</strong> — {selectedTender.title}
+                  {t('tenders.lbl_tender')} <strong>{selectedTender.reference_code}</strong> — {selectedTender.title}
                 </div>
 
                 <div style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr', gap: '12px' }}>
@@ -648,6 +647,7 @@ function TenderBidAuditingView() {
                     <label>{t('tenders.lbl_crn')}</label>
                     <input
                       type="text"
+                      dir="ltr"
                       className="form-control"
                       value={bidVendorCrn}
                       onChange={(e) => setBidVendorCrn(e.target.value)}
@@ -661,6 +661,7 @@ function TenderBidAuditingView() {
                     <label>{t('tenders.th_quoted_price')}</label>
                     <input
                       type="number"
+                      dir="ltr"
                       className="form-control"
                       value={bidPrice}
                       onChange={(e) => setBidPrice(parseFloat(e.target.value) || 0)}
@@ -672,6 +673,7 @@ function TenderBidAuditingView() {
                     <label>{t('tenders.lbl_bond_amount')}</label>
                     <input
                       type="number"
+                      dir="ltr"
                       className="form-control"
                       value={bidBondAmount}
                       onChange={(e) => setBidBondAmount(parseFloat(e.target.value) || 0)}
@@ -685,6 +687,7 @@ function TenderBidAuditingView() {
                     <label>{t('tenders.lbl_tech_score')}</label>
                     <input
                       type="number"
+                      dir="ltr"
                       max="100"
                       min="0"
                       className="form-control"
@@ -698,6 +701,7 @@ function TenderBidAuditingView() {
                     <label>{t('tenders.lbl_fin_score')}</label>
                     <input
                       type="number"
+                      dir="ltr"
                       max="100"
                       min="0"
                       className="form-control"
@@ -716,10 +720,10 @@ function TenderBidAuditingView() {
                       value={bidBank}
                       onChange={(e) => setBidBank(e.target.value)}
                     >
-                      <option value="Arab Bank">Arab Bank (البنك العربي)</option>
-                      <option value="Housing Bank for Trade &amp; Finance">Housing Bank (بنك الإسكان)</option>
-                      <option value="Bank al Etihad">Bank al Etihad (بنك الاتحاد)</option>
-                      <option value="Jordan Islamic Bank">Jordan Islamic Bank</option>
+                      <option value="Arab Bank">{t('tenders.opt_bank_arab', 'Arab Bank (البنك العربي)')}</option>
+                      <option value="Housing Bank for Trade &amp; Finance">{t('tenders.opt_bank_hbtf', 'Housing Bank (بنك الإسكان)')}</option>
+                      <option value="Bank al Etihad">{t('tenders.opt_bank_etihad', 'Bank al Etihad (بنك الاتحاد)')}</option>
+                      <option value="Jordan Islamic Bank">{t('tenders.opt_bank_jib', 'Jordan Islamic Bank')}</option>
                     </select>
                   </div>
 
@@ -727,6 +731,7 @@ function TenderBidAuditingView() {
                     <label>{t('tenders.lbl_delivery_days')}</label>
                     <input
                       type="number"
+                      dir="ltr"
                       className="form-control"
                       value={bidDeliveryDays}
                       onChange={(e) => setBidDeliveryDays(parseInt(e.target.value) || 14)}
@@ -736,11 +741,9 @@ function TenderBidAuditingView() {
                 </div>
               </div>
               <div className="modal-footer" style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px', marginTop: '16px' }}>
-                <button type="button" className="btn-secondary" onClick={() => setIsNewBidModalOpen(false)}>
-                  Cancel
-                </button>
+                <button type="button" className="btn-secondary" onClick={() => setIsNewBidModalOpen(false)}>{t('common:actions.cancel')}</button>
                 <button type="submit" className="btn-primary">
-                  Record Evaluated Bid
+                  {t('tenders.btn_record_bid')}
                 </button>
               </div>
             </form>
@@ -762,10 +765,10 @@ function TenderBidAuditingView() {
               <div className="modal-body" style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                 <div style={{ background: '#f0fdf4', padding: '12px', borderRadius: '6px' }}>
                   <div style={{ fontWeight: 700, fontSize: '13px', color: '#15803d' }}>
-                    Winning Bidder: {selectedBidToAward.vendor_name}
+                    {t('tenders.lbl_winning_bidder')} {selectedBidToAward.vendor_name}
                   </div>
                   <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '4px' }}>
-                    Contract Value: <strong className="mono bidi-ltr" dir="ltr" style={{ color: 'var(--text-main)' }}>JOD <span className="bidi-ltr" dir="ltr">{selectedBidToAward.quoted_price.toLocaleString()}</span></strong> | Weighted Score: <strong><span className="bidi-ltr" dir="ltr">{selectedBidToAward.weighted_score}%</span></strong>
+                    {t('tenders.lbl_contract_val')} <strong className="mono bidi-ltr" dir="ltr" style={{ color: 'var(--text-main)' }}>JOD <span className="bidi-ltr" dir="ltr">{selectedBidToAward.quoted_price.toLocaleString()}</span></strong> | {t('tenders.lbl_weighted_score')} <strong><span className="bidi-ltr" dir="ltr">{selectedBidToAward.weighted_score}%</span></strong>
                   </div>
                 </div>
 
@@ -785,11 +788,9 @@ function TenderBidAuditingView() {
                 </div>
               </div>
               <div className="modal-footer" style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px', marginTop: '16px' }}>
-                <button type="button" className="btn-secondary" onClick={() => setIsAwardModalOpen(false)}>
-                  Cancel
-                </button>
+                <button type="button" className="btn-secondary" onClick={() => setIsAwardModalOpen(false)}>{t('common:actions.cancel')}</button>
                 <button type="submit" className="btn-primary">
-                  Publish Award Decision
+                  {t('tenders.btn_publish_award')}
                 </button>
               </div>
             </form>

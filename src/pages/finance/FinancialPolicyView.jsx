@@ -126,7 +126,7 @@ function FinancialPolicyView() {
               <Scroll size={16} weight="bold" />
             </div>
           </div>
-          <div className="metric-value">{totalPolicies} Manuals</div>
+          <div className="metric-value"><span className="bidi-ltr" dir="ltr">{totalPolicies}</span> {t('financial_policies.unit_manuals', 'Manuals')}</div>
           <div className="metric-delta">{t('policies.kpi_manuals_delta')}</div>
         </div>
 
@@ -137,7 +137,7 @@ function FinancialPolicyView() {
               <Scales size={16} weight="bold" />
             </div>
           </div>
-          <div className="metric-value">{statutoryCount} Directives</div>
+          <div className="metric-value"><span className="bidi-ltr" dir="ltr">{statutoryCount}</span> {t('financial_policies.unit_directives', 'Directives')}</div>
           <div className="metric-delta">{t('policies.kpi_rules_delta')}</div>
         </div>
 
@@ -243,14 +243,14 @@ function FinancialPolicyView() {
                             onClick={() => handleOpenDetailModal(pol)}
                             style={{ fontSize: '11px', padding: '3px 8px' }}
                           >
-                            Inspect Rules
+                            {t('financial_policies.btn_inspect_rules', 'Inspect Rules')}
                           </button>
                           <button
                             className="btn-primary"
                             onClick={() => handleOpenRevisionModal(pol)}
                             style={{ fontSize: '11px', padding: '3px 8px' }}
                           >
-                            Amend
+                            {t('financial_policies.btn_amend', 'Amend')}
                           </button>
                         </div>
                       </td>
@@ -444,7 +444,7 @@ function FinancialPolicyView() {
             </div>
             <div className="modal-footer" style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px', marginTop: '16px' }}>
               <button type="button" className="btn-primary" onClick={() => setIsDetailModalOpen(false)}>
-                Close Policy Dossier
+                {t('policies.btn_close_dossier')}
               </button>
             </div>
           </div>
@@ -503,11 +503,9 @@ function FinancialPolicyView() {
                 </div>
               </div>
               <div className="modal-footer" style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px', marginTop: '16px' }}>
-                <button type="button" className="btn-secondary" onClick={() => setIsRevisionModalOpen(false)}>
-                  Cancel
-                </button>
+                <button type="button" className="btn-secondary" onClick={() => setIsRevisionModalOpen(false)}>{t('common:actions.cancel')}</button>
                 <button type="submit" className="btn-primary">
-                  Save Version Revision
+                  {t('policies.btn_save_revision')}
                 </button>
               </div>
             </form>
