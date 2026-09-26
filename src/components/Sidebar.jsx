@@ -47,7 +47,7 @@ function Sidebar() {
       <div className="sidebar-header">
         <div className="logo">
           <SlidersHorizontal weight="bold" />
-          <span>fillo</span>
+          <span>QuickBox</span>
         </div>
       </div>
 

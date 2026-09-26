@@ -76,7 +76,7 @@ const ALLOWED_LITERAL_TOKENS = new Set([
   'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
   'Net', 'COD', 'ALL', 'ADJ', 'REF', 'JV', 'BL', 'FA', 'SIG', 'CC', 'vs', 'MT940', 'SHA-256', 'CCC', 'OPEX',
   'SoD', 'CAPEX', 'SOPs', 'Runway', 'com', 'Ref', 'Max', 'Min', 'TRN', 'SLA', 'SSC',
-  'EN', 'AR', 'fillo'
+  'EN', 'AR', 'QuickBox'
 ]);
 
 function stripJsxExpressions(text) {

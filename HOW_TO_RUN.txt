@@ -1,9 +1,9 @@
 ============================================================
-  HOW TO OPEN AND RUN THE FILLO DASHBOARD (Inventory System)
+  HOW TO OPEN AND RUN THE QuickBox DASHBOARD (Inventory System)
 ============================================================
 
 This folder contains a React-based frontend dashboard that
-replicates the Fillo hotel management system's Inventory 
+replicates the QuickBox hotel management system's Inventory 
 Management page. Follow the steps below to run it on any computer.
 
 
@@ -45,7 +45,7 @@ You only need to do this ONCE (or after pulling new changes).
        VITE ready in 500ms
        Local: http://localhost:5173/
   3. Open that URL in your web browser (Chrome, Firefox, Edge, etc.).
-  4. The Fillo Inventory Management dashboard should appear!
+  4. The QuickBox Inventory Management dashboard should appear!
 
   To stop the server: press Ctrl+C in the terminal.
 
